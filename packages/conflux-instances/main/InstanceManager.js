@@ -1,0 +1,74 @@
+const fs = require('fs')
+const path = require('path')
+
+const { IpcChannel } = require('@obsidians/ipc')
+
+const semverLt = require('semver/functions/lt')
+
+class InstanceManager extends IpcChannel {
+  constructor () {
+    super('conflux-node')
+  }
+
+  async create ({ name, version, genesis_secrets, chain = 'dev' }) {
+    await this.pty.exec(`docker volume create --label version=${version},chain=${chain} conflux-${name}`)
+
+    const config = path.join(__dirname, 'chain-configs', `${chain}.toml`)
+    const log = path.join(__dirname, 'chain-configs', 'log.yaml')
+    const genesis = path.join('/tmp', 'genesis_secrets.txt')
+
+    fs.writeFileSync(genesis, genesis_secrets)
+
+    await this.pty.exec(`docker run -d --rm -it --name conflux-config-${name} -v conflux-${name}:/conflux-node obsidians/conflux:${version} /bin/bash`)
+    await this.pty.exec(`docker cp ${config} conflux-config-${name}:/conflux-node/default.toml`)
+    await this.pty.exec(`docker cp ${log} conflux-config-${name}:/conflux-node/log.yaml`)
+    await this.pty.exec(`docker cp ${genesis} conflux-config-${name}:/conflux-node/genesis_secrets.txt`)
+    await this.pty.exec(`docker stop conflux-config-${name}`)
+
+    fs.unlinkSync(genesis)
+  }
+
+  async list (chain = 'dev') {
+    const { logs: volumes } = await this.pty.exec(`docker volume ls --format "{{json . }}"`)
+    const instances = volumes.split('\n').filter(Boolean).map(JSON.parse).filter(x => x.Name.startsWith('conflux-'))
+    const instancesWithLabels = instances.map(i => {
+      const labels = {}
+      i.Labels.split(',').forEach(x => {
+        const [name, value] = x.split('=')
+        labels[name] = value
+      })
+      i.Labels = labels
+      return i
+    })
+    return instancesWithLabels.filter(x => x.Labels.chain === chain)
+  }
+
+  async delete (name) {
+    await this.pty.exec(`docker volume rm conflux-${name}`)
+  }
+
+  async versions () {
+    const { logs: images } = await this.pty.exec(`docker images obsidians/conflux --format "{{json . }}"`)
+    const versions = images.split('\n').filter(Boolean).map(JSON.parse).filter(x => x.Tag.startsWith('v'))
+    return versions
+  }
+
+  async deleteVersion (version) {
+    await this.pty.exec(`docker rmi obsidians/conflux:${version}`)
+  }
+
+  async remoteVersions (size) {
+    const res = await this.fetch(`http://registry.hub.docker.com/v1/repositories/obsidians/conflux/tags`)
+    return JSON.parse(res)
+      .filter(({ name }) => name.startsWith('2.'))
+      .sort((x, y) => semverLt(x.name, y.name) ? 1 : -1)
+      .slice(0, size)
+  }
+
+  async any () {
+    const { versions = [] } = await this.versions()
+    return !!versions.length
+  }
+}
+
+module.exports = InstanceManager

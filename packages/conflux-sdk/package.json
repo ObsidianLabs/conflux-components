@@ -1,0 +1,28 @@
+{
+  "name": "@obsidians/conflux-sdk",
+  "version": "0.1.0",
+  "description": "Conflux SDK",
+  "author": "Phil <qft.gtr@gmail.com>",
+  "license": "MIT",
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {},
+  "dependencies": {
+    "@obsidians/ipc": "^0.1.0",
+    "url-parse": "^1.4.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-external-helpers": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-function-bind": "^7.7.4",
+    "@babel/preset-env": "^7.7.5",
+    "babel-eslint": "10.0.3",
+    "cross-env": "^6.0.3"
+  },
+  "peerDependencies": {
+    "js-conflux-sdk": "^0.10.1"
+  }
+}
