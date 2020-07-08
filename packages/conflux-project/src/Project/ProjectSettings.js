@@ -37,8 +37,8 @@ export default class ProjectSettings {
 
   trimSettings = (rawSettings = {}) => {
     return {
-      language: rawSettings.language || 'teal',
-      main: rawSettings.main || '',
+      main: rawSettings.main || './contracts/MetaCoin.sol',
+      deploy: rawSettings.deploy || './build/contracts/MetaCoin.json',
     }
   }
 

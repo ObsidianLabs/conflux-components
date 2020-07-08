@@ -1,0 +1,4 @@
+{
+  "main": "./contracts/Coin.sol",
+  "deploy": "./build/contracts/Coin.json"
+}

@@ -44,10 +44,6 @@ export default class ConfluxSdk {
     return json.result
   }
 
-  newTransaction (tx, signatureProvider) {
-    // return new AlgoTransaction(tx, signatureProvider, this.client)
-  }
-  
   async deploy (contractJson, fromAddress) {
     const from = new AccountWithSigProvider(fromAddress, signatureProvider)
     const contract = this.client.cfx.Contract(contractJson)
@@ -56,5 +52,14 @@ export default class ConfluxSdk {
       .sendTransaction({ from , gas: estimate.gasUsed })
       .confirmed()
     return receipt
+  }
+
+  contractFrom (abi, address) {
+    return this.client.cfx.Contract({ abi, address })
+  }
+
+  async contract (abi, method, ...args) {
+    const result = await contract[method](...args)
+    return result.toString()
   }
 }

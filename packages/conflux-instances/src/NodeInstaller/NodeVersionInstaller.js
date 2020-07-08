@@ -109,7 +109,7 @@ export default class NodeVersionInstaller extends PureComponent {
               active
               logId='download'
               height='300px'
-              cmd={`docker pull algorand/stable:${this.state.downloadVersion}`}
+              cmd={`docker pull obsidians/conflux:${this.state.downloadVersion}`}
               onFinished={this.onDownloaded}
             />
           </div>

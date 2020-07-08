@@ -26,7 +26,7 @@ export default class NewProjectModal extends Component {
     this.state = {
       name: '',
       projectRoot: '',
-      template: 'metacoin',
+      template: 'coin',
       creating: false
     }
 
@@ -61,7 +61,7 @@ export default class NewProjectModal extends Component {
     if (created) {
       this.modal.current.closeModal()
       this.onConfirm(created)
-      this.setState({ name: '', projectRoot: '', template: 'metacoin' })
+      this.setState({ name: '', projectRoot: '', template: 'coin' })
     }
     this.setState({ creating: false })
   }
@@ -82,22 +82,30 @@ export default class NewProjectModal extends Component {
       return false
     }
 
-    const compilerVersion = this.props.compilerVersion
-    const cmd = [
-      `docker run --rm -it`,
-      `--name conflux-create-project`,
-      `-v "${projectRoot}":"/project/${name}"`,
-      `-w "/project/${name}"`,
-      `obsidians/truffle:${compilerVersion}`,
-      `truffle unbox ${template}`,
-    ].join(' ')
-
-    try {
-      await this.channel.invoke('createProject', { projectRoot })
-      await this.terminal.current.exec(cmd)
-    } catch (e) {
-      notification.error('Cannot Create the Project', e.message)
-      return false
+    if (template === 'metacoin') {
+      const compilerVersion = this.props.compilerVersion
+      const cmd = [
+        `docker run --rm -it`,
+        `--name conflux-create-project`,
+        `-v "${projectRoot}":"/project/${name}"`,
+        `-w "/project/${name}"`,
+        `obsidians/truffle:${compilerVersion}`,
+        `truffle unbox ${template}`,
+      ].join(' ')
+      try {
+        await this.channel.invoke('createProject', { projectRoot, template })
+        await this.terminal.current.exec(cmd)
+      } catch (e) {
+        notification.error('Cannot Create the Project', e.message)
+        return false
+      }
+    } else {
+      try {
+        await this.channel.invoke('createProject', { projectRoot, template })
+      } catch (e) {
+        notification.error('Cannot Create the Project', e.message)
+        return false
+      }
     }
 
     notification.success('Successful', `New project <b>${name}</b> is created.`)
@@ -148,7 +156,8 @@ export default class NewProjectModal extends Component {
             value={this.state.template}
             onChange={event => this.setState({ template: event.target.value })}
           >
-            <option value='metacoin'>metacoin</option>
+            <option value='coin'>coin</option>
+            <option value='metacoin'>[Truffle] metacoin</option>
           </CustomInput>
         </FormGroup>
         <div style={{ display: this.state.creating ? 'block' : 'none'}}>

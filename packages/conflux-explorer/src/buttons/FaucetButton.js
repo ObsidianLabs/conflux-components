@@ -36,7 +36,7 @@ export default class FaucetButton extends PureComponent {
               ref={this.webview}
               className='w-100 h-100 border-0 m-3'
               style={{ top: 0 }}
-              src='https://bank.testnet.algorand.network'
+              src='https://www.google.com'
             />
           </div>
         </Modal>

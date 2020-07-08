@@ -66,6 +66,25 @@ class ProjectManager {
     return true
   }
 
+  async readContractJson () {
+    const settings = await this.checkSettings()
+    if (!settings || !settings.deploy) {
+      throw new Error('Please set the smart contract to deploy in project settings.')
+    }
+
+    const { path } = fileOps.current
+    const contractJsonPath = path.join(this.projectRoot, settings.deploy)
+    const contractJson = await fileOps.current.readFile(contractJsonPath)
+
+    let contractObj
+    try {
+      contractObj = JSON.parse(contractJson)
+    } catch (e) {
+      throw new Error(`Error in reading <b>${contractJsonPath}</b>`)
+    }
+    return contractObj
+  }
+
   async deploy (from) {
     if (!nodeManager.sdk) {
       throw new Error('No running node. Please start one first.')
@@ -75,16 +94,13 @@ class ProjectManager {
       throw new Error('No selected account. Please select one in the <b>Explorer</b> tab.')
     }
 
-    const { path } = fileOps.current
-    const contractJsonPath = path.join(this.projectRoot, 'build', 'contracts', 'Coin.json')
-    const contractJson = await fileOps.current.readFile(contractJsonPath)
-
-    let contractObj
-    try {
-      contractObj = JSON.parse(contractJson)
-    } catch (e) {
-      throw new Error(`Error in reading <b>${contractJsonPath}</b>`)
+    const settings = await this.checkSettings()
+    if (!settings || !settings.deploy) {
+      throw new Error('Please set the smart contract to deploy in project settings.')
     }
+
+    const contractObj = await this.readContractJson()
+    console.log(contractObj)
 
     try {
       return await nodeManager.sdk.deploy(contractObj, this.selectedAccount)

@@ -85,7 +85,7 @@ export default class AccountTransactions extends PureComponent {
           </tr>
         )}
       >
-        {this.renderTableBody()}
+        {/* {this.renderTableBody()} */}
       </TableCard>
     )
   }

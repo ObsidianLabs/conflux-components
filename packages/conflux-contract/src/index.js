@@ -6,14 +6,12 @@ import {
   LoadingScreen,
 } from '@obsidians/ui-components'
 
-import AlgoSdk from '@obsidians/conflux-sdk'
+import ContractPage from './ContractPage'
 
-import AlgorandAccountPage from './AlgorandAccountPage'
+// import TransferButton from './buttons/TransferButton'
+// import FaucetButton from './buttons/FaucetButton'
 
-import TransferButton from './buttons/TransferButton'
-import FaucetButton from './buttons/FaucetButton'
-
-export default class AlgorandAccount extends PureComponent {
+export default class Contract extends PureComponent {
   constructor (props) {
     super(props)
 
@@ -40,7 +38,7 @@ export default class AlgorandAccount extends PureComponent {
     }
 
     this.tabs = React.createRef()
-    this.accountPage = React.createRef()
+    this.page = React.createRef()
     this.modal = React.createRef()
   }
 
@@ -48,8 +46,6 @@ export default class AlgorandAccount extends PureComponent {
   }
 
   componentDidUpdate (prevProps) {
-    if (!prevProps.algoNode && this.props.algoNode) {
-    }
   }
 
   get currentValue () {
@@ -71,7 +67,7 @@ export default class AlgorandAccount extends PureComponent {
   }
 
   onRefresh = () => {
-    this.accountPage.current.refresh()
+    this.page.current.refresh()
   }
 
   getTabText = tab => {
@@ -101,14 +97,8 @@ export default class AlgorandAccount extends PureComponent {
           onChangeStarred={this.props.onChangeStarred}
           onRefresh={this.onRefresh}
           onTabsUpdated={this.props.onTabsUpdated}
-          NavbarButtons={(
-            <React.Fragment>
-              <TransferButton address={value} />
-              { this.props.network === 'testnet' && <FaucetButton address={value} /> }
-            </React.Fragment>
-          )}
         >
-          <AlgorandAccountPage ref={this.accountPage} value={value} />
+          <ContractPage ref={this.page} value={value} />
         </TabsWithNavigationBar>
 
         <Modal

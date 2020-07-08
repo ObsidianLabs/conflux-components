@@ -32,7 +32,7 @@ export default class DeployerButton extends PureComponent {
 
     try {
       const result = await projectManager.deploy()
-      this.setState({ result: JSON.stringify(result, null, 2) })
+      this.setState({ result })
       this.notification.dismiss()
       notification.success('Deploy Successful')
       this.modal.current.openModal()
@@ -50,7 +50,7 @@ export default class DeployerButton extends PureComponent {
         className='pre-box pre-wrap break-all small'
         element='pre'
       >
-        {this.state.result}
+        {JSON.stringify(this.state.result, null, 2)}
       </Highlight>
     )
   }
@@ -81,6 +81,7 @@ export default class DeployerButton extends PureComponent {
           title='Deployment Result'
           textCancel='Close'
         >
+          Open the deployed <a href={`#/contract/${this.state.result.contractCreated}`}>contract</a>
           {this.renderDeployResult()}
         </Modal>
       </React.Fragment>

@@ -44,8 +44,8 @@ export default class ProjectSettingsTab extends PureComponent {
 
   trimSettings = (rawSettings = {}) => {
     return {
-      language: rawSettings.language || 'teal',
-      main: rawSettings.main || '',
+      main: rawSettings.main || './contracts/MetaCoin.sol',
+      deploy: rawSettings.deploy || './build/contracts/MetaCoin.json',
     }
   }
 
@@ -85,6 +85,14 @@ export default class ProjectSettingsTab extends PureComponent {
               className='bg-black'
               value={settings.main}
               onChange={this.onChange('main')}
+              placeholder={`Required`}
+            />
+            <DebouncedFormGroup
+              code
+              label='Smart contract to deploy'
+              className='bg-black'
+              value={settings.deploy}
+              onChange={this.onChange('deploy')}
               placeholder={`Required`}
             />
           </div>

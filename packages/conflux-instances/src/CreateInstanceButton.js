@@ -58,7 +58,6 @@ export default class CreateInstanceButton extends PureComponent {
     const genesis_secrets = (await Promise.all(this.state.genesis.map(k => keypairManager.getSigner(k.address))))
       .map(privateKey => privateKey.substr(2))
       .join('\n') + '\n'
-    console.log(genesis_secrets)
     await instanceChannel.invoke('create', {
       name: this.state.name,
       version: this.state.selected,

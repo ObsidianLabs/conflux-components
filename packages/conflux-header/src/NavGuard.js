@@ -23,6 +23,8 @@ export default class NavGuard {
     const [first] = this.parsePathname(pathname)
     if (first === 'guest') {
       this.updateSelectedProject(pathname)
+    } else if (first === 'contract') {
+      this.updateSelectedContract(pathname)
     }
   }
 
@@ -76,5 +78,11 @@ export default class NavGuard {
       project.path = found.get('path')
     }
     redux.dispatch('SELECT_PROJECT', { project })
+  }
+
+  updateSelectedContract (pathname) {
+    const [_, contract] = this.parsePathname(pathname)
+    const { network } = redux.getState()
+    redux.dispatch('SELECT_CONTRACT', { network, contract })
   }
 }

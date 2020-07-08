@@ -2,6 +2,7 @@
   "name": "@obsidians/conflux-components",
   "private": true,
   "scripts": {
+    "build": "node init.js"
   },
   "dependencies": {
   },

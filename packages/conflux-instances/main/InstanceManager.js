@@ -1,5 +1,6 @@
 const fs = require('fs')
 const path = require('path')
+const { COPYFILE_FICLONE_FORCE } = fs.constants
 
 const { IpcChannel } = require('@obsidians/ipc')
 
@@ -13,15 +14,21 @@ class InstanceManager extends IpcChannel {
   async create ({ name, version, genesis_secrets, chain = 'dev' }) {
     await this.pty.exec(`docker volume create --label version=${version},chain=${chain} conflux-${name}`)
 
-    const config = path.join(__dirname, 'chain-configs', `${chain}.toml`)
-    const log = path.join(__dirname, 'chain-configs', 'log.yaml')
+    const configPath = path.join('/tmp', `${chain}.toml`)
+    const logPath = path.join('/tmp', `log.yaml`)
     const genesis = path.join('/tmp', 'genesis_secrets.txt')
+
+    const configContent = fs.readFileSync(path.join(__dirname, 'chain-configs', `${chain}.toml`))
+    fs.writeFileSync(configPath, configContent)
+
+    const logContent = fs.readFileSync(path.join(__dirname, 'chain-configs', 'log.yaml'))
+    fs.writeFileSync(logPath, logContent)
 
     fs.writeFileSync(genesis, genesis_secrets)
 
     await this.pty.exec(`docker run -d --rm -it --name conflux-config-${name} -v conflux-${name}:/conflux-node obsidians/conflux:${version} /bin/bash`)
-    await this.pty.exec(`docker cp ${config} conflux-config-${name}:/conflux-node/default.toml`)
-    await this.pty.exec(`docker cp ${log} conflux-config-${name}:/conflux-node/log.yaml`)
+    await this.pty.exec(`docker cp ${configPath} conflux-config-${name}:/conflux-node/default.toml`)
+    await this.pty.exec(`docker cp ${logPath} conflux-config-${name}:/conflux-node/log.yaml`)
     await this.pty.exec(`docker cp ${genesis} conflux-config-${name}:/conflux-node/genesis_secrets.txt`)
     await this.pty.exec(`docker stop conflux-config-${name}`)
 
@@ -60,7 +67,7 @@ class InstanceManager extends IpcChannel {
   async remoteVersions (size) {
     const res = await this.fetch(`http://registry.hub.docker.com/v1/repositories/obsidians/conflux/tags`)
     return JSON.parse(res)
-      .filter(({ name }) => name.startsWith('2.'))
+      .filter(({ name }) => name.startsWith('v'))
       .sort((x, y) => semverLt(x.name, y.name) ? 1 : -1)
       .slice(0, size)
   }
