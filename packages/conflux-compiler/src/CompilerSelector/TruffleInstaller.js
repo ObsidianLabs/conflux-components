@@ -82,7 +82,7 @@ export default class CompilerInstaller extends PureComponent {
   render () {
     const title = (
       <div key='icon-downloading-compiler'>
-        <i className='fas fa-spinner fa-spin mr-2' />Downloading Truffle {this.state.downloadVersion}...
+        <i className='fas fa-spinner fa-spin mr-2' />Downloading Conflux Truffle {this.state.downloadVersion}...
       </div>
     )
     return (
@@ -96,7 +96,7 @@ export default class CompilerInstaller extends PureComponent {
             <i className='fas fa-download mr-1' />Install
           </DropdownToggle>
           <DropdownMenu right={this.props.right}>
-            <DropdownItem header className='small'>Available Truffle Versions</DropdownItem>
+            <DropdownItem header className='small'>Conflux Truffle Versions</DropdownItem>
             {this.renderVersions()}
           </DropdownMenu>
         </UncontrolledButtonDropdown>

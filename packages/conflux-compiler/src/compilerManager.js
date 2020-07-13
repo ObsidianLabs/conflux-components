@@ -4,7 +4,7 @@ import fileOps from '@obsidians/file-ops'
 
 class Compiler {
   constructor () {
-    this.channel = new IpcChannel('truffle')
+    this.channel = new IpcChannel('conflux-truffle')
     this._terminal = null
     this._button = null
     this.notification = null

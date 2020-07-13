@@ -52,7 +52,7 @@ export default class CompilerSelector extends PureComponent {
 
     if (!this.state.installed.length) {
       return (
-        <DropdownItem key="compiler-none" disabled>(No Truffle installed)</DropdownItem>
+        <DropdownItem key="compiler-none" disabled>(No Conflux Truffle installed)</DropdownItem>
       )
     }
 
@@ -82,7 +82,7 @@ export default class CompilerSelector extends PureComponent {
       return (
         <tr>
           <td align='middle' colSpan={4}>
-            (No Truffle installed)
+            (No Conflux Truffle installed)
           </td>
         </tr>
       )
@@ -115,7 +115,7 @@ export default class CompilerSelector extends PureComponent {
         <UncontrolledButtonDropdown direction='up'>
           <DropdownToggle size='sm' color='default' className='rounded-0 text-muted px-2'>
             <i className='fas fa-hammer mr-1' />
-            Truffle ({this.props.selected || 'none'})
+            Conflux Truffle ({this.props.selected || 'none'})
           </DropdownToggle>
           <DropdownMenu right>
             <DropdownItem header>
@@ -125,13 +125,13 @@ export default class CompilerSelector extends PureComponent {
             <DropdownItem divider />
             <DropdownItem onClick={this.onOpenManager}>
               <i className='fas fa-cog mr-1' />
-              Truffle Versions...
+              Conflux Truffle Versions...
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledButtonDropdown>
         <Modal
           ref={this.modal}
-          title='Truffle Version Manager'
+          title='Conflux Truffle Version Manager'
           ActionBtn={
             <TruffleInstaller
               left

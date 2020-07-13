@@ -2,7 +2,7 @@ const { IpcChannel } = require('@obsidians/ipc')
 
 class CompilerManager extends IpcChannel {
   constructor () {
-    super('truffle')
+    super('conflux-truffle')
   }
 
   async versions () {
