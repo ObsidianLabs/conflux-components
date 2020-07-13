@@ -1,7 +1,7 @@
 import { IpcChannel } from '@obsidians/ipc'
 
 import parseUrl from 'url-parse'
-import { AccountWithSigProvider, util } from 'js-conflux-sdk'
+import { Account, util } from 'js-conflux-sdk'
 
 import ConfluxClient from './ConfluxClient'
 import signatureProvider from './signatureProvider'
@@ -45,12 +45,12 @@ export default class ConfluxSdk {
   }
 
   async deploy (contractJson, fromAddress) {
-    const from = new AccountWithSigProvider(fromAddress, signatureProvider)
+    const from = new Account(fromAddress, signatureProvider)
     const contract = this.client.cfx.Contract(contractJson)
     const estimate = await contract.constructor().estimateGasAndCollateral({ from })
     const receipt = await contract.constructor()
-      .sendTransaction({ from , gas: estimate.gasUsed })
-      .confirmed()
+      .sendTransaction({ from, gas: estimate.gasUsed, chainId: 0 })
+      .executed()
     return receipt
   }
 

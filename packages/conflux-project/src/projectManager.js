@@ -100,7 +100,6 @@ class ProjectManager {
     }
 
     const contractObj = await this.readContractJson()
-    console.log(contractObj)
 
     try {
       return await nodeManager.sdk.deploy(contractObj, this.selectedAccount)
