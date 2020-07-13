@@ -73,9 +73,9 @@ export default class Welcome extends PureComponent {
               />
               <DockerImageItem
                 ref={this.listItemCompiler}
-                title='Truffle'
-                subtitle='Truffle is used to create and compile a project.'
-                link='https://hub.docker.com/r/obsidians/truffle'
+                title='Conflux Truffle'
+                subtitle='A Conflux version of truffle used to create and compile a project.'
+                link='https://hub.docker.com/r/confluxchain/conflux-truffle'
                 getVersions={() => compilerManager.invoke('versions')}
                 Installer={CompilerInstaller}
                 onInstalled={this.refresh}

@@ -81,8 +81,8 @@ class Compiler {
       `docker run -t --rm --name truffle-compile`,
       `-v "${projectRoot}":"/project/${name}"`,
       `-w "/project/${name}"`,
-      `obsidians/truffle:${compilerVersion}`,
-      `truffle compile`,
+      `confluxchain/conflux-truffle:${compilerVersion}`,
+      `cfxtruffle compile`,
     ].join(' ')
   }
 }

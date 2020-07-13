@@ -109,7 +109,7 @@ export default class CompilerInstaller extends PureComponent {
               active
               logId='download-compiler'
               height='300px'
-              cmd={`docker pull obsidians/truffle:${this.state.downloadVersion}`}
+              cmd={`docker pull confluxchain/conflux-truffle:${this.state.downloadVersion}`}
               onFinished={this.onDownloaded}
             />
           </div>

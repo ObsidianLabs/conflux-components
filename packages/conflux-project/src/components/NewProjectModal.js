@@ -89,8 +89,8 @@ export default class NewProjectModal extends Component {
         `--name conflux-create-project`,
         `-v "${projectRoot}":"/project/${name}"`,
         `-w "/project/${name}"`,
-        `obsidians/truffle:${compilerVersion}`,
-        `truffle unbox ${template}`,
+        `confluxchain/conflux-truffle:${compilerVersion}`,
+        `cfxtruffle unbox ${template}`,
       ].join(' ')
       try {
         await this.channel.invoke('createProject', { projectRoot, template })
