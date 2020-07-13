@@ -4,7 +4,7 @@ const { COPYFILE_FICLONE_FORCE } = fs.constants
 
 const { IpcChannel } = require('@obsidians/ipc')
 
-const semverLt = require('semver/functions/lt')
+const semver = require('semver')
 
 class InstanceManager extends IpcChannel {
   constructor () {
@@ -26,7 +26,7 @@ class InstanceManager extends IpcChannel {
 
     fs.writeFileSync(genesis, genesis_secrets)
 
-    await this.pty.exec(`docker run -d --rm -it --name conflux-config-${name} -v conflux-${name}:/conflux-node obsidians/conflux:${version} /bin/bash`)
+    await this.pty.exec(`docker run -d --rm -it --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
     await this.pty.exec(`docker cp ${configPath} conflux-config-${name}:/conflux-node/default.toml`)
     await this.pty.exec(`docker cp ${logPath} conflux-config-${name}:/conflux-node/log.yaml`)
     await this.pty.exec(`docker cp ${genesis} conflux-config-${name}:/conflux-node/genesis_secrets.txt`)
@@ -55,20 +55,20 @@ class InstanceManager extends IpcChannel {
   }
 
   async versions () {
-    const { logs: images } = await this.pty.exec(`docker images obsidians/conflux --format "{{json . }}"`)
-    const versions = images.split('\n').filter(Boolean).map(JSON.parse).filter(x => x.Tag.startsWith('v'))
+    const { logs: images } = await this.pty.exec(`docker images confluxchain/conflux-rust --format "{{json . }}"`)
+    const versions = images.split('\n').filter(Boolean).map(JSON.parse).filter(x => semver.valid(x.Tag))
     return versions
   }
 
   async deleteVersion (version) {
-    await this.pty.exec(`docker rmi obsidians/conflux:${version}`)
+    await this.pty.exec(`docker rmi confluxchain/conflux-rust:${version}`)
   }
 
   async remoteVersions (size) {
-    const res = await this.fetch(`http://registry.hub.docker.com/v1/repositories/obsidians/conflux/tags`)
+    const res = await this.fetch(`http://registry.hub.docker.com/v1/repositories/confluxchain/conflux-rust/tags`)
     return JSON.parse(res)
-      .filter(({ name }) => name.startsWith('v'))
-      .sort((x, y) => semverLt(x.name, y.name) ? 1 : -1)
+      .filter(({ name }) => semver.valid(name))
+      .sort((x, y) => semver.lt(x.name, y.name) ? 1 : -1)
       .slice(0, size)
   }
 

@@ -47,8 +47,9 @@ class NodeManager {
       `-p 12537:12537`,
       `-v conflux-${name}:/conflux-node`,
       `-w /conflux-node`,
-      `obsidians/conflux:${version}`,
-      `../conflux-rust/target/release/conflux --config default.toml`
+      `--entrypoint conflux`,
+      `confluxchain/conflux-rust:${version}`,
+      `--config default.toml`
     ].join(' ')
   }
 

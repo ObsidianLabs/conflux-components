@@ -66,7 +66,7 @@ export default class Welcome extends PureComponent {
                 ref={this.listItemNode}
                 title='Conflux Node'
                 subtitle='The main software that runs the Conflux node.'
-                link='https://hub.docker.com/r/obsidians/conflux'
+                link='https://hub.docker.com/r/confluxchain/conflux-rust'
                 getVersions={() => instanceManager.invoke('versions')}
                 Installer={NodeVersionInstaller}
                 onInstalled={this.refresh}
