@@ -11,12 +11,16 @@ import ProjectSettings from './ProjectSettings'
 import ProjectToolbar from './ProjectToolbar'
 import ProjectSettingsTab from './ProjectSettingsTab'
 
+import solidity from './languages/solidity'
+
 useBuiltinCustomTabs(['markdown'])
 modelSessionManager.registerCustomTab('settings', ProjectSettingsTab, 'Project Settings')
 modelSessionManager.registerModeDetector(filePath => {
   const { base } = fileOps.current.path.parse(filePath)
   if (base === 'config.json') {
     return 'settings'
+  } else if (base.endsWith('.sol')) {
+    return 'solidity'
   } else {
     return defaultModeDetector(filePath)
   }
@@ -37,6 +41,7 @@ export default class Project extends PureComponent {
 
   async componentDidMount () {
     projectManager.project = this
+    solidity()
     this.prepareProject(this.props.projectRoot)
   }
 
