@@ -59,7 +59,7 @@ export default class InstanceRow extends PureComponent {
     const labels = data.Labels
 
     return (
-      <tr>
+      <tr className='hover-flex'>
         <td>
           <div className='flex-row align-items-center'>
             {name}
@@ -70,7 +70,10 @@ export default class InstanceRow extends PureComponent {
         <td>{this.renderChainBtn(labels.chain)}</td>
         <td>{this.renderBlockNumber(name)}</td>
         <td align='right'>
-          <DeleteButton onConfirm={() => this.deleteInstance(name)} />
+          <DeleteButton
+            className='hover-show'
+            onConfirm={() => this.deleteInstance(name)}
+          />
         </td>
       </tr>
     )

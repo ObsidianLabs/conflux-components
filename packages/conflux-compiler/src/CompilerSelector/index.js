@@ -90,12 +90,13 @@ export default class CompilerSelector extends PureComponent {
 
     return (
       this.state.installed.map(v => (
-        <tr key={`table-row-${v.Tag}`} className='hover-block'>
+        <tr key={`table-row-${v.Tag}`} className='hover-flex'>
           <td>{v.Tag}</td>
           <td>{moment(v.CreatedAt, 'YYYY-MM-DD HH:mm:ss Z').format('LL')}</td>
           <td>{v.Size}</td>
           <td align='right'>
             <DeleteButton
+              className='hover-show'
               onConfirm={() => this.deleteCompilerVersion(v.Tag)}
               textConfirm='Click again to uninstall'
             />
