@@ -21,6 +21,7 @@
     "@obsidians/conflux-node": "^0.1.0",
     "@obsidians/conflux-project": "^0.1.0",
     "@obsidians/conflux-sdk": "^0.1.0",
+    "@obsidians/notification": "^0.1.0",
     "@obsidians/ui-components": "^0.1.0"
   },
   "devDependencies": {
@@ -42,6 +43,7 @@
     "rollup-plugin-postcss": "^2.3.0"
   },
   "peerDependencies": {
+    "js-conflux-sdk": "^0.10.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-highlight": "^0.12.0"
