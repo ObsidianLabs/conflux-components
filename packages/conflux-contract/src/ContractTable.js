@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react'
+import React, { Component } from 'react'
 import classnames from 'classnames'
 
 import {
@@ -11,7 +11,7 @@ import {
 } from '@obsidians/ui-components'
 
 import DropdownCard from './DropdownCard'
-import ActionForm, { ActionParamInput } from './ActionForm'
+import ActionForm from './ActionForm'
 
 export default class ContractTable extends Component {
   state = {

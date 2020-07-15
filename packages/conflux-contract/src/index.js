@@ -3,7 +3,6 @@ import React, { PureComponent } from 'react'
 import {
   TabsWithNavigationBar,
   Modal,
-  LoadingScreen,
 } from '@obsidians/ui-components'
 
 import ContractPage from './ContractPage'
