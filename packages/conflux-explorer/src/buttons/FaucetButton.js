@@ -1,46 +1,40 @@
 import React, { PureComponent } from 'react'
 
 import {
-  Modal,
   ToolbarButton,
 } from '@obsidians/ui-components'
 
+import notification from '@obsidians/notification'
+
 export default class FaucetButton extends PureComponent {
-  constructor(props) {
-    super(props)
-
-    this.modal = React.createRef()
-  }
-
-  openModal = () => {
-    this.modal.current.openModal()
+  claim = async () => {
+    this.notification = notification.info('Claiming', `Trying to claim free tokens for <b>${this.props.address}</b>`, 0)
+    let result
+    try {
+      const res = await fetch(`https://wallet.confluxscan.io/faucet/dev/ask?address=${this.props.address}`)
+      result = await res.json()
+    } catch (e) {}
+    this.notification.dismiss()
+    if (!result) {
+      notification.error('Failed', 'Unknown error')
+      return
+    }
+    if (result.code) {
+      notification.error('Failed', result.message)
+    } else {
+      notification.success('Success', `Claimed 100 CFX for <b>${this.props.address}</b>`)
+    }
   }
 
   render () {
     return (
-      <React.Fragment>
-        <ToolbarButton
-          id='navbar-faucet'
-          size='md'
-          icon='fas fa-faucet'
-          tooltip='Faucet'
-          onClick={this.openModal}
-        />
-        <Modal
-          ref={this.modal}
-          overflow
-          title='Faucet'
-        >
-          <div className='bg-light rounded' style={{ height: 500 }}>
-            <webview
-              ref={this.webview}
-              className='w-100 h-100 border-0 m-3'
-              style={{ top: 0 }}
-              src='https://www.google.com'
-            />
-          </div>
-        </Modal>
-      </React.Fragment>
+      <ToolbarButton
+        id='navbar-faucet'
+        size='md'
+        icon='fas fa-faucet'
+        tooltip='Faucet'
+        onClick={this.claim}
+      />
     )
   }
 }

@@ -96,12 +96,11 @@ export default class Explorer extends PureComponent {
           onChangeStarred={this.props.onChangeStarred}
           onRefresh={this.onRefresh}
           onTabsUpdated={this.props.onTabsUpdated}
-          // NavbarButtons={(
-          //   <React.Fragment>
-          //     <TransferButton address={value} />
-          //     { this.props.network === 'testnet' && <FaucetButton address={value} /> }
-          //   </React.Fragment>
-          // )}
+          NavbarButtons={(
+            <React.Fragment>
+              { this.props.network === 'mainnet' && <FaucetButton address={value} /> }
+            </React.Fragment>
+          )}
         >
           <AccountPage ref={this.accountPage} value={value} />
         </TabsWithNavigationBar>

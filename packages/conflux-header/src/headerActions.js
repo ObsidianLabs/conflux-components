@@ -15,12 +15,21 @@ export const networks = List([
   },
   {
     id: 'testnet',
-    group: 'default',
+    group: 'testnet',
     name: 'Testnet',
-    fullName: 'Testnet',
+    fullName: 'Conflux Testnet',
     icon: 'fas fa-vial',
-    notification: 'Switched to <b>Testnet</b> network.',
+    notification: 'Switched to <b>Conflux Testnet</b> network.',
     url: 'http://testnet-jsonrpc.conflux-chain.org:12537',
+  },
+  {
+    id: 'mainnet',
+    group: 'mainnet',
+    name: 'Pontus',
+    fullName: 'Conflux Pontus',
+    icon: 'fas fa-globe',
+    notification: 'Switched to <b>Conflux Pontus</b> network.',
+    url: 'http://mainnet-jsonrpc.conflux-chain.org:12537',
   }
 ])
 

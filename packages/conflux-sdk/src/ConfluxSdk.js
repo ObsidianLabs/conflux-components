@@ -22,7 +22,10 @@ export default class ConfluxSdk {
 
   async accountFrom (address) {
     const balance = await this.client.cfx.getBalance(address)
-    const code = await this.client.cfx.getCode(address)
+    let code = ''
+    try {
+      code = await this.client.cfx.getCode(address)
+    } catch (e) {}
     return {
       address,
       balance: util.unit.fromDripToCFX(balance),

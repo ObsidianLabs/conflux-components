@@ -11,6 +11,75 @@ import { projectManager } from '@obsidians/conflux-project'
 
 import ContractActions from './ContractActions'
 import ContractTable from './ContractTable'
+import ContractEvents from './ContractEvents'
+
+const abiSponsor = [
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "name": "add_privilege",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
+      }
+    ],
+    "name": "remove_privilege",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "contract_addr",
+        "type": "address"
+      }
+    ],
+    "name": "set_sponsor_for_collateral",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "contract_addr",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "upper_bound",
+        "type": "uint256"
+      }
+    ],
+    "name": "set_sponsor_for_gas",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  }
+]
 
 export default class ContractPage extends PureComponent {
   state = {
@@ -31,11 +100,19 @@ export default class ContractPage extends PureComponent {
 
   refresh = async () => {
     this.setState({ loading: true })
-    
+
     const value = this.props.value
 
     if (!value) {
       this.setState({ error: null })
+      return
+    }
+
+    if (value === '0x0888000000000000000000000000000000000001') {
+      this.setState({
+        loading: false,
+        abi: abiSponsor,
+      })
       return
     }
 
@@ -77,13 +154,12 @@ export default class ContractPage extends PureComponent {
 
     const contractInstance = nodeManager.sdk.contractFrom(abi, this.props.value)
     const functions = abi.filter(item => item.type === 'function')
-    // window.contract = contractInstance
-    
+
     return (
       <div className='d-flex p-relative h-100'>
         <SplitPane
           split='vertical'
-          defaultSize={480}
+          defaultSize={320}
           minSize={200}
         >
           <ContractActions
@@ -96,16 +172,27 @@ export default class ContractPage extends PureComponent {
             // history={contractCalls.getIn(['action', 'history'])}
             // bookmarks={contractCalls.getIn(['action', 'bookmarks'])}
           />
-          <ContractTable
-            value={this.props.value}
-            abi={functions.filter(item => item.stateMutability === 'view')}
-            contract={contractInstance}
+          <SplitPane
+            split='vertical'
+            defaultSize={320}
+            minSize={200}
+          >
+            <ContractTable
+              value={this.props.value}
+              abi={functions.filter(item => item.stateMutability === 'view')}
+              contract={contractInstance}
             // network={network}
             // contract={contract}
             // abi={this.state.abi}
             // history={contractCalls.getIn(['table', 'history'])}
             // bookmarks={contractCalls.getIn(['table', 'bookmarks'])}
-          />
+            />
+            <ContractEvents
+              value={this.props.value}
+              abi={abi.filter(item => item.type === 'event')}
+              contract={contractInstance}
+            />
+          </SplitPane>
         </SplitPane>
       </div>
     )
