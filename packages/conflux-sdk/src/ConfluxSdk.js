@@ -7,8 +7,10 @@ import ConfluxClient from './ConfluxClient'
 import signatureProvider from './signatureProvider'
 
 export default class ConfluxSdk {
-  constructor ({ url }) {
-    this.client = new ConfluxClient(url)
+  constructor ({ url, chainId, explorer }) {
+    this.client = new ConfluxClient(url, chainId)
+    this.chainId = chainId
+    this.explorer = explorer
   }
 
   isValidAddress (address) {
@@ -42,7 +44,7 @@ export default class ConfluxSdk {
 
   async getTransactions (address, page = 1) {
     const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `https://testnet.confluxscan.io/api/transaction/list?accountAddress=${address}&page=${page}&pageSize=10&txType=all`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address}&page=${page}&pageSize=10&txType=all`)
     const json = JSON.parse(result)
     return json.result
   }
@@ -52,7 +54,7 @@ export default class ConfluxSdk {
     const contract = this.client.cfx.Contract(contractJson)
     const estimate = await contract.constructor().estimateGasAndCollateral({ from })
     const receipt = await contract.constructor()
-      .sendTransaction({ from, gas: estimate.gasUsed, chainId: 0 })
+      .sendTransaction({ from, gas: estimate.gasUsed })
       .executed()
     return receipt
   }

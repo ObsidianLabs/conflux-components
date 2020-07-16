@@ -8,10 +8,19 @@ import notification from '@obsidians/notification'
 
 export default class FaucetButton extends PureComponent {
   claim = async () => {
-    this.notification = notification.info('Claiming', `Trying to claim free tokens for <b>${this.props.address}</b>`, 0)
+    let faucetUrl
+    if (this.props.network === 'mainnet') {
+      faucetUrl = `https://wallet.confluxscan.io/faucet/dev/ask?address=${this.props.address}`
+    } else if (this.props.network === 'testnet') {
+      faucetUrl = `http://test-faucet.conflux-chain.org:18088/dev/ask?address=${this.props.address}`
+    } else {
+      return
+    }
+
+    this.notification = notification.info('Claiming CFX...', `Trying to claim CFX tokens for <b>${this.props.address}</b>`, 0)
     let result
     try {
-      const res = await fetch(`https://wallet.confluxscan.io/faucet/dev/ask?address=${this.props.address}`)
+      const res = await fetch(faucetUrl)
       result = await res.json()
     } catch (e) {}
     this.notification.dismiss()
@@ -22,7 +31,7 @@ export default class FaucetButton extends PureComponent {
     if (result.code) {
       notification.error('Failed', result.message)
     } else {
-      notification.success('Success', `Claimed 100 CFX for <b>${this.props.address}</b>`)
+      notification.success('CFX Claimed', `Claimed 100 CFX for <b>${this.props.address}</b>`)
     }
   }
 

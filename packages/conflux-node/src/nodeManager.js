@@ -33,6 +33,7 @@ class NodeManager {
     await this._terminal.exec(startDocker, { resolveOnFirstLog: true })
     return {
       url: 'http://localhost:12537',
+      chainId: 0,
     }
   }
 

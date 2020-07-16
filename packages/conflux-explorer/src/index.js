@@ -98,7 +98,7 @@ export default class Explorer extends PureComponent {
           onTabsUpdated={this.props.onTabsUpdated}
           NavbarButtons={(
             <React.Fragment>
-              { this.props.network === 'mainnet' && <FaucetButton address={value} /> }
+              { this.props.network !== 'dev' && <FaucetButton address={value} network={this.props.network} /> }
             </React.Fragment>
           )}
         >

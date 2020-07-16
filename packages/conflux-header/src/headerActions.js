@@ -12,6 +12,7 @@ export const networks = List([
     fullName: 'Development Network',
     icon: 'fas fa-laptop-code',
     notification: 'Switched to <b>Development</b> network.',
+    chainId: 0,
   },
   {
     id: 'testnet',
@@ -21,6 +22,8 @@ export const networks = List([
     icon: 'fas fa-vial',
     notification: 'Switched to <b>Conflux Testnet</b> network.',
     url: 'http://testnet-jsonrpc.conflux-chain.org:12537',
+    chainId: 1,
+    explorer: 'https://testnet.confluxscan.io/api',
   },
   {
     id: 'mainnet',
@@ -30,6 +33,8 @@ export const networks = List([
     icon: 'fas fa-globe',
     notification: 'Switched to <b>Conflux Pontus</b> network.',
     url: 'http://mainnet-jsonrpc.conflux-chain.org:12537',
+    chainId: 0,
+    explorer: 'https://confluxscan.io/api',
   }
 ])
 

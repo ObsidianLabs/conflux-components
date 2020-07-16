@@ -64,7 +64,6 @@ export default class ContractActions extends Component {
         .sendTransaction({
           from: signer,
           value: util.unit.fromCFXToDrip(this.state.value),
-          chainId: 0,
         })
         .executed()
     } catch (e) {
