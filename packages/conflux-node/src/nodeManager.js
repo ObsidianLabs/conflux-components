@@ -34,6 +34,7 @@ class NodeManager {
     return {
       url: 'http://localhost:12537',
       chainId: 0,
+      id: `local.${name}`,
     }
   }
 

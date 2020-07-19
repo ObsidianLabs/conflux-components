@@ -25,6 +25,8 @@ export default class NavGuard {
       this.updateSelectedProject(pathname)
     } else if (first === 'contract') {
       this.updateSelectedContract(pathname)
+    } else if (first === 'account') {
+      this.updateSelectedAccount(pathname)
     }
   }
 
@@ -84,5 +86,11 @@ export default class NavGuard {
     const [_, contract] = this.parsePathname(pathname)
     const { network } = redux.getState()
     redux.dispatch('SELECT_CONTRACT', { network, contract })
+  }
+
+  updateSelectedAccount (pathname) {
+    const [_, account] = this.parsePathname(pathname)
+    const { network } = redux.getState()
+    // redux.dispatch('SELECT_CONTRACT', { network, contract })
   }
 }

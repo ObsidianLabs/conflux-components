@@ -141,7 +141,7 @@ export default class ContractActions extends Component {
           className='pre-box pre-wrap break-all small'
           element='pre'
         >
-          {actionResult}
+          <code>{actionResult}</code>
         </Highlight>
       )
     }

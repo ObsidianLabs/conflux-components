@@ -50,7 +50,7 @@ export default class DeployerButton extends PureComponent {
         className='pre-box pre-wrap break-all small'
         element='pre'
       >
-        {JSON.stringify(this.state.result, null, 2)}
+        <code>{JSON.stringify(this.state.result, null, 2)}</code>
       </Highlight>
     )
   }

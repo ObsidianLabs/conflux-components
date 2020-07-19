@@ -1,16 +1,16 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import parseUrl from 'url-parse'
 import { Account, util } from 'js-conflux-sdk'
 
 import ConfluxClient from './ConfluxClient'
 import signatureProvider from './signatureProvider'
 
 export default class ConfluxSdk {
-  constructor ({ url, chainId, explorer }) {
+  constructor ({ url, chainId, explorer, id }) {
     this.client = new ConfluxClient(url, chainId)
     this.chainId = chainId
     this.explorer = explorer
+    this.networkId = id
   }
 
   isValidAddress (address) {
@@ -23,15 +23,11 @@ export default class ConfluxSdk {
   }
 
   async accountFrom (address) {
-    const balance = await this.client.cfx.getBalance(address)
-    let code = ''
-    try {
-      code = await this.client.cfx.getCode(address)
-    } catch (e) {}
+    const account = await this.client.cfx.getAccount(address)
     return {
       address,
-      balance: util.unit.fromDripToCFX(balance),
-      code
+      balance: util.unit.fromDripToCFX(account.balance),
+      codeHash: account.codeHash,
     }
   }
 
@@ -50,13 +46,23 @@ export default class ConfluxSdk {
   }
 
   async deploy (contractJson, fromAddress) {
+    const codeHash = util.sign.sha3(Buffer.from(contractJson.deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
+
     const from = new Account(fromAddress, signatureProvider)
     const contract = this.client.cfx.Contract(contractJson)
     const estimate = await contract.constructor().estimateGasAndCollateral({ from })
     const receipt = await contract.constructor()
       .sendTransaction({ from, gas: estimate.gasUsed })
       .executed()
-    return receipt
+    const tx = await this.client.cfx.getTransactionByHash(receipt.transactionHash)
+
+    return {
+      network: this.networkId,
+      contractCreated: receipt.contractCreated,
+      codeHash: `0x${codeHash}`,
+      tx,
+      receipt,
+    }
   }
 
   contractFrom (abi, address) {

@@ -49,6 +49,8 @@
     "rollup-plugin-postcss": "^2.3.0"
   },
   "peerDependencies": {
+    "immutable": "^4.0.0-rc.12",
+    "moment": "^2.24.0",
     "monaco-ace-tokenizer": "^0.2.0",
     "monaco-editor": "^0.20.0",
     "prettier": "^2.0.5",

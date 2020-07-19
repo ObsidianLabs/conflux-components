@@ -7,6 +7,7 @@ import {
 import nodeManager from '@obsidians/conflux-node'
 
 import AccountBalance from './AccountBalance'
+import AccountInfo from './AccountInfo'
 import AccountTransactions from './AccountTransactions'
 
 export default class AccountPage extends PureComponent {
@@ -82,14 +83,16 @@ export default class AccountPage extends PureComponent {
             <AccountBalance account={account} />
           </div>
           <div className='col-8 p-0 overflow-auto' style={{ maxHeight: 250 }}>
+            <AccountInfo account={account} />
           </div>
         </div>
         <div className='d-flex flex-fill overflow-hidden'>
           <div className='col-12 p-0 border-top-black overflow-auto'>
-            <AccountTransactions account={account} />
           </div>
         </div>
       </div>
     )
   }
 }
+
+// <AccountTransactions account={account} />

@@ -26,7 +26,7 @@ export const networks = List([
     explorer: 'https://testnet.confluxscan.io/api',
   },
   {
-    id: 'mainnet',
+    id: 'pontus',
     group: 'mainnet',
     name: 'Pontus',
     fullName: 'Conflux Pontus',

@@ -7,7 +7,7 @@ import {
 } from '@obsidians/ui-components'
 
 import nodeManager from '@obsidians/conflux-node'
-import { projectManager } from '@obsidians/conflux-project'
+import redux from '@obsidians/redux'
 
 import ContractActions from './ContractActions'
 import ContractTable from './ContractTable'
@@ -85,7 +85,7 @@ export default class ContractPage extends PureComponent {
   state = {
     error: null,
     abi: null,
-    loading: false,
+    loading: true,
   }
 
   componentDidMount () {
@@ -99,31 +99,41 @@ export default class ContractPage extends PureComponent {
   }
 
   refresh = async () => {
-    this.setState({ loading: true })
+    this.setState({ loading: true, error: null, abi: null })
 
     const value = this.props.value
 
     if (!value) {
-      this.setState({ error: null })
+      this.setState({ loading: false, error: 'No address entered.' })
       return
     }
 
-    if (value === '0x0888000000000000000000000000000000000001') {
+    let account
+    try {
+      account = await nodeManager.sdk.accountFrom(value)
+    } catch (e) {
+      this.setState({ loading: false, error: e.message })
+      return
+    }
+
+    if (account.codeHash === '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470') {
+      this.setState({ loading: false, error: 'No contract deployed.' })
+      return
+    }
+
+    const abi = redux.getState().abis.getIn([account.codeHash, 'abi'])
+    if (!abi) {
       this.setState({
         loading: false,
-        abi: abiSponsor,
+        error: <span>No ABI for code hash <code>{account.codeHash}</code>.</span>
       })
       return
     }
 
     try {
-      const contract = await projectManager.readContractJson()
-      this.setState({
-        loading: false,
-        abi: contract.abi
-      })
+      this.setState({ loading: false, abi: JSON.parse(abi) })
     } catch (e) {
-      this.setState({ loading: false, error: e.message })
+      this.setState({ loading: false, error: 'Invalid ABI structure.' })
     }
   }
 
@@ -139,7 +149,7 @@ export default class ContractPage extends PureComponent {
       )
     }
 
-    if (this.state.loading || !abi) {
+    if (this.state.loading) {
       return <LoadingScreen />
     }
 
