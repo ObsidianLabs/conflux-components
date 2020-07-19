@@ -187,15 +187,17 @@ export default class ContractActions extends Component {
             fields={selectedAction.inputs}
             Empty={<div className='small'>(None)</div>}
           />
-          <Label className='mb-1 small font-weight-bold'>Value</Label>
-          <ActionParamInput
-            type='name'
-            placeholder={`CFX to transfer`}
-            value={this.state.value}
-            onChange={value => this.setState({ value })}
-          >
-            <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-user' /></a>
-          </ActionParamInput>
+          <FormGroup className='mb-2'>
+            <Label className='mb-1 small font-weight-bold'>Value</Label>
+            <ActionParamInput
+              type='name'
+              placeholder={`CFX to transfer`}
+              value={this.state.value}
+              onChange={value => this.setState({ value })}
+            >
+              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-user' /></a>
+            </ActionParamInput>
+          </FormGroup>
         </DropdownCard>
         <DropdownCard
           isOpen

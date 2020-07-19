@@ -31,7 +31,7 @@ export default class ContractEvents extends Component {
     })
   }
 
-  getEventLogs = async eventName => {
+  getEventLogs = async selectedEvent => {
     if (this.state.loading) {
       return
     }
@@ -40,7 +40,7 @@ export default class ContractEvents extends Component {
     const { contract, value } = this.props
     let logs
     try {
-      logs = await contract[eventName].call(value, undefined).getLogs()
+      logs = await contract[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs()
     } catch (e) {
       console.warn(e)
       this.setState({ loading: false, error: e.message, logs: '' })
@@ -83,7 +83,7 @@ export default class ContractEvents extends Component {
           icon={this.state.executing ? 'fas fa-spin fa-spinner' : 'fas fa-play'}
           tooltip='Get event logs'
           className='border-right-1'
-          onClick={() => this.getEventLogs(selectedEvent.name)}
+          onClick={() => this.getEventLogs(selectedEvent)}
         />
       </React.Fragment>
     )
