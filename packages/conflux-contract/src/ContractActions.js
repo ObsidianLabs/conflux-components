@@ -63,7 +63,7 @@ export default class ContractActions extends Component {
         .call(...values)
         .sendTransaction({
           from: signer,
-          value: util.unit.fromCFXToDrip(this.state.value),
+          value: util.unit.fromCFXToDrip(this.state.value || 0),
         })
         .executed()
     } catch (e) {
