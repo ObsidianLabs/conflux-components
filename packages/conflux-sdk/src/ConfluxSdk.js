@@ -8,6 +8,7 @@ import signatureProvider from './signatureProvider'
 export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id }) {
     this.client = new ConfluxClient(url, chainId)
+    this.url = url
     this.chainId = chainId
     this.explorer = explorer
     this.networkId = id
@@ -31,11 +32,11 @@ export default class ConfluxSdk {
     }
   }
 
-  async getAssetInfo (assetId) {
-    if (!this.assets[assetId]) {
-      this.assets[assetId] = await this.client.assetInformation(assetId)
-    }
-    return this.assets[assetId]
+  async trend () {
+    const ipc = new IpcChannel()
+    const result = await ipc.invoke('fetch', `${this.explorer}/dashboard/trend?span=86400`)
+    const json = JSON.parse(result)
+    return json.result
   }
 
   async getTransactions (address, page = 1) {

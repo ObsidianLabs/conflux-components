@@ -6,6 +6,7 @@ class NodeManager {
   constructor () {
     this._sdk = null
     this._terminal = null
+    this.network = null
   }
 
   get sdk () {
@@ -62,11 +63,12 @@ class NodeManager {
     if (params) {
       this._sdk = new Sdk(params)
     } else {
-      this._sdk = null
+      // this._sdk = null
     }
   }
 
   switchNetwork (network) {
+    this.network = network
     if (network.url) {
       this._sdk = new Sdk(network)
     } else {
