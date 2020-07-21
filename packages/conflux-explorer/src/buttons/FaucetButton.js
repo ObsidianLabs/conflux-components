@@ -9,7 +9,7 @@ import notification from '@obsidians/notification'
 export default class FaucetButton extends PureComponent {
   claim = async () => {
     let faucetUrl
-    if (this.props.network === 'mainnet') {
+    if (this.props.network === 'oceanus') {
       faucetUrl = `https://wallet.confluxscan.io/faucet/dev/ask?address=${this.props.address}`
     } else if (this.props.network === 'testnet') {
       faucetUrl = `http://test-faucet.conflux-chain.org:18088/dev/ask?address=${this.props.address}`
