@@ -31,13 +31,13 @@ contract Coin {
       return balances[tokenOwner];
     }
 
-    function add(address account) public payable {
+    function add_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
         SPONSOR.add_privilege(a);
     }
 
-    function remove(address account) public payable {
+    function remove_privilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
         SPONSOR.remove_privilege(a);
