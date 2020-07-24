@@ -10,9 +10,10 @@ export default class AbiInputModal extends PureComponent {
   constructor (props) {
     super(props)
     this.modal = React.createRef()
-    this.abiInput = React.createRef()
+    this.nameInput = React.createRef()
 
     this.state = {
+      name: '',
       codeHash: '',
       abi: '',
       validJson: false,
@@ -21,20 +22,21 @@ export default class AbiInputModal extends PureComponent {
 
   openModal = () => {
     this.modal.current.openModal()
-    setTimeout(() => this.abiInput.current.focus(), 100)
+    setTimeout(() => this.nameInput.current.focus(), 100)
     return new Promise(resolve => { this.onResolve = resolve })
   }
 
   onConfirm = () => {
     this.onResolve({
+      name: this.state.name,
       codeHash: this.state.codeHash,
       abi: this.state.abi,
     })
-    this.setState({ codeHash: '', abi: '', validJson: false })
+    this.setState({ name: '', codeHash: '', abi: '', validJson: false })
     this.modal.current.closeModal()
   }
 
-  onChange = abi => {
+  onChangeAbi = abi => {
     try {
       JSON.parse(abi)
     } catch (e) {
@@ -45,21 +47,27 @@ export default class AbiInputModal extends PureComponent {
   }
 
   render () {
+    const { name, codeHash, validJson } = this.state
     return (
       <Modal
         ref={this.modal}
         h100
         title='Enter New ABI'
         onConfirm={this.onConfirm}
-        confirmDisabled={!this.state.codeHash || !this.state.validJson}
+        confirmDisabled={!name || !codeHash || !validJson}
       >
         <DebouncedFormGroup
+          ref={this.nameInput}
+          label='Name'
+          value={name}
+          onChange={name => this.setState({ name })}
+        />
+        <DebouncedFormGroup
           label='Code hash'
-          value={this.state.codeHash}
+          value={codeHash}
           onChange={codeHash => this.setState({ codeHash })}
         />
         <DebouncedFormGroup
-          ref={this.abiInput}
           size='sm'
           label='ABI'
           type='textarea'
@@ -68,7 +76,7 @@ export default class AbiInputModal extends PureComponent {
           inputGroupClassName='flex-grow-1'
           className='h-100 code'
           value={this.state.abi}
-          onChange={this.onChange}
+          onChange={this.onChangeAbi}
         />
       </Modal>
     )

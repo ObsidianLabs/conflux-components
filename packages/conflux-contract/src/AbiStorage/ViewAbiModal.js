@@ -15,7 +15,12 @@ export default class ViewAbiModal extends PureComponent {
   }
 
   openModal (abi) {
-    this.setState({ abi })
+    try {
+      const formattedAbi = JSON.stringify(JSON.parse(abi), null, 2)
+      this.setState({ abi: formattedAbi })
+    } catch (e) {
+      this.setState({ abi })
+    }
     this.modal.current.openModal()
   }
 

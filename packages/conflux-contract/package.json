@@ -31,6 +31,7 @@
     "@babel/plugin-proposal-function-bind": "^7.7.4",
     "@babel/preset-env": "^7.7.5",
     "@babel/preset-react": "^7.7.4",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-url": "^4.0.2",
     "@svgr/rollup": "^5.2.0",

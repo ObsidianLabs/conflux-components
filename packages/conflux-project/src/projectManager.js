@@ -110,9 +110,15 @@ class ProjectManager {
       throw e
     }
 
-    redux.dispatch('ABI_ADD', { codeHash: result.codeHash, abi: JSON.stringify(contractObj.abi) })
-
     const { path } = fileOps.current
+    const contractName = path.parse(settings.main).base
+
+    redux.dispatch('ABI_ADD', {
+      name: contractName,
+      codeHash: result.codeHash,
+      abi: JSON.stringify(contractObj.abi),
+    })
+
     const deployResultPath = path.join(this.projectRoot, 'deploys', `${result.network}_${moment().format('YYYYMMDD_HHmmss')}.json`)
     await fileOps.current.ensureFile(deployResultPath)
     await fileOps.current.writeFile(deployResultPath, JSON.stringify(result, null, 2))

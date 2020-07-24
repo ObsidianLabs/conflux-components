@@ -108,6 +108,16 @@ export default class ContractPage extends PureComponent {
       return
     }
 
+    let abi = redux.getState().abis.getIn([value, 'abi'])
+    if (abi) {
+      try {
+        this.setState({ loading: false, abi: JSON.parse(abi) })
+      } catch (e) {
+        this.setState({ loading: false, error: 'Invalid ABI structure.' })
+      }
+      return
+    }
+
     let account
     try {
       account = await nodeManager.sdk.accountFrom(value)
@@ -121,7 +131,7 @@ export default class ContractPage extends PureComponent {
       return
     }
 
-    const abi = redux.getState().abis.getIn([account.codeHash, 'abi'])
+    abi = redux.getState().abis.getIn([account.codeHash, 'abi'])
     if (!abi) {
       this.setState({
         loading: false,

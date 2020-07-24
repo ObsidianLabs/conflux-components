@@ -2,8 +2,10 @@ import React, { PureComponent } from 'react'
 
 import {
   Modal,
+  Table,
   IconButton,
   DeleteButton,
+  UncontrolledTooltip,
 } from '@obsidians/ui-components'
 
 import redux from '@obsidians/redux'
@@ -43,8 +45,8 @@ export default class AbiStorageModal extends PureComponent {
   }
 
   newAbi = async () => {
-    const { codeHash, abi } = await this.abiInputModal.current.openModal()
-    redux.dispatch('ABI_ADD', { codeHash, abi })
+    const { name, codeHash, abi } = await this.abiInputModal.current.openModal()
+    redux.dispatch('ABI_ADD', { name, codeHash, abi })
     notification.success(
       'ABI Added',
       `A new ABI record is added to the storage.`
@@ -84,30 +86,38 @@ export default class AbiStorageModal extends PureComponent {
   }
 
   renderAbiRow = item => {
-    let [codeHash, abi] = item
-    abi = abi.get('abi')
+    const [codeHash, obj] = item
+    const abi = obj.get('abi')
     try {
       abi = JSON.stringify(JSON.parse(abi), null, 2)
     } catch (e) {}
     return (
       <tr key={`abi-${codeHash}`} className='hover-flex'>
         <td>
-          <code className='small'>{codeHash}</code>
-        </td>
-        <td>
-          <div className='d-flex'>
-            <IconButton
-              color='primary'
-              onClick={() => this.viewAbi(abi)}
-              icon='fas fa-eye'
-            />
+          <div className='text-overflow-dots'>
+            {obj.get('name') || 'asdkfasdhflkjasdhflkjasdhfkjlasfhsdakjfkfas'}
           </div>
         </td>
+        <td className='pr-0'>
+          <code className='small'>{codeHash}</code>
+        </td>
         <td align='right'>
-          <DeleteButton
-            className='hover-show'
-            onConfirm={() => this.deleteAbi(codeHash)}
-          />
+          <div className='d-flex flex-row justify-content-end hover-show'>
+            <IconButton
+              color='transparent'
+              id={`show-abi-${codeHash}`}
+              className='text-muted'
+              icon='fas fa-eye'
+              onClick={() => this.viewAbi(abi)}
+            >
+              <UncontrolledTooltip delay={0} placement='top' target={`show-abi-${codeHash}`}>
+                Show ABI
+              </UncontrolledTooltip>
+            </IconButton>
+            <DeleteButton
+              onConfirm={() => this.deleteAbi(codeHash)}
+            />
+          </div>
         </td>
       </tr>
     )
@@ -123,18 +133,18 @@ export default class AbiStorageModal extends PureComponent {
           textCancel='Close'
           onActions={[this.newAbi]}
         >
-          <table className='table table-sm table-hover table-striped'>
-            <thead>
+          <Table
+            tableSm
+            TableHead={(
               <tr>
-                <th style={{ width: '80%' }}>Code Hash</th>
-                <th style={{ width: '15%' }}>ABI</th>
-                <th></th>
+                <th style={{ width: '16%' }}>Name</th>
+                <th style={{ width: '75%' }}>Code Hash / Address</th>
+                <th style={{ width: '9%' }}></th>
               </tr>
-            </thead>
-            <tbody>
-              {this.renderTable()}
-            </tbody>
-          </table>
+            )}
+          >
+            {this.renderTable()}
+          </Table>
         </Modal>
         <ViewAbiModal ref={this.viewAbiModal} />
         <AbiInputModal ref={this.abiInputModal} />
