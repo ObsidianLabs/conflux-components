@@ -1,8 +1,12 @@
 pragma solidity >=0.5.0 <0.7.0;
 
+import "./SponsorWhitelistControl.sol";
+
 contract Coin {
     address public minter;
-    mapping (address => uint) public balances;
+    mapping (address => uint) private balances;
+
+    SponsorWhitelistControl constant public SPONSOR = SponsorWhitelistControl(address(0x0888000000000000000000000000000000000001));
 
     event Sent(address from, address to, uint amount);
 
@@ -25,5 +29,17 @@ contract Coin {
     
     function balanceOf(address tokenOwner) public view returns(uint balance){
       return balances[tokenOwner];
+    }
+
+    function add(address account) public payable {
+        address[] memory a = new address[](1);
+        a[0] = account;
+        SPONSOR.add_privilege(a);
+    }
+
+    function remove(address account) public payable {
+        address[] memory a = new address[](1);
+        a[0] = account;
+        SPONSOR.remove_privilege(a);
     }
 }
