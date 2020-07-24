@@ -52,10 +52,14 @@ export default class RemoteNetwork extends PureComponent {
     if (!nodeManager.sdk) {
       return
     }
-    const chain = this.props.chain
-    const status = await nodeManager.sdk?.client.cfx.getStatus()
-    if (this.props.chain === chain) {
-      this.setState({ status })
+    try {
+      const chain = this.props.chain
+      const status = await nodeManager.sdk?.client.cfx.getStatus()
+      if (this.props.chain === chain) {
+        this.setState({ status })
+      }
+    } catch (error) {
+      this.setState({ status: null })
     }
   }
 
