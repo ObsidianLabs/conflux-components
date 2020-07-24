@@ -33,7 +33,18 @@ export const networks = List([
     icon: 'fas fa-globe',
     notification: 'Switched to <b>Conflux Oceanus</b> network.',
     url: 'http://mainnet-jsonrpc.conflux-chain.org:12537',
-    chainId: 0,
+    chainId: 2,
+    explorer: 'https://confluxscan.io/api',
+  },
+  {
+    id: 'oceanus-mining',
+    group: 'mainnet',
+    name: 'Oceanus Mining',
+    fullName: 'Oceanus Mining',
+    icon: 'fas fa-hammer',
+    notification: 'Switched to <b>Conflux Oceanus Mining</b> mode.',
+    url: 'http://mainnet-jsonrpc.conflux-chain.org:12537',
+    chainId: 2,
     explorer: 'https://confluxscan.io/api',
   }
 ])

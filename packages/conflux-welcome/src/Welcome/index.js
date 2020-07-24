@@ -10,6 +10,7 @@ import instanceManager, { NodeVersionInstaller } from '@obsidians/conflux-instan
 import compilerManager, { CompilerInstaller } from '@obsidians/conflux-compiler'
 
 import ListItemDocker from './ListItemDocker'
+import ListItemConflux from './ListItemConflux'
 import DockerImageItem from './DockerImageItem'
 import checkDependencies from './checkDependencies'
 
@@ -20,6 +21,7 @@ export default class Welcome extends PureComponent {
       ready: false
     }
     this.listItemDocker = React.createRef()
+    this.listItemConflux = React.createRef()
     this.listItemNode = React.createRef()
     this.listItemCompiler = React.createRef()
   }
@@ -38,6 +40,7 @@ export default class Welcome extends PureComponent {
   refresh = async () => {
     if (this.mounted) {
       this.listItemDocker.current.refresh()
+      this.listItemConflux.current.refresh()
       this.listItemNode.current.refresh()
       this.listItemCompiler.current.refresh()
       const ready = await checkDependencies()
@@ -62,10 +65,13 @@ export default class Welcome extends PureComponent {
                 ref={this.listItemDocker}
                 onStartedDocker={this.refresh}
               />
+              <ListItemConflux
+                ref={this.listItemConflux}
+              />
               <DockerImageItem
                 ref={this.listItemNode}
-                title='Conflux Node'
-                subtitle='The main software that runs the Conflux node.'
+                title='Conflux Node in Docker'
+                subtitle='Conflux node built into a docker image.'
                 link='https://hub.docker.com/r/confluxchain/conflux-rust'
                 getVersions={() => instanceManager.invoke('versions')}
                 Installer={NodeVersionInstaller}
@@ -73,7 +79,7 @@ export default class Welcome extends PureComponent {
               />
               <DockerImageItem
                 ref={this.listItemCompiler}
-                title='Conflux Truffle'
+                title='Conflux Truffle in Docker'
                 subtitle='A Conflux version of truffle used to create and compile a project.'
                 link='https://hub.docker.com/r/confluxchain/conflux-truffle'
                 getVersions={() => compilerManager.invoke('versions')}

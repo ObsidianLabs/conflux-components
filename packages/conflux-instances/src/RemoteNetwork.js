@@ -41,16 +41,22 @@ export default class RemoteNetwork extends PureComponent {
     if (!nodeManager.sdk) {
       return
     }
+    const chain = this.props.chain
     const trend = await nodeManager.sdk?.trend()
-    this.setState({ trend })
+    if (this.props.chain === chain) {
+      this.setState({ trend })
+    }
   }
 
   async refreshBlock () {
     if (!nodeManager.sdk) {
       return
     }
+    const chain = this.props.chain
     const status = await nodeManager.sdk?.client.cfx.getStatus()
-    this.setState({ status })
+    if (this.props.chain === chain) {
+      this.setState({ status })
+    }
   }
 
   render () {

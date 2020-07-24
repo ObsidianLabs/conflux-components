@@ -11,7 +11,7 @@ import RemoteNetwork from './RemoteNetwork'
 
 export default function InstanceListWithTerminal (props) {
   const { active, network = 'dev', onLifecycle } = props
-  if (network === 'dev') {
+  if (network === 'dev' || network === 'oceanus-mining') {
     return (
       <SplitPane
         split='horizontal'

@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 
 import { Card } from '@obsidians/ui-components'
 import notification from '@obsidians/notification'
+import { NodeConfigModal } from '@obsidians/conflux-node'
 
 import NodeVersionManager from './NodeInstaller/NodeVersionManager'
 import CreateInstanceButton from './CreateInstanceButton'
@@ -69,6 +70,24 @@ export default class InstanceList extends PureComponent {
   }
 
   renderTableBody = () => {
+    if (this.props.chain === 'oceanus-mining') {
+      return (
+        <InstanceRow
+          noDelete
+          data={{
+            Name: 'conflux-Conflux Oceanus Miner',
+            Labels: {
+              version: 'v0.6.0',
+              chain: 'oceanus-mining',
+            }
+          }}
+          runningInstance={this.state.runningInstance}
+          lifecycle={this.state.lifecycle}
+          onNodeLifecycle={this.onNodeLifecycle}
+        />
+      )
+    }
+
     if (!this.state.instances.length) {
       return <tr><td align='middle' colSpan={6}>(No Conflux instance)</td></tr>
     }
@@ -86,26 +105,33 @@ export default class InstanceList extends PureComponent {
   }
 
   render () {
+    let right = null
+    if (this.props.chain === 'dev') {
+      right = (
+        <React.Fragment>
+          <NodeVersionManager
+            onRefresh={this.refreshInstances}
+          />
+          <CreateInstanceButton
+            className='ml-2'
+            chain={this.props.chain}
+            onRefresh={this.refreshInstances}
+          />
+        </React.Fragment>
+      )
+    }
     return (
-      <Card
-        title={`Conflux Instances (${this.props.chain})`}
-        right={(
-          <React.Fragment>
-            <NodeVersionManager
-              onRefresh={this.refreshInstances}
-            />
-            <CreateInstanceButton
-              className='ml-2'
-              chain={this.props.chain}
-              onRefresh={this.refreshInstances}
-            />
-          </React.Fragment>
-        )}
-      >
-        <div className='flex-grow-1 overflow-auto'>
-          {this.renderTable()}
-        </div>
-      </Card>
+      <React.Fragment>
+        <Card
+          title={`Conflux Instances (${this.props.chain})`}
+          right={right}
+        >
+          <div className='flex-grow-1 overflow-auto'>
+            {this.renderTable()}
+          </div>
+        </Card>
+        <NodeConfigModal />
+      </React.Fragment>
     )
   }
 }
