@@ -78,12 +78,21 @@ export default class ListItemDocker extends PureComponent {
   installConflux = async () => {
     this.modal.current.openModal()
     setTimeout(async () => {
-      let result = await this.terminal.current.exec('wget -c https://github.com/Conflux-Chain/conflux-rust/releases/download/v0.6.0/conflux_mac_v0.6.0.zip')
+      let result
+      if (process.env.OS_IS_LINUX) {
+        result = await this.terminal.current.exec('wget -c https://github.com/Conflux-Chain/conflux-rust/releases/download/v0.6.0/conflux_linux_v0.6.0.zip')
+      } else {
+        result = await this.terminal.current.exec('wget -c https://github.com/Conflux-Chain/conflux-rust/releases/download/v0.6.0/conflux_mac_v0.6.0.zip')
+      }
       if (result.code) {
         notification.error('Failed to Download Conflux', '')
         return
       }
-      result = await this.terminal.current.exec('unzip -o conflux_mac_v0.6.0.zip')
+      if (process.env.OS_IS_LINUX) {
+        result = await this.terminal.current.exec('unzip -o conflux_linux_v0.6.0.zip')
+    } else {
+        result = await this.terminal.current.exec('unzip -o conflux_mac_v0.6.0.zip')
+      }
       if (result.code) {
         notification.error('Failed to Decompress Conflux', '')
         return

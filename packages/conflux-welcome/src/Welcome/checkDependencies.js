@@ -47,6 +47,7 @@ export default async function checkDependencies () {
   try {
     const results = await Promise.all([
       checkDocker(),
+      checkConfluxVersion(),
       instanceManager.invoke('versions').then(versions => versions[0].Tag),
       compilerManager.invoke('versions').then(versions => versions[0].Tag),
     ])
