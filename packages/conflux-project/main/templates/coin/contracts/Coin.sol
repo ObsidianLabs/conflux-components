@@ -6,7 +6,7 @@ contract Coin {
     address public minter;
     mapping (address => uint) private balances;
 
-    SponsorWhitelistControl constant public SPONSOR = SponsorWhitelistControl(address(0x0888000000000000000000000000000000000001));
+    SponsorWhitelistControl constant private SPONSOR = SponsorWhitelistControl(address(0x0888000000000000000000000000000000000001));
 
     event Sent(address from, address to, uint amount);
 
