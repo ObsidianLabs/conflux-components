@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Conflux Studio welcome screen",
   "author": "Phil <qft.gtr@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "source": "src/index.js",
   "main": "main/index.js",
   "browser": "dist/index.es.js",
