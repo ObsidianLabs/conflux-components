@@ -11,7 +11,7 @@ export async function checkDocker () {
 
 export async function dockerVersion () {
   const ipc = new IpcChannel()
-  const result = await ipc.invoke('exec', `docker -v`)
+  const result = await ipc.invoke('cp', `docker -v`)
   if (result.code) {
     return ''
   }
@@ -20,7 +20,14 @@ export async function dockerVersion () {
 
 export async function startDocker () {
   const ipc = new IpcChannel()
-  ipc.invoke('exec', `open /Applications/Docker.app`)
+  if (process.env.OS_IS_MAC) {
+    ipc.invoke('exec', `open /Applications/Docker.app`)
+  } else if (process.env.OS_IS_LINUX) {
+    return
+  } else {
+    // ipc.invoke('exec', 'docker-machine restart')
+    return
+  }
   return new Promise(resolve => {
     const h = setInterval(async () => {
       if (await checkDocker()) {
@@ -39,7 +46,7 @@ export async function checkConfluxVersion () {
   const ipc = new IpcChannel()
   const binFolder = getConfluxBinFolder()
   await fileOps.current.ensureDirectory(binFolder)
-  const result = await ipc.invoke('exec', './run/conflux -V', { cwd: binFolder })
+  const result = await ipc.invoke('cp', './run/conflux -V', { cwd: binFolder })
   return !result.code && result.logs
 }
 
