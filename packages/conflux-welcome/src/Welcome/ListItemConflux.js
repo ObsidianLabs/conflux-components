@@ -77,21 +77,36 @@ export default class ListItemDocker extends PureComponent {
   
   installConflux = async () => {
     this.modal.current.openModal()
+    const version = 'v0.6.0'
     setTimeout(async () => {
       let result
+      let filename = ''
+      let url = ''
+      let command = ''
       if (process.env.OS_IS_LINUX) {
-        result = await this.terminal.current.exec('wget -c https://github.com/Conflux-Chain/conflux-rust/releases/download/v0.6.0/conflux_linux_v0.6.0.zip')
+        filename = `conflux_linux_${version}.zip`
+        url = `https://github.com/Conflux-Chain/conflux-rust/releases/download/${version}/${filename}`
+        command = `wget -c ${url}`
+      } else if (process.env.OS_IS_MAC) {
+        filename = `conflux_mac_${version}.zip`
+        url = `https://github.com/Conflux-Chain/conflux-rust/releases/download/${version}/${filename}`
+        command = `curl -OL ${url}`
       } else {
-        result = await this.terminal.current.exec('wget -c https://github.com/Conflux-Chain/conflux-rust/releases/download/v0.6.0/conflux_mac_v0.6.0.zip')
+        filename = `conflux_win10_x64_${version}.zip`
+        url = `https://github.com/Conflux-Chain/conflux-rust/releases/download/${version}/${filename}`
+        command = `wget ${url} -OutFile ${filename}`
       }
+      result = await this.terminal.current.exec(command)
       if (result.code) {
         notification.error('Failed to Download Conflux', '')
         return
       }
       if (process.env.OS_IS_LINUX) {
-        result = await this.terminal.current.exec('unzip -o conflux_linux_v0.6.0.zip')
-    } else {
-        result = await this.terminal.current.exec('unzip -o conflux_mac_v0.6.0.zip')
+        result = await this.terminal.current.exec(`unzip -o ${filename}`)
+      } else if (process.env.OS_IS_MAC) {
+        result = await this.terminal.current.exec(`unzip -o ${filename}`)
+      } else {
+        result = await this.terminal.current.exec(`expand-archive ${filename} -DestinationPath .`)
       }
       if (result.code) {
         notification.error('Failed to Decompress Conflux', '')
