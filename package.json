@@ -1,5 +1,6 @@
 {
   "name": "@obsidians/conflux-components",
+  "license": "GPL-3.0",
   "private": true,
   "scripts": {
     "build": "node init.js"
