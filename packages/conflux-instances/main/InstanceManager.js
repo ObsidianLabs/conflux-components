@@ -55,7 +55,7 @@ class InstanceManager extends IpcChannel {
   }
 
   async versions () {
-    const { logs: images } = await this.pty.exec(`docker images confluxchain/conflux-rust --format "{{json . }}"`)
+    const { logs: images } = await this.pty.cp(`docker images confluxchain/conflux-rust --format "{{json . }}"`)
     const versions = images.split('\n').filter(Boolean).map(JSON.parse).filter(x => semver.valid(x.Tag))
     return versions
   }
