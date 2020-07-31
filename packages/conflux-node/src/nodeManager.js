@@ -1,3 +1,4 @@
+import fileOps from '@obsidians/file-ops'
 import Sdk from '@obsidians/conflux-sdk'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
@@ -6,6 +7,8 @@ class NodeManager {
   constructor () {
     this._sdk = null
     this._terminal = null
+    this._configModal = null
+    this.network = null
   }
 
   get sdk () {
@@ -16,8 +19,8 @@ class NodeManager {
     this._terminal = v
   }
 
-  set minerTerminal (v) {
-    this._minerTerminal = v
+  set configModal (v) {
+    this._configModal = v
   }
 
   set status (v) {
@@ -29,11 +32,52 @@ class NodeManager {
       return
     }
 
+    if (chain === 'oceanus-mining') {
+      return this.startOceanusMiner()
+    }
+
     const startDocker = this.generateCommands({ name, version })
     await this._terminal.exec(startDocker, { resolveOnFirstLog: true })
     return {
       url: 'http://localhost:12537',
+      chainId: 0,
+      id: `local.${name}`,
     }
+  }
+
+  async startOceanusMiner () {
+    const confluxDir = this.getConfluxBinFolder()
+    let configFile = await fileOps.current.readFile(fileOps.current.path.join(confluxDir, 'default.toml'))
+    let miner = configFile.match(/mining_author="(.+)"/)
+    let ip = configFile.match(/public_address="(.+)"/)
+    try {
+      ip = await fetch(`http://download.obsidians.io/ip`).then(res => res.text())
+    } catch (e) {
+      ip = (ip && ip[1]) ? ip[1].split(':')[0] : ''
+    }
+
+    const result = await this._configModal.openModal({ miner: miner ? miner[1] : '', ip })
+    if (!result) {
+      throw new Error('NodeConfigModal was cloased.')
+    }
+
+    miner = result.miner
+    ip = result.ip
+
+    configFile = configFile.replace(`# start_mining=true`, `start_mining=true`)
+    configFile = configFile.replace(`# mining_author`, `mining_author`)
+    configFile = configFile.replace(/mining_author=".+"/, `mining_author="${miner.replace('0x', '')}"`)
+    configFile = configFile.replace(`# public_address=`, `public_address=`)
+    configFile = configFile.replace(/public_address=".+"/, `public_address="${ip}:32323"`)
+
+    await fileOps.current.writeFile(fileOps.current.path.join(confluxDir, 'default.toml'), configFile)
+
+    await this._terminal.exec('ulimit -n 10000', { cwd: confluxDir })
+    await this._terminal.exec('./conflux --config default.toml --full 2>stderr.txt', { resolveOnFirstLog: true, cwd: confluxDir })
+  }
+
+  getConfluxBinFolder () {
+    return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin', 'run')
   }
 
   generateCommands ({ name, version }) {
@@ -60,11 +104,12 @@ class NodeManager {
     if (params) {
       this._sdk = new Sdk(params)
     } else {
-      this._sdk = null
+      // this._sdk = null
     }
   }
 
   switchNetwork (network) {
+    this.network = network
     if (network.url) {
       this._sdk = new Sdk(network)
     } else {
@@ -78,9 +123,13 @@ class NodeManager {
     }
   }
 
-  async stop ({ name, version }) {
+  async stop ({ name, version, chain }) {
     if (this._terminal) {
-      await this._terminal.exec(`docker stop conflux-${name}-${version}`)
+      if (chain === 'oceanus-mining') {
+        await this._terminal.stop()
+      } else {
+        await this._terminal.exec(`docker stop conflux-${name}-${version}`)
+      }
     }
   }
 }

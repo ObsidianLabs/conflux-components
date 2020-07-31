@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Conflux contract interactions",
   "author": "Phil <qft.gtr@gmail.com>",
-  "license": "MIT",
+  "license": "GPL-3.0",
   "source": "src/index.js",
   "main": "main/index.js",
   "browser": "dist/index.es.js",
@@ -19,9 +19,9 @@
   "dependencies": {
     "@obsidians/conflux-contract": "^0.1.0",
     "@obsidians/conflux-node": "^0.1.0",
-    "@obsidians/conflux-project": "^0.1.0",
     "@obsidians/conflux-sdk": "^0.1.0",
     "@obsidians/notification": "^0.1.0",
+    "@obsidians/redux": "^0.1.0",
     "@obsidians/ui-components": "^0.1.0"
   },
   "devDependencies": {
@@ -31,6 +31,7 @@
     "@babel/plugin-proposal-function-bind": "^7.7.4",
     "@babel/preset-env": "^7.7.5",
     "@babel/preset-react": "^7.7.4",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-url": "^4.0.2",
     "@svgr/rollup": "^5.2.0",
@@ -43,6 +44,7 @@
     "rollup-plugin-postcss": "^2.3.0"
   },
   "peerDependencies": {
+    "immutable": "^4.0.0-rc.12",
     "js-conflux-sdk": "^0.10.1",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",

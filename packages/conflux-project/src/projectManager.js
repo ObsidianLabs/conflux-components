@@ -4,6 +4,8 @@ import redux from '@obsidians/redux'
 import nodeManager from '@obsidians/conflux-node'
 import compilerManager from '@obsidians/conflux-compiler'
 
+import moment from 'moment'
+
 class ProjectManager {
   constructor () {
     this.project = null
@@ -85,7 +87,7 @@ class ProjectManager {
     return contractObj
   }
 
-  async deploy (from) {
+  async deploy () {
     if (!nodeManager.sdk) {
       throw new Error('No running node. Please start one first.')
     }
@@ -101,11 +103,27 @@ class ProjectManager {
 
     const contractObj = await this.readContractJson()
 
+    let result
     try {
-      return await nodeManager.sdk.deploy(contractObj, this.selectedAccount)
+      result = await nodeManager.sdk.deploy(contractObj, this.selectedAccount)
     } catch (e) {
       throw e
     }
+
+    const { path } = fileOps.current
+    const contractName = path.parse(settings.main).base
+
+    redux.dispatch('ABI_ADD', {
+      name: contractName,
+      codeHash: result.codeHash,
+      abi: JSON.stringify(contractObj.abi),
+    })
+
+    const deployResultPath = path.join(this.projectRoot, 'deploys', `${result.network}_${moment().format('YYYYMMDD_HHmmss')}.json`)
+    await fileOps.current.ensureFile(deployResultPath)
+    await fileOps.current.writeFile(deployResultPath, JSON.stringify(result, null, 2))
+
+    return result
   }
 
   toggleTerminal (terminal) {

@@ -17,11 +17,7 @@ export default class AccountBalance extends PureComponent {
           badge={`${account.balance} CFX`}
           badgeColor='success'
         />
-        <TableCardRow
-          name='Code'
-          icon='fas fa-cubes'
-          badge={`${!!(account.code)}`}
-        />
+
       </TableCard>
     )
   }

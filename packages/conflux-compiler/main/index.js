@@ -6,7 +6,7 @@ class CompilerManager extends IpcChannel {
   }
 
   async versions () {
-    const { logs: images } = await this.pty.exec(`docker images confluxchain/conflux-truffle --format "{{json . }}"`)
+    const { logs: images } = await this.pty.cp(`docker images confluxchain/conflux-truffle --format "{{json . }}"`)
     const versions = images.split('\n').filter(Boolean).map(JSON.parse)
     return versions
   }

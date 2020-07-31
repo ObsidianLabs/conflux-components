@@ -7,18 +7,25 @@ import {
 import { NodeTerminal } from '@obsidians/conflux-node'
 
 import InstanceList from './InstanceList'
+import RemoteNetwork from './RemoteNetwork'
 
 export default function InstanceListWithTerminal (props) {
   const { active, network = 'dev', onLifecycle } = props
+  if (network === 'dev' || network === 'oceanus-mining') {
+    return (
+      <SplitPane
+        split='horizontal'
+        primary='second'
+        defaultSize={260}
+        minSize={200}
+      >
+        <InstanceList chain={network} onLifecycle={onLifecycle} />
+        <NodeTerminal active={active} />
+      </SplitPane>
+    )
+  }
+
   return (
-    <SplitPane
-      split='horizontal'
-      primary='second'
-      defaultSize={260}
-      minSize={200}
-    >
-      <InstanceList chain={network} onLifecycle={onLifecycle} />
-      <NodeTerminal active={active} />
-    </SplitPane>
+    <RemoteNetwork chain={network} />
   )
 }

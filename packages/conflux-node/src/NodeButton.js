@@ -30,13 +30,18 @@ export default class NodeButton extends PureComponent {
     this.setState({ lifecycle: 'starting' })
     this.onLifecycle('starting')
 
-    const params = await nodeManager.start({
-      name: this.props.name,
-      version: this.props.version,
-      chain: this.props.chain,
-    })
-    this.setState({ lifecycle: 'started' })
-    this.onLifecycle('started', params)
+    try {
+      const params = await nodeManager.start({
+        name: this.props.name,
+        version: this.props.version,
+        chain: this.props.chain,
+      })
+      this.setState({ lifecycle: 'started' })
+      this.onLifecycle('started', params)
+    } catch (e) {
+      this.setState({ lifecycle: 'stopped' })
+      this.onLifecycle('stopped')
+    }
   }
 
   stop = async () => {

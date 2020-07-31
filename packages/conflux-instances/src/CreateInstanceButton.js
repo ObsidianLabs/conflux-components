@@ -10,6 +10,7 @@ import {
 } from '@obsidians/ui-components'
 
 import keypairManager from '@obsidians/keypair'
+import notification from '@obsidians/notification'
 
 import instanceChannel from './instanceChannel'
 
@@ -53,6 +54,11 @@ export default class CreateInstanceButton extends PureComponent {
   }
 
   onCreateInstance = async () => {
+    if (!this.state.keypairs || !this.state.keypairs.length) {
+      notification.error('Failed', 'Please create or import a keypair in the keypair manager first. ')
+      return
+    }
+
     this.setState({ creating: 'Creating...' })
 
     const genesis_secrets = (await Promise.all(this.state.genesis.map(k => keypairManager.getSigner(k.address))))

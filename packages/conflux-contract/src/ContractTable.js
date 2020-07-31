@@ -118,6 +118,11 @@ export default class ContractTable extends Component {
 
   render () {
     const actions = this.props.abi
+
+    if (!actions || !actions.length) {
+      return null
+    }
+    
     const selectedAction = actions[this.state.selected] || {}
 
     return (

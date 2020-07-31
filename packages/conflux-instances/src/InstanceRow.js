@@ -54,7 +54,7 @@ export default class InstanceRow extends PureComponent {
   }
 
   render () {
-    const data = this.props.data
+    const { data, noDelete } = this.props
     const name = data.Name.substr(8)
     const labels = data.Labels
 
@@ -70,10 +70,12 @@ export default class InstanceRow extends PureComponent {
         <td>{this.renderChainBtn(labels.chain)}</td>
         <td>{this.renderBlockNumber(name)}</td>
         <td align='right'>
+        { !noDelete && 
           <DeleteButton
             className='hover-show'
             onConfirm={() => this.deleteInstance(name)}
           />
+        }
         </td>
       </tr>
     )
