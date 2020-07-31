@@ -10,9 +10,9 @@ export default class FaucetButton extends PureComponent {
   claim = async () => {
     let faucetUrl
     if (this.props.network === 'oceanus' || this.props.network === 'oceanus-mining') {
-      faucetUrl = `https://wallet.confluxscan.io/faucet/dev/ask?address=${this.props.address}`
+      faucetUrl = `https://wallet.confluxscan.io/faucet/dev/ask?address=${this.props.address?.toLowerCase()}`
     } else if (this.props.network === 'testnet') {
-      faucetUrl = `http://test-faucet.conflux-chain.org:18088/dev/ask?address=${this.props.address}`
+      faucetUrl = `http://test-faucet.conflux-chain.org:18088/dev/ask?address=${this.props.address?.toLowerCase()}`
     } else {
       return
     }
