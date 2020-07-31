@@ -55,7 +55,7 @@ export default class CreateInstanceButton extends PureComponent {
 
   onCreateInstance = async () => {
     if (!this.state.keypairs || !this.state.keypairs.length) {
-      notification.error('Failed', 'Please create or import a keypair as the signer before creating a Conflux instance in Keypair Manager')
+      notification.error('Failed', 'Please create or import a keypair in the keypair manager first. ')
       return
     }
 
