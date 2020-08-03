@@ -23,18 +23,37 @@ export async function startDocker () {
   if (process.env.OS_IS_MAC) {
     ipc.invoke('exec', `open /Applications/Docker.app`)
   } else if (process.env.OS_IS_LINUX) {
-    return
+    return false
   } else {
-    // ipc.invoke('exec', 'docker-machine restart')
-    return
+    // Try to start Docker Toolbox
+    const toolboxResult = await ipc.invoke('cp', 'docker-machine start')
+    if (toolboxResult.code) {
+      // Get Docker Desktop path
+      const pathResult = await ipc.invoke('cp', '(Get-Command docker).Path')
+      const desktopPath = pathResult?.logs?.replace('Resources\\bin\\docker.exe', 'Docker Desktop.exe').trim()
+      if (!desktopPath.endsWith('Desktop.exe')) {
+        return false
+      }
+      // Try to start Docker Desktop
+      const desktopResult = await ipc.invoke('cp', `Start-Process "${desktopPath}"`)
+      if (desktopResult.code) {
+        return false
+      }
+    }
   }
   return new Promise(resolve => {
+    const delay = 500
+    let counter = 5 * 60 * (1000 / delay) // 5 mins
     const h = setInterval(async () => {
+      if (--counter <= 0) {
+        clearInterval(h)
+        resolve(false)
+      }
       if (await checkDocker()) {
         clearInterval(h)
-        resolve()
+        resolve(true)
       }
-    }, 500)
+    }, delay)
   })
 }
 
