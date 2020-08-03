@@ -77,7 +77,7 @@ export default class ListItemDocker extends PureComponent {
   
   installConflux = async () => {
     this.modal.current.openModal()
-    const version = 'v0.6.0'
+    const version = 'v0.6.1'
     setTimeout(async () => {
       let result
       let filename = ''
