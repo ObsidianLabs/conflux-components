@@ -21,8 +21,8 @@ export default async function checkDependencies () {
     const results = await Promise.all([
       dockerChannel.check(),
       checkConfluxVersion(),
-      instance.node.invoke('versions').then(versions => versions[0].Tag),
-      compiler.channel.invoke('versions').then(versions => versions[0].Tag),
+      instance.node.installed(),
+      compiler.channel.installed(),
     ])
     return results.every(x => !!x)
   } catch (e) {

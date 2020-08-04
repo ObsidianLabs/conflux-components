@@ -37,7 +37,7 @@ export default class CreateInstanceButton extends PureComponent {
 
   refresh = async () => {
     this.setState({ loading: true })
-    const versions = await instanceChannel.invoke('versions')
+    const versions = await instanceChannel.versions()
     const keypairs = await keypairManager.loadAllKeypairs()
     this.setState({
       versions,

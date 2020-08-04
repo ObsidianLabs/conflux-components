@@ -31,7 +31,7 @@ export default class DockerImageItem extends PureComponent {
 
     let versions
     try {
-      versions = await this.props.channel.invoke('versions')
+      versions = await this.props.channel.versions()
     } catch (e) {
       this.mounted && this.setState({ status: 'NO_DOCKER' })
       return
