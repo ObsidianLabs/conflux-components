@@ -19,6 +19,7 @@
   "dependencies": {
     "@obsidians/conflux-compiler": "^0.1.0",
     "@obsidians/conflux-instances": "^0.1.0",
+    "@obsidians/docker": "^0.1.0",
     "@obsidians/file-ops": "^0.1.0",
     "@obsidians/ipc": "^0.1.2",
     "@obsidians/notification": "^0.1.0",

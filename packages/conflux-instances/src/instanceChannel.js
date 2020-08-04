@@ -1,3 +1,8 @@
 import { IpcChannel } from '@obsidians/ipc'
+import { DockerImageChannel } from '@obsidians/docker'
 
-export default new IpcChannel('conflux-node')
+const channel = new IpcChannel('conflux-node')
+
+channel.node = new DockerImageChannel('confluxchain/conflux-rust')
+
+export default channel
