@@ -1,17 +1,13 @@
-import { IpcChannel } from '@obsidians/ipc'
+import { DockerImageChannel } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 import fileOps from '@obsidians/file-ops'
 
 class Compiler {
   constructor () {
-    this.channel = new IpcChannel('conflux-truffle')
+    this.channel = new DockerImageChannel('confluxchain/conflux-truffle')
     this._terminal = null
     this._button = null
     this.notification = null
-  }
-
-  async invoke (method, ...args) {
-    return await this.channel.invoke(method, ...args)
   }
 
   set terminal (v) {
