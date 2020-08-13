@@ -22,21 +22,19 @@ export default function BottomBar (props) {
       </AbiStorage>
       <div className='flex-1' />
       <CacheRoute
-        path={`/guest/:project?`}
-        render={() => {
-          return (
-            <DockerImageSelector
-              imageName='confluxchain/conflux-truffle'
-              icon='fas fa-hammer'
-              title='Conflux Truffle'
-              noneName='Conflux Truffle'
-              modalTitle='Conflux Truffle Manager'
-              downloadingTitle='Downloading Conflux Truffle'
-              selected={props.compilerVersion}
-              onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
-            />
-          )
-        }}
+        path={`/guest/:project`}
+        render={() => (
+          <DockerImageSelector
+            imageName='confluxchain/conflux-truffle'
+            icon='fas fa-hammer'
+            title='Conflux Truffle'
+            noneName='Conflux Truffle'
+            modalTitle='Conflux Truffle Manager'
+            downloadingTitle='Downloading Conflux Truffle'
+            selected={props.compilerVersion}
+            onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
+          />
+        )}
       />
       <CacheRoute
         path={`/guest/:project`}

@@ -10,6 +10,7 @@ import {
 } from '@obsidians/ui-components'
 
 import keypairManager from '@obsidians/keypair'
+import { DockerImageInputSelector } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 
 import instanceChannel from './instanceChannel'
@@ -19,11 +20,9 @@ export default class CreateInstanceButton extends PureComponent {
     super(props)
 
     this.state = {
-      loading: false,
-      versions: [],
-      keypairs: [],
       name: '',
-      selected: '',
+      version: '',
+      keypairs: [],
       addr: '',
       creating: false,
     }
@@ -36,16 +35,8 @@ export default class CreateInstanceButton extends PureComponent {
   }
 
   refresh = async () => {
-    this.setState({ loading: true })
-    const versions = await instanceChannel.node.versions()
     const keypairs = await keypairManager.loadAllKeypairs()
-    this.setState({
-      versions,
-      loading: false,
-      keypairs,
-      selected: versions[0] ? versions[0].Tag : '',
-      genesis: keypairs,
-    })
+    this.setState({ keypairs })
   }
 
   onClickButton = () => {
@@ -55,36 +46,24 @@ export default class CreateInstanceButton extends PureComponent {
 
   onCreateInstance = async () => {
     if (!this.state.keypairs || !this.state.keypairs.length) {
-      notification.error('Failed', 'Please create or import a keypair in the keypair manager first. ')
+      notification.error('Failed', 'Please create or import a keypair in the keypair manager first.')
       return
     }
 
     this.setState({ creating: 'Creating...' })
 
-    const genesis_secrets = (await Promise.all(this.state.genesis.map(k => keypairManager.getSigner(k.address))))
+    const genesis_secrets = (await Promise.all(this.state.keypairs.map(k => keypairManager.getSigner(k.address))))
       .map(privateKey => privateKey.substr(2))
       .join('\n') + '\n'
     await instanceChannel.invoke('create', {
       name: this.state.name,
-      version: this.state.selected,
+      version: this.state.version,
       chain: this.props.chain,
       genesis_secrets,
     })
     this.modal.current.closeModal()
     this.setState({ creating: false })
     this.props.onRefresh()
-  }
-
-  renderVersionOptions = () => {
-    if (this.state.loading) {
-      return 'Loading'
-    }
-
-    if (!this.state.versions.length) {
-      return <option disabled key='' value=''>(No Conflux installed)</option>
-    }
-
-    return this.state.versions.map(v => <option key={v.Tag} value={v.Tag}>{v.Tag}</option>)
   }
 
   renderGenesisInput = () => {
@@ -132,11 +111,12 @@ export default class CreateInstanceButton extends PureComponent {
         </Button>
         <Modal
           ref={this.modal}
+          overflow
           title={`New Instance (${this.props.chain})`}
           textConfirm='Create'
           onConfirm={this.onCreateInstance}
           pending={this.state.creating}
-          confirmDisabled={!this.state.name || !this.state.selected}
+          confirmDisabled={!this.state.name || !this.state.version}
         >
           <DebouncedFormGroup
             label='Instance name'
@@ -145,17 +125,15 @@ export default class CreateInstanceButton extends PureComponent {
             value={this.state.name}
             onChange={name => this.setState({ name })}
           />
-          <FormGroup>
-            <Label>Conflux version</Label>
-            <CustomInput
-              type='select'
-              className='form-control'
-              value={this.state.selected}
-              onChange={event => this.setState({ selected: event.target.value })}
-            >
-              {this.renderVersionOptions()}
-            </CustomInput>
-          </FormGroup>
+          <DockerImageInputSelector
+            imageName='confluxchain/conflux-rust'
+            label='Conflux version'
+            noneName='Conflux node'
+            modalTitle='Conflux Version Manager'
+            downloadingTitle='Downloading Conflux'
+            selected={this.state.version}
+            onSelected={version => this.setState({ version })}
+          />
         </Modal>
       </React.Fragment>
     )
