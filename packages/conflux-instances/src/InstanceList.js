@@ -77,7 +77,7 @@ export default class InstanceList extends PureComponent {
           data={{
             Name: 'conflux-Conflux Oceanus Miner',
             Labels: {
-              version: 'v0.6.0',
+              version: 'v0.6.1',
               chain: 'oceanus-mining',
             }
           }}
