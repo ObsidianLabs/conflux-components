@@ -126,7 +126,7 @@ export default class CreateInstanceButton extends PureComponent {
             onChange={name => this.setState({ name })}
           />
           <DockerImageInputSelector
-            imageName='confluxchain/conflux-rust'
+            channel={instanceChannel.node}
             label='Conflux version'
             noneName='Conflux node'
             modalTitle='Conflux Version Manager'

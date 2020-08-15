@@ -17,6 +17,7 @@
     "prepare": "yarn build"
   },
   "dependencies": {
+    "@obsidians/conflux-compiler": "^0.1.0",
     "@obsidians/conflux-contract": "^0.1.0",
     "@obsidians/conflux-project": "^0.1.0",
     "@obsidians/docker": "^0.1.0",

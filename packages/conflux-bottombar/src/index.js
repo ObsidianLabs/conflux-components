@@ -5,6 +5,7 @@ import { DockerImageSelector } from '@obsidians/docker'
 import { KeypairButton } from '@obsidians/keypair'
 import { TerminalButton } from '@obsidians/conflux-project'
 import { AbiStorage } from '@obsidians/conflux-contract'
+import compilerManager from '@obsidians/conflux-compiler'
 
 export default function BottomBar (props) {
   return (
@@ -25,7 +26,7 @@ export default function BottomBar (props) {
         path={`/guest/:project`}
         render={() => (
           <DockerImageSelector
-            imageName='confluxchain/conflux-truffle'
+            channel={compilerManager.channel}
             icon='fas fa-hammer'
             title='Conflux Truffle'
             noneName='Conflux Truffle'
