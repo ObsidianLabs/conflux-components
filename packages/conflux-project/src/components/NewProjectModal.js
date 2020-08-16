@@ -16,6 +16,8 @@ import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import { IpcChannel } from '@obsidians/ipc'
 import Terminal from '@obsidians/terminal'
+import { DockerImageInputSelector } from '@obsidians/docker'
+import compilerManager from '@obsidians/conflux-compiler'
 
 import actions from '../actions'
 
@@ -27,7 +29,8 @@ export default class NewProjectModal extends Component {
       name: '',
       projectRoot: '',
       template: 'coin',
-      creating: false
+      truffleVersion: '',
+      creating: false,
     }
 
     this.modal = React.createRef()
@@ -83,13 +86,17 @@ export default class NewProjectModal extends Component {
     }
 
     if (template === 'metacoin') {
-      const compilerVersion = this.props.compilerVersion
+      const truffleVersion = this.state.truffleVersion
+      if (!truffleVersion) {
+        notification.error('Cannot Create the Project', 'Please select a version for Conflux Truffle.')
+        return false
+      }
       const cmd = [
         `docker run --rm -it`,
         `--name conflux-create-project`,
         `-v "${projectRoot}":"/project/${name}"`,
         `-w "/project/${name}"`,
-        `confluxchain/conflux-truffle:${compilerVersion}`,
+        `confluxchain/conflux-truffle:${truffleVersion}`,
         `cfxtruffle unbox ${template}`,
       ].join(' ')
       try {
@@ -112,6 +119,23 @@ export default class NewProjectModal extends Component {
     return { projectRoot, name }
   }
 
+  renderTruffleVersion = () => {
+    if (this.state.template !== 'metacoin') {
+      return null
+    }
+    return (
+      <DockerImageInputSelector
+        channel={compilerManager.channel}
+        label='Conflux truffle version'
+        noneName='Conflux Truffle'
+        modalTitle='Conflux Truffle Manager'
+        downloadingTitle='Downloading Conflux Truffle'
+        selected={this.state.truffleVersion}
+        onSelected={truffleVersion => this.setState({ truffleVersion })}
+      />
+    )
+  }
+
   render () {
     const { name, creating } = this.state
 
@@ -123,6 +147,7 @@ export default class NewProjectModal extends Component {
     return (
       <Modal
         ref={this.modal}
+        overflow
         title='Create a New Project'
         textConfirm='Create Project'
         onConfirm={this.onCreateProject}
@@ -160,6 +185,7 @@ export default class NewProjectModal extends Component {
             <option value='metacoin'>[Truffle] metacoin</option>
           </CustomInput>
         </FormGroup>
+        {this.renderTruffleVersion()}
         <div style={{ display: this.state.creating ? 'block' : 'none'}}>
           <Terminal
             ref={this.terminal}

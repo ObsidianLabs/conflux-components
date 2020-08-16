@@ -6,7 +6,7 @@ import {
 } from '@obsidians/ui-components'
 
 import fileOps from '@obsidians/file-ops'
-import { checkDocker } from './checkDependencies'
+import { dockerChannel, DownloadImageButton } from '@obsidians/docker'
 
 export default class DockerImageItem extends PureComponent {
   mounted = false
@@ -24,14 +24,14 @@ export default class DockerImageItem extends PureComponent {
   }
 
   refresh = async () => {
-    if (!await checkDocker()) {
+    if (!await dockerChannel.check()) {
       this.mounted && this.setState({ status: 'NO_DOCKER' })
       return
     }
 
     let versions
     try {
-      versions = await this.props.getVersions()
+      versions = await this.props.channel.versions()
     } catch (e) {
       this.mounted && this.setState({ status: 'NO_DOCKER' })
       return
@@ -80,11 +80,12 @@ export default class DockerImageItem extends PureComponent {
       case 'NO_DOCKER':
         return <Button color='secondary'>Need Docker</Button>
       case 'NONE':
-        const Installer = this.props.Installer
         return (
-          <Installer
+          <DownloadImageButton
             right
             color='primary'
+            channel={this.props.channel}
+            downloadingTitle={this.props.downloadingTitle}
             onDownloaded={this.props.onInstalled}
           />
         )

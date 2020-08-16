@@ -6,8 +6,8 @@ import {
 
 import fileOps from '@obsidians/file-ops'
 
-import instanceManager, { NodeVersionInstaller } from '@obsidians/conflux-instances'
-import compilerManager, { CompilerInstaller } from '@obsidians/conflux-compiler'
+import instance from '@obsidians/conflux-instances'
+import compiler from '@obsidians/conflux-compiler'
 
 import ListItemDocker from './ListItemDocker'
 import ListItemConflux from './ListItemConflux'
@@ -70,21 +70,21 @@ export default class Welcome extends PureComponent {
               />
               <DockerImageItem
                 ref={this.listItemNode}
+                channel={instance.node}
                 title='Conflux Node in Docker'
                 subtitle='Conflux node built into a docker image.'
                 link='https://hub.docker.com/r/confluxchain/conflux-rust'
-                getVersions={() => instanceManager.invoke('versions')}
-                Installer={NodeVersionInstaller}
                 onInstalled={this.refresh}
+                downloadingTitle='Downloading Conflux'
               />
               <DockerImageItem
                 ref={this.listItemCompiler}
+                channel={compiler.channel}
                 title='Conflux Truffle in Docker'
                 subtitle='A Conflux version of truffle used to create and compile a project.'
                 link='https://hub.docker.com/r/confluxchain/conflux-truffle'
-                getVersions={() => compilerManager.invoke('versions')}
-                Installer={CompilerInstaller}
                 onInstalled={this.refresh}
+                downloadingTitle='Downloading Conflux Truffle'
               />
             </ListGroup>
             <Button

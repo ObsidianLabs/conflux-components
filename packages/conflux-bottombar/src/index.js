@@ -1,10 +1,11 @@
 import React from 'react'
 import CacheRoute from 'react-router-cache-route'
 
+import { DockerImageSelector } from '@obsidians/docker'
 import { KeypairButton } from '@obsidians/keypair'
-import { CompilerSelector } from '@obsidians/conflux-compiler'
 import { TerminalButton } from '@obsidians/conflux-project'
 import { AbiStorage } from '@obsidians/conflux-contract'
+import compilerManager from '@obsidians/conflux-compiler'
 
 export default function BottomBar (props) {
   return (
@@ -22,15 +23,19 @@ export default function BottomBar (props) {
       </AbiStorage>
       <div className='flex-1' />
       <CacheRoute
-        path={`/guest/:project?`}
-        render={() => {
-          return (
-            <CompilerSelector
-              selected={props.compilerVersion}
-              onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
-            />
-          )
-        }}
+        path={`/guest/:project`}
+        render={() => (
+          <DockerImageSelector
+            channel={compilerManager.channel}
+            icon='fas fa-hammer'
+            title='Conflux Truffle'
+            noneName='Conflux Truffle'
+            modalTitle='Conflux Truffle Manager'
+            downloadingTitle='Downloading Conflux Truffle'
+            selected={props.compilerVersion}
+            onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
+          />
+        )}
       />
       <CacheRoute
         path={`/guest/:project`}

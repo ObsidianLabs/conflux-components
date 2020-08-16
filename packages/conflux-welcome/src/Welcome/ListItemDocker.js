@@ -6,7 +6,7 @@ import {
 
 import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
-import { checkDocker, dockerVersion, startDocker } from './checkDependencies'
+import { dockerChannel } from '@obsidians/docker'
 
 export default class ListItemDocker extends PureComponent {
   mounted = false
@@ -28,8 +28,8 @@ export default class ListItemDocker extends PureComponent {
       return
     }
 
-    const version = await dockerVersion()
-    if (await checkDocker()) {
+    const version = await dockerChannel.version()
+    if (await dockerChannel.check()) {
       this.mounted && this.setState({ docker: 'STARTED', version })
     } else if (version) {
       this.mounted && this.setState({ docker: 'INSTALLED', version })
@@ -43,8 +43,13 @@ export default class ListItemDocker extends PureComponent {
 
   startDocker = async () => {
     this.mounted && this.setState({ docker: 'STARTING' })
-    await startDocker()
-    this.mounted && this.setState({ docker: 'STARTED' })
+    const success = await dockerChannel.launch()
+    if (success) {
+      this.mounted && this.setState({ docker: 'STARTED' })
+    } else {
+      this.mounted && this.setState({ docker: 'INSTALLED' })
+      notification.error('Fail to run docker', 'Something went wrong when starting Docker, please try again.')
+    }
     this.props.onStartedDocker()
   }
 

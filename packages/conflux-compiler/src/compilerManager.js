@@ -1,17 +1,13 @@
-import { IpcChannel } from '@obsidians/ipc'
+import { DockerImageChannel } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 import fileOps from '@obsidians/file-ops'
 
 class Compiler {
   constructor () {
-    this.channel = new IpcChannel('conflux-truffle')
+    this.channel = new DockerImageChannel('confluxchain/conflux-truffle')
     this._terminal = null
     this._button = null
     this.notification = null
-  }
-
-  async invoke (method, ...args) {
-    return await this.channel.invoke(method, ...args)
   }
 
   set terminal (v) {
@@ -77,9 +73,15 @@ class Compiler {
 
   generateBuildCmd({ projectRoot, compilerVersion }) {
     const { base: name } = fileOps.current.path.parse(projectRoot)
+    let volumne = ''
+    if (process.env.OS_IS_WINDOWS) {
+      volumne = `-v "${projectRoot.replace(/\\/g, '/')}:/project/${name}"`
+    } else {
+      volumne = `-v "${projectRoot}":"/project/${name}"`
+    }
     return [
       `docker run -t --rm --name truffle-compile`,
-      `-v "${projectRoot}":"/project/${name}"`,
+      volumne,
       `-w "/project/${name}"`,
       `confluxchain/conflux-truffle:${compilerVersion}`,
       `cfxtruffle compile`,

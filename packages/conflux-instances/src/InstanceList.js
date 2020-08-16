@@ -1,10 +1,10 @@
 import React, { PureComponent } from 'react'
 
 import { Card } from '@obsidians/ui-components'
+import { DockerImageButton } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 import { NodeConfigModal } from '@obsidians/conflux-node'
 
-import NodeVersionManager from './NodeInstaller/NodeVersionManager'
 import CreateInstanceButton from './CreateInstanceButton'
 
 import InstanceHeader from './InstanceHeader'
@@ -77,7 +77,7 @@ export default class InstanceList extends PureComponent {
           data={{
             Name: 'conflux-Conflux Oceanus Miner',
             Labels: {
-              version: 'v0.6.0',
+              version: 'v0.6.1',
               chain: 'oceanus-mining',
             }
           }}
@@ -109,8 +109,13 @@ export default class InstanceList extends PureComponent {
     if (this.props.chain === 'dev') {
       right = (
         <React.Fragment>
-          <NodeVersionManager
-            onRefresh={this.refreshInstances}
+          <DockerImageButton
+            channel={instanceChannel.node}
+            icon='fas fa-server'
+            title='Conflux Versions'
+            noneName='Conflux node'
+            modalTitle='Conflux Version Manager'
+            downloadingTitle='Downloading Conflux'
           />
           <CreateInstanceButton
             className='ml-2'

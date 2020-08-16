@@ -1,42 +1,8 @@
 import fileOps from '@obsidians/file-ops'
 import { IpcChannel } from '@obsidians/ipc'
-import instanceManager from '@obsidians/conflux-instances'
-import compilerManager from '@obsidians/conflux-compiler'
-
-export async function checkDocker () {
-  const ipc = new IpcChannel()
-  const result = await ipc.invoke('exec', 'docker info')
-  return !result.code
-}
-
-export async function dockerVersion () {
-  const ipc = new IpcChannel()
-  const result = await ipc.invoke('cp', `docker -v`)
-  if (result.code) {
-    return ''
-  }
-  return result.logs
-}
-
-export async function startDocker () {
-  const ipc = new IpcChannel()
-  if (process.env.OS_IS_MAC) {
-    ipc.invoke('exec', `open /Applications/Docker.app`)
-  } else if (process.env.OS_IS_LINUX) {
-    return
-  } else {
-    // ipc.invoke('exec', 'docker-machine restart')
-    return
-  }
-  return new Promise(resolve => {
-    const h = setInterval(async () => {
-      if (await checkDocker()) {
-        clearInterval(h)
-        resolve()
-      }
-    }, 500)
-  })
-}
+import instance from '@obsidians/conflux-instances'
+import compiler from '@obsidians/conflux-compiler'
+import { dockerChannel } from '@obsidians/docker'
 
 export function getConfluxBinFolder () {
   return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin')
@@ -53,10 +19,10 @@ export async function checkConfluxVersion () {
 export default async function checkDependencies () {
   try {
     const results = await Promise.all([
-      checkDocker(),
+      dockerChannel.check(),
       checkConfluxVersion(),
-      instanceManager.invoke('versions').then(versions => versions[0].Tag),
-      compilerManager.invoke('versions').then(versions => versions[0].Tag),
+      instance.node.installed(),
+      compiler.channel.installed(),
     ])
     return results.every(x => !!x)
   } catch (e) {
