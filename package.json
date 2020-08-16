@@ -6,7 +6,7 @@
     "build": "node init.js"
   },
   "dependencies": {
-    "node-sass": "^4.13.1"
+    "node-sass": "^4.14.1"
   },
   "resolutions": {
     "node-sass/node-gyp": "^5.0.2"
