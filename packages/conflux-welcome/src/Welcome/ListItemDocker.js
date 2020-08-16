@@ -43,8 +43,13 @@ export default class ListItemDocker extends PureComponent {
 
   startDocker = async () => {
     this.mounted && this.setState({ docker: 'STARTING' })
-    await dockerChannel.launch()
-    this.mounted && this.setState({ docker: 'STARTED' })
+    const success = await dockerChannel.launch()
+    if (success) {
+      this.mounted && this.setState({ docker: 'STARTED' })
+    } else {
+      this.mounted && this.setState({ docker: 'INSTALLED' })
+      notification.error('Fail to run docker', 'Something went wrong when starting Docker, please try again.')
+    }
     this.props.onStartedDocker()
   }
 

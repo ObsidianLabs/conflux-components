@@ -73,9 +73,15 @@ class Compiler {
 
   generateBuildCmd({ projectRoot, compilerVersion }) {
     const { base: name } = fileOps.current.path.parse(projectRoot)
+    let volumne = ''
+    if (process.env.OS_IS_WINDOWS) {
+      volumne = `-v "${projectRoot.replace(/\\/g, '/')}:/project/${name}"`
+    } else {
+      volumne = `-v "${projectRoot}":"/project/${name}"`
+    }
     return [
       `docker run -t --rm --name truffle-compile`,
-      `-v "${projectRoot}":"/project/${name}"`,
+      volumne,
       `-w "/project/${name}"`,
       `confluxchain/conflux-truffle:${compilerVersion}`,
       `cfxtruffle compile`,
