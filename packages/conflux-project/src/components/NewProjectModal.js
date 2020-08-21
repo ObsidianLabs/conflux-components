@@ -91,10 +91,11 @@ export default class NewProjectModal extends Component {
         notification.error('Cannot Create the Project', 'Please select a version for Conflux Truffle.')
         return false
       }
+      const projectDir = fileOps.current.getDockerMountPath(projectRoot)
       const cmd = [
         `docker run --rm -it`,
         `--name conflux-create-project`,
-        `-v "${projectRoot}":"/project/${name}"`,
+        `-v "${projectDir}:/project/${name}"`,
         `-w "/project/${name}"`,
         `confluxchain/conflux-truffle:${truffleVersion}`,
         `cfxtruffle unbox ${template}`,
