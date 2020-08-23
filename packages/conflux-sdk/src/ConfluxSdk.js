@@ -39,9 +39,16 @@ export default class ConfluxSdk {
     return json.result
   }
 
-  async getTransactions (address, page = 1) {
+  async getTransactionsCount (address) {
     const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address}&page=${page}&pageSize=10&txType=all`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/address/query?address=${address}`)
+    const json = JSON.parse(result)
+    return json.result.account.all
+  }
+
+  async getTransactions (address, page = 1, size = 10) {
+    const ipc = new IpcChannel()
+    const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address}&page=${page}&pageSize=${size}&txType=all`)
     const json = JSON.parse(result)
     return json.result
   }

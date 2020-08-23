@@ -17,7 +17,14 @@ export default function ({ tx, owner }) {
         <i className='fas fa-arrow-alt-right' />
       </div>
       <div className='flex-1 overflow-hidden'>
-        <Address addr={tx.to} />
+        {
+          tx.contractCreated &&
+          <Address addr={tx.contractCreated} displayText='Contract Creation' redirect={false}/>
+        }
+        {
+          !tx.contractCreated &&
+          <Address addr={tx.to} />
+        }
       </div>
       <Badge pill color={tx.from === owner ? 'danger' : 'success'}>
         {amount}

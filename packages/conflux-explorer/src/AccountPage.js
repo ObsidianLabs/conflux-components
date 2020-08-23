@@ -16,6 +16,11 @@ export default class AccountPage extends PureComponent {
     account: null,
   }
 
+  constructor (props) {
+    super(props)
+    this.accountTransactions = React.createRef()
+  }
+
   componentDidMount () {
     this.refresh()
   }
@@ -42,12 +47,15 @@ export default class AccountPage extends PureComponent {
     let account
     try {
       account = await nodeManager.sdk.accountFrom(value)
+      account.count = await nodeManager.sdk.getTransactionsCount(value)
       this.setState({ error: null, account })
       this.forceUpdate()
     } catch (e) {
       this.setState({ error: e.message, account: null })
       return
     }
+
+    this.accountTransactions.current.refresh(account)
   }
 
   render () {
@@ -88,6 +96,7 @@ export default class AccountPage extends PureComponent {
         </div>
         <div className='d-flex flex-fill overflow-hidden'>
           <div className='col-12 p-0 border-top-black overflow-auto'>
+            <AccountTransactions account={account} ref={this.accountTransactions}/>
           </div>
         </div>
       </div>
