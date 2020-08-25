@@ -27,10 +27,10 @@ export default class TransactionRow extends PureComponent {
         </td>
         <td>{TxComponent}</td>
         <td>
-          <TransactionFee amount={util.unit.fromDripToCFX(tx.gas)} unit='CFX'/>
+          <TransactionFee amount={tx.gas}/>
         </td>
         <td>
-          <TransactionFee amount={util.unit.fromDripToGDrip(tx.gasPrice)} unit='Gdrip'/>
+          <TransactionFee amount={tx.gasPrice}/>
         </td>
       </tr>
     )

@@ -90,8 +90,8 @@ export default class AccountTransactions extends PureComponent {
             <th style={{ width: '10%' }}>time</th>
             <th style={{ width: '15%' }}>Hash</th>
             <th style={{ width: '45%' }}>transaction</th>
-            <th style={{ width: '15%' }}>fee</th>
-            <th style={{ width: '15%' }}>gas price</th>
+            <th style={{ width: '15%', textAlign: 'right' }}>fee</th>
+            <th style={{ width: '15%', textAlign: 'right' }}>gas price</th>
           </tr>
         )}
       >

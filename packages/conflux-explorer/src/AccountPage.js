@@ -54,8 +54,6 @@ export default class AccountPage extends PureComponent {
       this.setState({ error: e.message, account: null })
       return
     }
-
-    this.accountTransactions.current.refresh(account)
   }
 
   render () {
@@ -85,7 +83,7 @@ export default class AccountPage extends PureComponent {
     }
 
     return (
-      <div className='d-flex flex-1 flex-column overflow-auto'>
+      <div className='d-flex flex-1 flex-column overflow-auto' key={account.address}>
         <div className='d-flex'>
           <div className='col-4 p-0 border-right-black'>
             <AccountBalance account={account} />
@@ -104,4 +102,3 @@ export default class AccountPage extends PureComponent {
   }
 }
 
-// <AccountTransactions account={account} />

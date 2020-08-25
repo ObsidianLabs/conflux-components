@@ -4,7 +4,7 @@ import { UncontrolledTooltip } from '@obsidians/ui-components'
 const formatAddress = address => <code>{address.substr(0, 10)}...{address.substr(address.length - 6, address.length)}</code>
 const accountAddress = address => `#/account/${address}`
 
-export default function Address ({ addr, redirect = true, displayText }) {
+export default function Address ({ addr, redirect = true, displayText, showTooltip = true }) {
   if (!addr) {
     return null
   }
@@ -27,10 +27,15 @@ export default function Address ({ addr, redirect = true, displayText }) {
   }
   return (
     <React.Fragment>
-      {text}
-      <UncontrolledTooltip trigger='hover' delay={0} target={id}>
-        { addr }
-      </UncontrolledTooltip>
+      <div key={id}>
+        {text}
+      </div>
+      {
+        showTooltip &&
+        <UncontrolledTooltip trigger='hover' delay={0} target={id} key={id}>
+          { addr }
+        </UncontrolledTooltip>
+      }
     </React.Fragment>
   )
 }
