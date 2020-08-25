@@ -3,7 +3,6 @@ import { UncontrolledTooltip } from '@obsidians/ui-components'
 
 const formatAddress = address => <code>{address.substr(0, 10)}...{address.substr(address.length - 6, address.length)}</code>
 const accountAddress = address => `#/account/${address}`
-// const contractAddress = address => `#/contract/${address}`
 
 export default function Address ({ addr, redirect = true, displayText }) {
   if (!addr) {

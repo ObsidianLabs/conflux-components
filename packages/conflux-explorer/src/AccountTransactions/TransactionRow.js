@@ -8,8 +8,6 @@ import { util } from 'js-conflux-sdk'
 import TransactionTransfer from './TransactionTransfer'
 import TransactionFee from './TransactionFee'
 import Address from './Address'
-// import TransactionAxfer from './TransactionAxfer'
-// import TransactionAcfg from './TransactionAcfg'
 
 export default class TransactionRow extends PureComponent {
   onClick = () => {
