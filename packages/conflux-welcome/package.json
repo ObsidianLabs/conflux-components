@@ -25,7 +25,9 @@
     "@obsidians/notification": "^0.1.0",
     "@obsidians/terminal": "^0.1.1",
     "@obsidians/ui-components": "^0.1.0",
-    "electron-updater": "^4.2.5"
+    "@octokit/core": "^3.1.2",
+    "electron-updater": "^4.2.5",
+    "semver": "^7.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
