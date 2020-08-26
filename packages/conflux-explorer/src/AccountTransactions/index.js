@@ -15,6 +15,7 @@ export default class AccountTransactions extends PureComponent {
     txs: [],
     page: 1,
     total: -1,
+    size: 10,
   }
 
   componentDidMount () {
@@ -28,18 +29,18 @@ export default class AccountTransactions extends PureComponent {
   }
 
   refresh = async account => {
-    this.setState({ txs: [], loading: true })
-    const { total, list: txs } = await nodeManager.sdk.getTransactions(account.address)
-    this.setState({ txs, page: 2, hasMore: true, loading: false })
+    this.setState({ txs: [], loading: true, page: 1 })
+    const { total, list: txs } = await nodeManager.sdk.getTransactions(account.address, 1, this.state.size)
+    this.setState({ txs, page: 2, hasMore: txs.length < total, loading: false })
   }
 
   loadMore = async () => {
     this.setState({ loading: true })
-    const { cursor, data: txs } = await nodeManager.sdk.getTransactions(this.props.account.address, this.state.page)
+    const { total, list: txs } = await nodeManager.sdk.getTransactions(this.props.account.address, this.state.page, this.state.size)
     this.setState({
       txs: [...this.state.txs, ...txs],
       page: this.state.page + 1,
-      hasMore: true,
+      hasMore: (this.state.txs.length + txs.length) < total,
       loading: false,
     })
   }
@@ -54,6 +55,14 @@ export default class AccountTransactions extends PureComponent {
         <tr key='txs-loading' className='bg-transparent'>
           <td align='middle' colSpan={5}>
             <i className='fas fa-spin fa-spinner mr-1' />Loading...
+          </td>
+        </tr>
+      )
+    } else if (!this.state.txs.length) {
+      rows.push(
+        <tr key='txs-loadmore' className='bg-transparent'>
+          <td align='middle' colSpan={5}>
+            No Transactions Found
           </td>
         </tr>
       )
@@ -79,13 +88,14 @@ export default class AccountTransactions extends PureComponent {
         TableHead={(
           <tr>
             <th style={{ width: '10%' }}>time</th>
-            <th style={{ width: '10%' }}>block</th>
-            <th style={{ width: '10%' }}>type</th>
-            <th style={{ width: '70%' }}>tx</th>
+            <th style={{ width: '15%' }}>Hash</th>
+            <th style={{ width: '45%' }}>transaction</th>
+            <th style={{ width: '15%', textAlign: 'right' }}>fee</th>
+            <th style={{ width: '15%', textAlign: 'right' }}>gas price</th>
           </tr>
         )}
       >
-        {/* {this.renderTableBody()} */}
+        {this.renderTableBody()}
       </TableCard>
     )
   }

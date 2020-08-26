@@ -3,10 +3,11 @@ import React, { PureComponent } from 'react'
 import { Badge } from '@obsidians/ui-components'
 
 import moment from 'moment'
+import { util } from 'js-conflux-sdk'
 
 import TransactionTransfer from './TransactionTransfer'
-// import TransactionAxfer from './TransactionAxfer'
-// import TransactionAcfg from './TransactionAcfg'
+import TransactionFee from './TransactionFee'
+import Address from './Address'
 
 export default class TransactionRow extends PureComponent {
   onClick = () => {
@@ -15,21 +16,22 @@ export default class TransactionRow extends PureComponent {
 
   render () {
     const { tx, owner } = this.props
-    
-    let type = tx.type
-    let typeColor = 'primary'
     let TxComponent = <TransactionTransfer tx={tx} owner={owner} />
-
     return (
       <tr onClick={this.onClick}>
         <td><small>{moment(tx.timestamp * 1000).format('MM/DD HH:mm:ss')}</small></td>
-        <td><small>{tx.round}</small></td>
         <td>
-          <div className='d-flex flex-row align-items-center'>
-            <Badge pill color={typeColor}>{type}</Badge>
+          <div className='flex-1 overflow-hidden'>
+            <Address addr={tx.hash} redirect={false}/>
           </div>
         </td>
         <td>{TxComponent}</td>
+        <td>
+          <TransactionFee amount={tx.gas}/>
+        </td>
+        <td>
+          <TransactionFee amount={tx.gasPrice}/>
+        </td>
       </tr>
     )
   }
