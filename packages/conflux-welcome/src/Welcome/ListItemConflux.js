@@ -4,13 +4,11 @@ import {
   ListGroupItem,
   Modal,
 } from '@obsidians/ui-components'
-import semver from 'semver'
-import { Octokit } from "@octokit/core";
 
 import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import Terminal from '@obsidians/terminal'
-import { checkConfluxVersion, getConfluxBinFolder } from './checkDependencies'
+import { getConfluxBinFolder, checkConfluxVersion } from './checkConfluxUpdate'
 
 export default class ListItemDocker extends PureComponent {
   constructor(props) {
@@ -34,17 +32,16 @@ export default class ListItemDocker extends PureComponent {
   }
 
   refresh = async () => {
-    const version = await checkConfluxVersion()
-    if (!version) {
-      this.mounted && this.setState({ status: 'NONE', version: '' })
+    const { update, currentVersion, latestVersion } = await checkConfluxVersion()
+    console.log(latestVersion, currentVersion)
+    if (!currentVersion) {
+      this.mounted && this.setState({ status: 'NONE', version: '', latestVersion })
       return
     }
-    const currentVersion = semver.clean(version.replace('conflux', ''))
-    const latestVersion = await this.getLatestVersion()
-    if (semver.gt(latestVersion, currentVersion)) {
-      this.mounted && this.setState({ status: 'UPDATE', version: currentVersion })
+    if (update) {
+      this.mounted && this.setState({ status: 'UPDATE', version: currentVersion, latestVersion })
     } else {
-      this.mounted && this.setState({ status: 'INSTALLED', version: currentVersion })
+      this.mounted && this.setState({ status: 'INSTALLED', version: currentVersion, latestVersion })
     }
   }
 
@@ -90,8 +87,7 @@ export default class ListItemDocker extends PureComponent {
   
   installConflux = async () => {
     this.modal.current.openModal()
-    const latestVersion = await this.getLatestVersion()
-    const version = `v${latestVersion}`
+    const version = `v${this.state.latestVersion}`
     setTimeout(async () => {
       let result
       let filename = ''
@@ -149,17 +145,6 @@ export default class ListItemDocker extends PureComponent {
       }
       this.installConflux()
     }, 100)
-  }
-
-  getLatestVersion = async () => {
-    const octokit = new Octokit();
-    const latestRelease = await octokit.request('GET /repos/{owner}/{repo}/releases/latest', {
-      owner: 'Conflux-Chain',
-      repo: 'conflux-rust'
-    })
-    const latestVersion = semver.clean(latestRelease.data.tag_name)
-    this.setState({ latestVersion })
-    return latestVersion
   }
 
   render () {

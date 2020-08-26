@@ -1,20 +1,7 @@
-import fileOps from '@obsidians/file-ops'
-import { IpcChannel } from '@obsidians/ipc'
 import instance from '@obsidians/conflux-instances'
 import compiler from '@obsidians/conflux-compiler'
 import { dockerChannel } from '@obsidians/docker'
-
-export function getConfluxBinFolder () {
-  return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin')
-}
-
-export async function checkConfluxVersion () {
-  const ipc = new IpcChannel()
-  const binFolder = getConfluxBinFolder()
-  await fileOps.current.ensureDirectory(binFolder)
-  const result = await ipc.invoke('cp', './run/conflux -V', { cwd: binFolder })
-  return !result.code && result.logs
-}
+import { checkConfluxVersion } from './checkConfluxUpdate'
 
 export default async function checkDependencies () {
   try {
