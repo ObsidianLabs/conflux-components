@@ -34,3 +34,8 @@ export async function checkConfluxVersion () {
     latestVersion
   }
 }
+
+export async function checkConfluxReady () {
+  const { update, currentVersion } = await checkConfluxVersion()
+  return currentVersion && !update
+}

@@ -48,6 +48,7 @@ export default class ListItemDocker extends PureComponent {
     switch (this.state.status) {
       case '':
       case 'NONE':
+      case 'UPDATE':
         return <span key='fail'><i className='fas fa-minus-circle mr-2 text-muted' /></span>
       case 'INSTALLED':
         return <span key='success'><i className='fas fa-check-circle mr-2 text-success' /></span>

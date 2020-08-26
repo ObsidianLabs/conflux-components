@@ -1,13 +1,13 @@
 import instance from '@obsidians/conflux-instances'
 import compiler from '@obsidians/conflux-compiler'
 import { dockerChannel } from '@obsidians/docker'
-import { checkConfluxVersion } from './checkConfluxUpdate'
+import { checkConfluxReady } from './checkConfluxUpdate'
 
 export default async function checkDependencies () {
   try {
     const results = await Promise.all([
       dockerChannel.check(),
-      checkConfluxVersion(),
+      checkConfluxReady(),
       instance.node.installed(),
       compiler.channel.installed(),
     ])
