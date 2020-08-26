@@ -33,7 +33,6 @@ export default class ListItemDocker extends PureComponent {
 
   refresh = async () => {
     const { update, currentVersion, latestVersion } = await checkConfluxVersion()
-    console.log(latestVersion, currentVersion)
     if (!currentVersion) {
       this.mounted && this.setState({ status: 'NONE', version: '', latestVersion })
       return
