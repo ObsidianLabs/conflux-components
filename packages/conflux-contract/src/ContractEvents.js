@@ -132,7 +132,7 @@ export default class ContractEvents extends Component {
           if (type === 'address') {
             content = (
               <a href={`#/account/${content}`} className='text-body'>
-                {content.substr(0, 8)}...{content.substr(36)}
+                {content}
               </a>
             )
           }
