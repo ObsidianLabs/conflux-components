@@ -31,7 +31,7 @@ class InstanceManager extends IpcChannel {
 
     fs.writeFileSync(genesis, genesis_secrets)
 
-    await this.cp(`docker run -d --rm -it --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
+    await this.cp(`docker run -d --rm -i --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
     await this.cp(`docker cp ${configPath} conflux-config-${name}:/conflux-node/default.toml`)
     await this.cp(`docker cp ${logPath} conflux-config-${name}:/conflux-node/log.yaml`)
     await this.cp(`docker cp ${genesis} conflux-config-${name}:/conflux-node/genesis_secrets.txt`)
