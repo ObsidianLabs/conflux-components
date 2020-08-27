@@ -49,7 +49,7 @@ export default class ActionForm extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      args: this.props.fields.map(({ value }) => value || '')
+      args: props.fields?.map(({ value }) => value || '')
     }
   }
 
