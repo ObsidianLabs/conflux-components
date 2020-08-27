@@ -147,6 +147,67 @@ export default class ContractPage extends PureComponent {
     }
   }
 
+  renderContractActions (value, abi, contract) {
+    if (!abi.length) {
+      return (
+        <Screen>
+          <p>No actions found</p>
+        </Screen>
+      )
+    }
+    return (
+      <ContractActions
+        // network={network}
+        value={value}
+        abi={abi}
+        contract={contract}
+        // contract={contract}
+        // abi={this.state.abi}
+        // history={contractCalls.getIn(['action', 'history'])}
+        // bookmarks={contractCalls.getIn(['action', 'bookmarks'])}
+      />
+    )
+  }
+
+  renderContractViews (value, abi, contract) {
+    if (!abi.length) {
+      return (
+        <Screen>
+          <p>No views found</p>
+        </Screen>
+      )
+    }
+    return (
+      <ContractTable
+        value={value}
+        abi={abi}
+        contract={contract}
+      // network={network}
+      // contract={contract}
+      // abi={this.state.abi}
+      // history={contractCalls.getIn(['table', 'history'])}
+      // bookmarks={contractCalls.getIn(['table', 'bookmarks'])}
+      />
+    )
+  }
+
+  renderContractEvents (value, abi, contract) {
+    if (!abi.length) {
+      return (
+        <Screen>
+          <p>No events found</p>
+        </Screen>
+      )
+    }
+    return (
+      <ContractEvents
+        value={value}
+        abi={abi}
+        contract={contract}
+      />
+    )
+  }
+
   render () {
     const { error, abi } = this.state
 
@@ -174,6 +235,9 @@ export default class ContractPage extends PureComponent {
 
     const contractInstance = nodeManager.sdk.contractFrom(abi, this.props.value)
     const functions = abi.filter(item => item.type === 'function')
+    const events = abi.filter(item => item.type === 'event')
+    const actions = functions.filter(item => item.stateMutability !== 'view')
+    const views = functions.filter(item => item.stateMutability === 'view')
 
     return (
       <div className='d-flex p-relative h-100'>
@@ -182,36 +246,14 @@ export default class ContractPage extends PureComponent {
           defaultSize={320}
           minSize={200}
         >
-          <ContractActions
-            // network={network}
-            value={this.props.value}
-            abi={functions.filter(item => item.stateMutability !== 'view')}
-            contract={contractInstance}
-            // contract={contract}
-            // abi={this.state.abi}
-            // history={contractCalls.getIn(['action', 'history'])}
-            // bookmarks={contractCalls.getIn(['action', 'bookmarks'])}
-          />
+          {this.renderContractActions(this.props.value, actions, contractInstance)}
           <SplitPane
             split='vertical'
             defaultSize={320}
             minSize={200}
           >
-            <ContractTable
-              value={this.props.value}
-              abi={functions.filter(item => item.stateMutability === 'view')}
-              contract={contractInstance}
-            // network={network}
-            // contract={contract}
-            // abi={this.state.abi}
-            // history={contractCalls.getIn(['table', 'history'])}
-            // bookmarks={contractCalls.getIn(['table', 'bookmarks'])}
-            />
-            <ContractEvents
-              value={this.props.value}
-              abi={abi.filter(item => item.type === 'event')}
-              contract={contractInstance}
-            />
+            {this.renderContractViews(this.props.value, views, contractInstance)}
+            {this.renderContractEvents(this.props.value, events, contractInstance)}
           </SplitPane>
         </SplitPane>
       </div>
