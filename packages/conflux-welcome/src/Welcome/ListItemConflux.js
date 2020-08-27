@@ -8,15 +8,16 @@ import {
 import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import Terminal from '@obsidians/terminal'
-import { checkConfluxVersion, getConfluxBinFolder } from './checkDependencies'
+import { getConfluxBinFolder, checkConfluxVersion } from './checkConfluxUpdate'
 
 export default class ListItemDocker extends PureComponent {
   constructor(props) {
     super(props)
     this.mounted = false
     this.state = {
-      status: '', // '', 'NONE', 'INSTALLED'
-      version: ''
+      status: '', // '', 'NONE', 'INSTALLED', 'UPDATE'
+      version: '',
+      latestVersion: ''
     }
     this.modal = React.createRef()
     this.terminal = React.createRef()
@@ -31,11 +32,15 @@ export default class ListItemDocker extends PureComponent {
   }
 
   refresh = async () => {
-    const version = await checkConfluxVersion()
-    if (version) {
-      this.mounted && this.setState({ status: 'INSTALLED', version })
+    const { update, currentVersion, latestVersion } = await checkConfluxVersion()
+    if (!currentVersion) {
+      this.mounted && this.setState({ status: 'NONE', version: '', latestVersion })
+      return
+    }
+    if (update) {
+      this.mounted && this.setState({ status: 'UPDATE', version: currentVersion, latestVersion })
     } else {
-      this.mounted && this.setState({ status: 'NONE', version: '' })
+      this.mounted && this.setState({ status: 'INSTALLED', version: currentVersion, latestVersion })
     }
   }
 
@@ -43,6 +48,7 @@ export default class ListItemDocker extends PureComponent {
     switch (this.state.status) {
       case '':
       case 'NONE':
+      case 'UPDATE':
         return <span key='fail'><i className='fas fa-minus-circle mr-2 text-muted' /></span>
       case 'INSTALLED':
         return <span key='success'><i className='fas fa-check-circle mr-2 text-success' /></span>
@@ -57,8 +63,10 @@ export default class ListItemDocker extends PureComponent {
         return <span>Loading...</span>
       case 'NONE':
         return <span>The main software that runs the Conflux node.</span>
+      case 'UPDATE':
+        return <span>{this.state.latestVersion} update available. Current version {this.state.version}</span>
       default:
-        return <span>{this.state.version}</span>
+        return <span>Version {this.state.version}</span>
     }
   }
 
@@ -70,6 +78,8 @@ export default class ListItemDocker extends PureComponent {
         return <Button color='primary' onClick={this.installConflux}>Install</Button>
       case 'INSTALLED':
         return <Button color='secondary'>Installed</Button>
+      case 'UPDATE':
+        return <Button color='primary' onClick={this.updateConflux}>Update</Button>
       default:
         return null
     }
@@ -77,7 +87,7 @@ export default class ListItemDocker extends PureComponent {
   
   installConflux = async () => {
     this.modal.current.openModal()
-    const version = 'v0.6.1'
+    const version = `v${this.state.latestVersion}`
     setTimeout(async () => {
       let result
       let filename = ''
@@ -115,6 +125,25 @@ export default class ListItemDocker extends PureComponent {
       this.modal.current.closeModal()
       notification.success('Conflux Node Installed', '')
       this.refresh()
+    }, 100)
+  }
+
+  updateConflux = async () => {
+    this.modal.current.openModal()
+
+    setTimeout(async () => {
+      let deleteCommand = ''
+      if (process.env.OS_IS_WINDOWS) {
+        deleteCommand = 'rm -r -fo ./run'
+      } else {
+        deleteCommand = 'rm -rf ./run'
+      }
+      const result = await this.terminal.current.exec(deleteCommand)
+      if (result.code) {
+        notification.error('Failed to Update Conflux', '')
+        return
+      }
+      this.installConflux()
     }, 100)
   }
 
