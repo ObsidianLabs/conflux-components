@@ -108,7 +108,7 @@ export default class ContractTable extends Component {
     if (actionResult) {
       return (
         <div>
-          <span>{actionResult}</span>
+          <span className="user-select">{actionResult}</span>
         </div>
       )
     }
