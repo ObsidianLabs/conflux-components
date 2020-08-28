@@ -41,6 +41,9 @@ export default class ConfluxSdk {
 
   async getTransactionsCount (address) {
     const ipc = new IpcChannel()
+    if (!this.explorer) {
+      return
+    }
     const result = await ipc.invoke('fetch', `${this.explorer}/address/query?address=${address}`)
     const json = JSON.parse(result)
     return json.result.account.all
@@ -48,6 +51,9 @@ export default class ConfluxSdk {
 
   async getTransactions (address, page = 1, size = 10) {
     const ipc = new IpcChannel()
+    if (!this.explorer) {
+      return { noExplorer: true }
+    }
     const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address}&page=${page}&pageSize=${size}&txType=all`)
     const json = JSON.parse(result)
     return json.result
