@@ -16,6 +16,7 @@ export default class AccountTransactions extends PureComponent {
     page: 1,
     total: -1,
     size: 10,
+    hide: false
   }
 
   componentDidMount () {
@@ -30,13 +31,21 @@ export default class AccountTransactions extends PureComponent {
 
   refresh = async account => {
     this.setState({ txs: [], loading: true, page: 1 })
-    const { total, list: txs } = await nodeManager.sdk.getTransactions(account.address, 1, this.state.size)
+    const { total, list: txs, noExplorer } = await nodeManager.sdk.getTransactions(account.address, 1, this.state.size)
+    if (noExplorer) {
+      this.setState({ hide: true })
+      return
+    }
     this.setState({ txs, page: 2, hasMore: txs.length < total, loading: false })
   }
 
   loadMore = async () => {
     this.setState({ loading: true })
-    const { total, list: txs } = await nodeManager.sdk.getTransactions(this.props.account.address, this.state.page, this.state.size)
+    const { total, list: txs, noExplorer } = await nodeManager.sdk.getTransactions(this.props.account.address, this.state.page, this.state.size)
+    if (noExplorer) {
+      this.setState({ hide: true })
+      return
+    }
     this.setState({
       txs: [...this.state.txs, ...txs],
       page: this.state.page + 1,
@@ -81,6 +90,9 @@ export default class AccountTransactions extends PureComponent {
 
 
   render () {
+    if (this.state.hide) {
+      return null
+    }
     return (
       <TableCard
         title='Transactions'
