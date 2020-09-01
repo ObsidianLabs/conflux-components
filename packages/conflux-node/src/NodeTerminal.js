@@ -36,7 +36,7 @@ export default class NodeTerminal extends PureComponent {
     super(props)
     
     this.state = {
-      activeTab: 'node',
+      activeTab: props.miner ? 'miner' : 'node',
     }
     this.tabs = React.createRef()
   }
