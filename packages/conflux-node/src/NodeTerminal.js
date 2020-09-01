@@ -83,7 +83,7 @@ export default class NodeTerminal extends PureComponent {
       { key: 'node', text: <span key='terminal-node'><i className='fas fa-server mr-1' />node</span> },
     ]
     if (miner) {
-      initialTabs = { key: 'miner', text: <span key='terminal-miner'><i className='fas fa-hammer mr-1' />miner</span> }
+      initialTabs = [{ key: 'miner', text: <span key='terminal-miner'><i className='fas fa-hammer mr-1' />miner</span> }]
     }
   
     return (
