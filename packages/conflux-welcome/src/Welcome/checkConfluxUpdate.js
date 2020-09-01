@@ -12,7 +12,7 @@ export async function checkConfluxCurrentVersion () {
   const ipc = new IpcChannel()
   const binFolder = getConfluxBinFolder()
   await fileOps.current.ensureDirectory(binFolder)
-  const result = await ipc.invoke('cp', './run/conflux -V', { cwd: binFolder })
+  const result = await ipc.invoke('exec', './run/conflux -V', { cwd: binFolder })
   return !result.code && semver.clean(result.logs.replace('conflux', ''))
 }
 
