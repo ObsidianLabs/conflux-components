@@ -20,7 +20,7 @@ export default function InstanceListWithTerminal (props) {
         minSize={200}
       >
         <InstanceList chain={network} onLifecycle={onLifecycle} />
-        <NodeTerminal active={active} />
+        <NodeTerminal active={active} miner={network !== 'dev'} />
       </SplitPane>
     )
   }

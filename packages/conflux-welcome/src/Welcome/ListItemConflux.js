@@ -10,6 +10,8 @@ import notification from '@obsidians/notification'
 import Terminal from '@obsidians/terminal'
 import { getConfluxBinFolder, checkConfluxVersion } from './checkConfluxUpdate'
 
+Terminal.defaultProps.cwd = fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio')
+
 export default class ListItemDocker extends PureComponent {
   constructor(props) {
     super(props)

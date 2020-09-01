@@ -7,6 +7,7 @@ class NodeManager {
   constructor () {
     this._sdk = null
     this._terminal = null
+    this._minerTerminal = null
     this._configModal = null
     this.network = null
   }
@@ -17,6 +18,10 @@ class NodeManager {
 
   set terminal (v) {
     this._terminal = v
+  }
+
+  set minerTerminal (v) {
+    this._minerTerminal = v
   }
 
   set configModal (v) {
@@ -58,7 +63,7 @@ class NodeManager {
 
     const result = await this._configModal.openModal({ miner: miner ? miner[1] : '', ip })
     if (!result) {
-      throw new Error('NodeConfigModal was cloased.')
+      throw new Error('NodeConfigModal was closed.')
     }
 
     miner = result.miner
@@ -72,8 +77,10 @@ class NodeManager {
 
     await fileOps.current.writeFile(fileOps.current.path.join(confluxDir, 'default.toml'), configFile)
 
-    await this._terminal.exec('ulimit -n 10000', { cwd: confluxDir })
-    await this._terminal.exec('./conflux --config default.toml --full 2>stderr.txt', { resolveOnFirstLog: true, cwd: confluxDir })
+    if (!process.env.OS_IS_WINDOWS) {
+      await this._minerTerminal.exec('ulimit -n 10000')
+    }
+    await this._minerTerminal.exec('./conflux --config default.toml --full 2>stderr.txt', { resolveOnFirstLog: true })
   }
 
   getConfluxBinFolder () {
@@ -124,12 +131,10 @@ class NodeManager {
   }
 
   async stop ({ name, version, chain }) {
-    if (this._terminal) {
-      if (chain === 'oceanus-mining') {
-        await this._terminal.stop()
-      } else {
-        await this._terminal.exec(`docker stop conflux-${name}-${version}`)
-      }
+    if (chain === 'oceanus-mining') {
+      this._minerTerminal && await this._minerTerminal.stop()
+    } else {
+      this._terminal && await this._terminal.execAsChildProcess(`docker stop conflux-${name}-${version}`)
     }
   }
 }

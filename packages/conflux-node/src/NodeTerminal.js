@@ -7,6 +7,7 @@ import {
 } from '@obsidians/ui-components'
 
 import Terminal from '@obsidians/terminal'
+import fileOps from '@obsidians/file-ops'
 
 import nodeManager from './nodeManager'
 
@@ -58,20 +59,31 @@ export default class NodeTerminal extends PureComponent {
         { key: 'miner', text: <span key='terminal-miner'><i className='fas fa-hammer mr-1' />miner</span> },
       ]
     })
+    setTimeout(() => this.tabs.current.onCloseTab({ key: 'node' }), 100)
   }
   closeMinerTab = () => {
-    this.tabs.current.onCloseTab({ key: 'miner' })
+    this.tabs.current.setState({
+      tabs: [
+        { key: 'node', text: <span key='terminal-node'><i className='fas fa-server mr-1' />node</span> },
+        { key: 'miner', text: <span key='terminal-miner'><i className='fas fa-hammer mr-1' />miner</span> },
+      ]
+    })
+    setTimeout(() => this.tabs.current.onCloseTab({ key: 'miner' }), 100)
+  }
+
+  getConfluxBinFolder () {
+    return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin', 'run')
   }
 
   render () {
     const { active, miner } = this.props
     const { activeTab } = this.state
 
-    const initialTabs = [
+    let initialTabs = [
       { key: 'node', text: <span key='terminal-node'><i className='fas fa-server mr-1' />node</span> },
     ]
     if (miner) {
-      initialTabs.push({ key: 'miner', text: <span key='terminal-miner'><i className='fas fa-hammer mr-1' />miner</span> })
+      initialTabs = { key: 'miner', text: <span key='terminal-miner'><i className='fas fa-hammer mr-1' />miner</span> }
     }
   
     return (
@@ -95,6 +107,7 @@ export default class NodeTerminal extends PureComponent {
           <TabPane className='h-100 w-100' tabId='miner'>
             <Terminal
               logId='conflux-miner'
+              cwd={this.getConfluxBinFolder()}
               active={active && activeTab === 'miner'}
               ref={ref => (nodeManager.minerTerminal = ref)}
               onLogReceived={onLogReceived}
