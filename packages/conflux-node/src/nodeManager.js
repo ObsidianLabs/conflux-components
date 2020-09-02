@@ -1,5 +1,6 @@
 import fileOps from '@obsidians/file-ops'
 import Sdk from '@obsidians/conflux-sdk'
+import notification from '@obsidians/notification'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -133,8 +134,10 @@ class NodeManager {
   async stop ({ name, version, chain }) {
     if (chain === 'oceanus-mining') {
       this._minerTerminal && await this._minerTerminal.stop()
-    } else {
-      this._terminal && await this._terminal.execAsChildProcess(`docker stop conflux-${name}-${version}`)
+    } else if (this._terminal) {
+      const n = notification.info('Stopping Conflux Node...', '', 0)
+      await this._terminal.execAsChildProcess(`docker stop conflux-${name}-${version}`)
+      n.dismiss()
     }
   }
 }
