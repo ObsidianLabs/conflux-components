@@ -5,7 +5,7 @@ import fileOps from '@obsidians/file-ops'
 import { IpcChannel } from '@obsidians/ipc'
 
 export function getConfluxBinFolder () {
-  return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin')
+  return fileOps.current.path.join(fileOps.current.workspace, '.bin')
 }
 
 export async function checkConfluxCurrentVersion () {

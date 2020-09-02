@@ -84,7 +84,7 @@ class NodeManager {
   }
 
   getConfluxBinFolder () {
-    return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin', 'run')
+    return fileOps.current.path.join(fileOps.current.workspace, '.bin', 'run')
   }
 
   generateCommands ({ name, version }) {

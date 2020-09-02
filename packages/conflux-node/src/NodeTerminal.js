@@ -72,7 +72,7 @@ export default class NodeTerminal extends PureComponent {
   }
 
   getConfluxBinFolder () {
-    return fileOps.current.path.join(fileOps.current.homePath, 'Conflux Studio', '.bin', 'run')
+    return fileOps.current.path.join(fileOps.current.workspace, '.bin', 'run')
   }
 
   render () {

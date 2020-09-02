@@ -25,7 +25,7 @@ export class ProjectActions {
 
   async openProject () {
     try {
-      const projectRoot = await fileOps.current.chooseFolder('Conflux Studio')
+      const projectRoot = await fileOps.current.chooseFolder()
       const { base } = fileOps.current.path.parse(projectRoot)
       const projectId = btoa(projectRoot)
       redux.dispatch('ADD_PROJECT', {
