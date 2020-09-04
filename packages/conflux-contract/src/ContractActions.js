@@ -139,7 +139,7 @@ export default class ContractActions extends Component {
       return (
         <Highlight
           language='javascript'
-          className='pre-box pre-wrap break-all small'
+          className='pre-box pre-wrap break-all small user-select'
           element='pre'
         >
           <code>{actionResult}</code>
