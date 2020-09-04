@@ -271,7 +271,7 @@ export default class ContractPage extends PureComponent {
         return (
           <Screen>
             <h4 className='display-4'>ABI Not Found</h4>
-            <p>There is no associated ABI for the current contract at <code>{account.address}</code> with code hash <code>{account.codeHash}</code>.</p>
+            <p>There is no associated ABI for the current contract at <kbd>{account.address}</kbd> with code hash <kbd>{account.codeHash}</kbd></p>
             <hr />
             <div className='flex'>
               <UncontrolledButtonDropdown>
