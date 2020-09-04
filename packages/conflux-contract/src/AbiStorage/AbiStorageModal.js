@@ -44,8 +44,8 @@ export default class AbiStorageModal extends PureComponent {
     this.viewAbiModal.current.openModal(abi)
   }
 
-  newAbi = async () => {
-    const { name, codeHash, abi } = await this.abiInputModal.current.openModal()
+  newAbi = async (inputName, inputCodeHash) => {
+    const { name, codeHash, abi } = await this.abiInputModal.current.openModal(inputName, inputCodeHash)
     redux.dispatch('ABI_ADD', { name, codeHash, abi })
     notification.success(
       'ABI Added',

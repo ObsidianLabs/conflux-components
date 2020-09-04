@@ -4,6 +4,11 @@ import {
   Screen,
   SplitPane,
   LoadingScreen,
+  Button,
+  UncontrolledButtonDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from '@obsidians/ui-components'
 
 import nodeManager from '@obsidians/conflux-node'
@@ -12,6 +17,7 @@ import redux from '@obsidians/redux'
 import ContractActions from './ContractActions'
 import ContractTable from './ContractTable'
 import ContractEvents from './ContractEvents'
+import AbiStorageModal from './AbiStorage/AbiStorageModal'
 
 const abiSponsor = [
   {
@@ -82,10 +88,20 @@ const abiSponsor = [
 ]
 
 export default class ContractPage extends PureComponent {
-  state = {
-    error: null,
-    abi: null,
-    loading: true,
+
+  constructor (props) {
+    super(props)
+    this.abiStorageModal = React.createRef()
+
+    this.state = {
+      error: null,
+      errorType: null,
+      abi: null,
+      abis: [],
+      selectedAbi: null,
+      account: null,
+      loading: true,
+    }
   }
 
   componentDidMount () {
@@ -99,7 +115,7 @@ export default class ContractPage extends PureComponent {
   }
 
   refresh = async () => {
-    this.setState({ loading: true, error: null, abi: null })
+    this.setState({ loading: true, error: null, abi: null, abis: [], selectedAbi: null, account: null, errorType: null })
 
     const value = this.props.value
 
@@ -121,6 +137,7 @@ export default class ContractPage extends PureComponent {
     let account
     try {
       account = await nodeManager.sdk.accountFrom(value)
+      this.setState({ account })
     } catch (e) {
       this.setState({ loading: false, error: e.message })
       return
@@ -135,7 +152,9 @@ export default class ContractPage extends PureComponent {
     if (!abi) {
       this.setState({
         loading: false,
-        error: <span>No ABI for code hash <code>{account.codeHash}</code>.</span>
+        error: <span>No ABI for code hash <code>{account.codeHash}</code>.</span>,
+        errorType: 'ABI_NOT_FOUND',
+        abis: redux.getState().abis.toArray(),
       })
       return
     }
@@ -145,6 +164,11 @@ export default class ContractPage extends PureComponent {
     } catch (e) {
       this.setState({ loading: false, error: 'Invalid ABI structure.' })
     }
+  }
+
+  async openAbiStorageModal (codeHash) {
+    await this.abiStorageModal.current.newAbi('', codeHash)
+    this.refresh()
   }
 
   renderContractActions (value, abi, contract) {
@@ -208,8 +232,26 @@ export default class ContractPage extends PureComponent {
     )
   }
 
+  renderABIDropdownItem () {
+    return this.state.abis.map(abiItem => {
+      const [codeHash, abiObj] = abiItem
+      let abi
+      try {
+        abi = JSON.parse(abiObj.get('abi'))
+      } catch (error) {}
+      return (
+        <DropdownItem
+          key={codeHash}
+          onClick={() => this.setState({ abi, error: null })}
+        >
+          <b>{abiObj.get('name')}</b> - <small><code>{codeHash}</code></small>
+        </DropdownItem>
+      )
+    })
+  }
+
   render () {
-    const { error, abi } = this.state
+    const { error, abi, account, errorType } = this.state
 
     if (!this.props.value) {
       return (
@@ -225,6 +267,34 @@ export default class ContractPage extends PureComponent {
     }
 
     if (error) {
+      if (account && errorType && errorType === 'ABI_NOT_FOUND') {
+        return (
+          <Screen>
+            <h4 className='display-4'>ABI Not Found</h4>
+            <p>There is no associated ABI for the current contract at <code>{account.address}</code> with code hash <code>{account.codeHash}</code>.</p>
+            <hr />
+            <div className='flex'>
+              <UncontrolledButtonDropdown>
+                <DropdownToggle color='primary' caret>
+                  Select an existing ABI
+                </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem header>ABIs</DropdownItem>
+                  {this.renderABIDropdownItem()}
+                </DropdownMenu>
+              </UncontrolledButtonDropdown>
+              <Button
+                color='primary'
+                style={{ marginLeft: '15px', height: '36px' }}
+                onClick={() => this.openAbiStorageModal(account.codeHash)}
+              >
+                Add ABI for code hash <code>{account.codeHash.substr(0, 4)}...{account.codeHash.substr(account.codeHash.length - 4, account.codeHash.length)}</code>
+              </Button>
+            </div>
+            <AbiStorageModal ref={this.abiStorageModal}/>
+          </Screen>
+        )
+      }
       return (
         <Screen>
           <h4 className='display-4'>Error</h4>

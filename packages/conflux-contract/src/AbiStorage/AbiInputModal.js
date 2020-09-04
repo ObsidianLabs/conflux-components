@@ -20,7 +20,13 @@ export default class AbiInputModal extends PureComponent {
     }
   }
 
-  openModal = () => {
+  openModal = (name, codeHash, abi) => {
+    if (name || codeHash) {
+      this.setState({ name, codeHash })
+    }
+    if (abi) {
+      this.onChangeAbi(abi)
+    }
     this.modal.current.openModal()
     setTimeout(() => this.nameInput.current.focus(), 100)
     return new Promise(resolve => { this.onResolve = resolve })
@@ -63,7 +69,7 @@ export default class AbiInputModal extends PureComponent {
           onChange={name => this.setState({ name })}
         />
         <DebouncedFormGroup
-          label='Code hash'
+          label='Code hash / Address'
           value={codeHash}
           onChange={codeHash => this.setState({ codeHash })}
         />
