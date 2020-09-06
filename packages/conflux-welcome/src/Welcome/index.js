@@ -10,7 +10,6 @@ import instance from '@obsidians/conflux-instances'
 import compiler from '@obsidians/conflux-compiler'
 
 import ListItemDocker from './ListItemDocker'
-import ListItemConflux from './ListItemConflux'
 import DockerImageItem from './DockerImageItem'
 import checkDependencies from './checkDependencies'
 
@@ -21,7 +20,6 @@ export default class Welcome extends PureComponent {
       ready: false
     }
     this.listItemDocker = React.createRef()
-    this.listItemConflux = React.createRef()
     this.listItemNode = React.createRef()
     this.listItemCompiler = React.createRef()
   }
@@ -40,7 +38,6 @@ export default class Welcome extends PureComponent {
   refresh = async () => {
     if (this.mounted) {
       this.listItemDocker.current.refresh()
-      this.listItemConflux.current.refresh()
       this.listItemNode.current.refresh()
       this.listItemCompiler.current.refresh()
       const ready = await checkDependencies()
@@ -64,9 +61,6 @@ export default class Welcome extends PureComponent {
               <ListItemDocker
                 ref={this.listItemDocker}
                 onStartedDocker={this.refresh}
-              />
-              <ListItemConflux
-                ref={this.listItemConflux}
               />
               <DockerImageItem
                 ref={this.listItemNode}
