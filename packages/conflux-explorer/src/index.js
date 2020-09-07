@@ -5,6 +5,8 @@ import {
   Modal,
 } from '@obsidians/ui-components'
 
+import keypairManager from '@obsidians/keypair'
+
 import AccountPage from './AccountPage'
 
 import TransferButton from './buttons/TransferButton'
@@ -39,12 +41,20 @@ export default class Explorer extends PureComponent {
     this.tabs = React.createRef()
     this.accountPage = React.createRef()
     this.modal = React.createRef()
+    this.keypairs = {}
   }
 
   componentDidMount () {
+    keypairManager.loadAllKeypairs().then(this.updateKeypairs)
+    keypairManager.onUpdated(this.updateKeypairs)
   }
 
-  componentDidUpdate (prevProps) {
+  updateKeypairs = keypairs => {
+    this.keypairs = {}
+    keypairs.forEach(k => {
+      this.keypairs[k.address] = k.name
+    })
+    this.forceUpdate()
   }
 
   get currentValue () {
@@ -72,10 +82,12 @@ export default class Explorer extends PureComponent {
   getTabText = tab => {
     const { value, temp } = tab
     let tabText = ''
-    if (value.length < 10) {
-      tabText += value
+    if (this.keypairs[value]) {
+      tabText = this.keypairs[value]
+    } else if (value.length < 10) {
+      tabText = value
     } else {
-      tabText += (value.substr(0, 6) + '...' + value.slice(-4))
+      tabText = `${value.substr(0, 6)}...${value.slice(-4)}`
     }
     return tabText
   }
