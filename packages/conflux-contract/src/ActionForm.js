@@ -119,7 +119,7 @@ export class ArrayInput extends PureComponent {
 export function ActionParamInput ({ type, value, onChange, placeholder, disabled, textarea, unit, children }) {
   const props = { value, onChange, disabled, placeholder: placeholder || type }
   
-  if (type.endsWith('[]')) {
+  if (type && type.endsWith('[]')) {
     return (
       <ArrayInput
         size='sm'
@@ -226,9 +226,9 @@ export default class ActionForm extends PureComponent {
     const values = []
     this.props.fields.forEach(({ name, type }, index) => {
       const value = this.state.args[index]
-      if (type.endsWith('[]')) {
+      if (type && type.endsWith('[]')) {
         values.push(value ? value.map(item => item.value) : [])
-      } else if (type.startsWith('bytes')) {
+      } else if (type && type.startsWith('bytes')) {
         const length = Number(type.substr(5))
         const bytes = util.format.bytes(value)
         if (bytes.length > length) {

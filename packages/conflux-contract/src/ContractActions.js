@@ -39,6 +39,7 @@ export default class ContractActions extends Component {
     this.setState({
       selected: index,
       gas: '',
+      gasPrice: '',
       value: '',
       signer: '',
       executing: false,
@@ -78,6 +79,7 @@ export default class ContractActions extends Component {
           from: signer,
           value: util.unit.fromCFXToDrip(this.state.value || 0),
           gas: this.state.gas || 1000000,
+          gasPrice: this.state.gasPrice || 100,
         })
         .executed()
     } catch (e) {
@@ -215,12 +217,21 @@ export default class ContractActions extends Component {
           <FormGroup className='mb-2'>
             <Label className='mb-1 small font-weight-bold'>Gas</Label>
             <ActionParamInput
-              type='gas'
               placeholder={`Default: 1,000,000`}
               value={this.state.gas}
               onChange={gas => this.setState({ gas })}
             >
               <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-burn' /></a>
+            </ActionParamInput>
+          </FormGroup>
+          <FormGroup className='mb-2'>
+            <Label className='mb-1 small font-weight-bold'>Gas Price</Label>
+            <ActionParamInput
+              placeholder={`Default: 100 drip`}
+              value={this.state.gasPrice}
+              onChange={gasPrice => this.setState({ gasPrice })}
+            >
+              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-dollar-sign' /></a>
             </ActionParamInput>
           </FormGroup>
         </DropdownCard>
