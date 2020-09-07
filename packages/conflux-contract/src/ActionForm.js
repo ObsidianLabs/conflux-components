@@ -84,6 +84,7 @@ export class ArrayInput extends PureComponent {
     const {
       size,
       addon,
+      type,
       textarea,
     } = this.props
     return (
@@ -105,6 +106,7 @@ export class ArrayInput extends PureComponent {
           <DebouncedInput
             ref={this.input}
             textarea={textarea}
+            placeholder={type}
             value={this.state.newValue}
             onChange={newValue => this.setState({ newValue })}
           />
@@ -122,6 +124,7 @@ export function ActionParamInput ({ type, value, onChange, placeholder, disabled
       <ArrayInput
         size='sm'
         addon={children}
+        type={type}
         textarea={textarea}
         onChange={onChange}
       />
@@ -226,7 +229,14 @@ export default class ActionForm extends PureComponent {
       if (type.endsWith('[]')) {
         values.push(value ? value.map(item => item.value) : [])
       } else if (type.startsWith('bytes')) {
-        values.push(util.format.bytes(value))
+        const length = Number(type.substr(5))
+        const bytes = util.format.bytes(value)
+        if (bytes.length > length) {
+          throw new Error(`Byte length overflow for parameter <b>${name}</b>. Expect ${length} but got ${bytes.length}.`)
+        }
+        const arr = new Uint8Array(length)
+        arr.set(bytes)
+        values.push(arr)
       } else {
         values.push(value)
       }

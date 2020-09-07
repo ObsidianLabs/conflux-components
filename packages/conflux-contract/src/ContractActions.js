@@ -38,6 +38,7 @@ export default class ContractActions extends Component {
   selectAction (index) {
     this.setState({
       selected: index,
+      gas: '',
       value: '',
       signer: '',
       executing: false,
@@ -50,7 +51,19 @@ export default class ContractActions extends Component {
     if (this.state.executing) {
       return
     }
-    const values = this.form.getValues()
+
+    if (!this.state.signer) {
+      notification.error('Error', 'No signer is provided.')
+      return
+    }
+
+    let values
+    try {
+      values = this.form.getValues()
+    } catch (e) {
+      notification.error('Error', e.message)
+      return
+    }
 
     this.setState({ executing: true, actionError: '', actionResult: '' })
     this.notification = notification.info(`Waiting`, `Waiting for transaction confirmation...`, 0)
@@ -64,7 +77,7 @@ export default class ContractActions extends Component {
         .sendTransaction({
           from: signer,
           value: util.unit.fromCFXToDrip(this.state.value || 0),
-          gas: 1000000,
+          gas: this.state.gas || 1000000,
         })
         .executed()
     } catch (e) {
@@ -197,6 +210,17 @@ export default class ContractActions extends Component {
               onChange={value => this.setState({ value })}
             >
               <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-user' /></a>
+            </ActionParamInput>
+          </FormGroup>
+          <FormGroup className='mb-2'>
+            <Label className='mb-1 small font-weight-bold'>Gas</Label>
+            <ActionParamInput
+              type='gas'
+              placeholder={`Default: 1,000,000`}
+              value={this.state.gas}
+              onChange={gas => this.setState({ gas })}
+            >
+              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-burn' /></a>
             </ActionParamInput>
           </FormGroup>
         </DropdownCard>
