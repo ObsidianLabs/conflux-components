@@ -25,7 +25,7 @@ class InstanceManager extends IpcChannel {
 
     await this.exec(`docker volume create --label version=${version},chain=${chain} conflux-${name}`)
 
-    await this.exec(`docker run -di --rm --name conflux-config-${name} -v conflux-${name}:/conflux-node obsidians/conflux-rust:${version} /bin/bash`)
+    await this.exec(`docker run -di --rm --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
 
     await this.exec(`docker cp conflux-config-${name}:/root/run/default.toml ${configPath}`)
     await this.exec(`docker cp conflux-config-${name}:/root/run/log.yaml ${logPath}`)

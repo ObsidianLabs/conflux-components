@@ -25,7 +25,7 @@ export default class InstanceConfigModal extends PureComponent {
     this.modal.current.openModal()
 
     const config = await instanceChannel.invoke('readConfig', {
-      name: this.data.Name,
+      name: this.data.Name.substr(8),
       version: this.data.Labels.version
     })
     this.setState({ value: config, loading: false })
@@ -36,7 +36,7 @@ export default class InstanceConfigModal extends PureComponent {
   onConfirm = async () => {
     this.setState({ saving: true })
     await instanceChannel.invoke('writeConfig', {
-      name: this.data.Name,
+      name: this.data.Name.substr(8),
       version: this.data.Labels.version,
       content: this.state.value,
     })
@@ -44,13 +44,6 @@ export default class InstanceConfigModal extends PureComponent {
     this.setState({ saving: false })
   }
   
-  delete = async () => {
-    const name = this.data.Name.substr(4)
-    await instanceChannel.invoke('delete', name)
-    this.modal.current.closeModal()
-    this.props.onRefresh()
-  }
-
   render () {
     return (
       <Modal
