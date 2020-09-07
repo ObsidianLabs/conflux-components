@@ -1,28 +1,143 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import {
   FormGroup,
   Label,
   DebouncedInput,
+  Badge,
+  MultiSelect,
+  Modal,
 } from '@obsidians/ui-components'
 
-// import DateTimePicker from '$common/DateTimePicker'
-// import DebouncedInput from '$inputs/DebouncedInput'
+import { util } from 'js-conflux-sdk'
+
+const optionItemFromValue = (value, type) => {
+  let icon = null
+  let label = value.length > 10 ? `${value.substr(0, 8)}...` : value
+
+  // if (format === 'file') {
+  //   icon = <i className='fas fa-file mr-1' />
+  //   label = fileOps.current.path.parse(value).base
+  // } else if (format === 'utf8') {
+  //   icon = <i className='fas fa-font-case mr-1'/>
+  // } else if (format === 'hex') {
+  //   icon = <i className='fas fa-code mr-1'/>
+  // }
+
+  return {
+    value,
+    label: <span key={`arg-${type}`}>{icon}{label}</span>
+  }
+}
+
+export class ArrayInput extends PureComponent {
+  constructor (props) {
+    super(props)
+
+    this.modal = React.createRef()
+    this.input = React.createRef()
+    
+    this.state = {
+      values: props.value || [],
+      data: '',
+      title: '',
+      errorInData: false,
+    }
+
+    this.options = [
+      {
+        label: 'Add Item',
+        options: [
+          { label: 'Enter...', getValue: this.enterNewItem },
+        ]
+      }
+    ]
+  }
+  
+  enterNewItem = async () => {
+    this.setState({ newValue: '', title: 'Enter a New Item' })
+    this.modal.current.openModal()
+    setTimeout(() => this.input.current.focus(), 100)
+    return new Promise(resolve=> this.onResolve = resolve)
+  }
+
+  onClickItem = async ({ value }) => {
+    this.setState({ newValue: value, title: 'Modiry an Item' })
+    this.modal.current.openModal()
+    setTimeout(() => {
+      this.input.current.focus()
+    }, 100)
+    return new Promise(resolve=> this.onResolve = resolve)
+  }
+
+  onConfirm = () => {
+    this.onResolve(optionItemFromValue(this.state.newValue, this.props.type))
+    this.setState({ newValue: '' })
+    this.modal.current.closeModal()
+  }
+
+  onChange = values => {
+    this.setState({ values })
+    this.props.onChange(values)
+  }
+
+  render () {
+    const {
+      size,
+      addon,
+      textarea,
+    } = this.props
+    return (
+      <React.Fragment>
+        <MultiSelect
+          size={size}
+          addon={addon}
+          options={this.options}
+          value={this.state.values}
+          onChange={this.onChange}
+          onClickLabel={this.onClickItem}
+        />
+        <Modal
+          ref={this.modal}
+          title={this.state.title}
+          onConfirm={this.onConfirm}
+          confirmDisabled={this.state.errorInData}
+        >
+          <DebouncedInput
+            ref={this.input}
+            textarea={textarea}
+            value={this.state.newValue}
+            onChange={newValue => this.setState({ newValue })}
+          />
+        </Modal>
+      </React.Fragment>
+    )
+  }
+}
 
 export function ActionParamInput ({ type, value, onChange, placeholder, disabled, textarea, unit, children }) {
   const props = { value, onChange, disabled, placeholder: placeholder || type }
-  return (
-    <DebouncedInput size='sm' addon={children} {...props} />
-  )
-  //  else if (textarea) {
-//     return (
-//       <div style={{ position: 'relative' }}>
-//         <DebouncedInput code type='textarea' size='sm' {...props} />
-//         { unit && <Badge style={{ position: 'absolute', right: '5px', bottom: '5px', height: '18px', zIndex: 100 }}>{unit}</Badge> }
-//       </div>
-//     )
-//   } else {
-    // return <DebouncedInput size='sm' {...props} />
-//   }
+  
+  if (type.endsWith('[]')) {
+    return (
+      <ArrayInput
+        size='sm'
+        addon={children}
+        textarea={textarea}
+        onChange={onChange}
+      />
+    )
+  } else if (textarea) {
+    return (
+      <div style={{ position: 'relative' }}>
+        <DebouncedInput type='textarea' size='sm' {...props} />
+        { unit && <Badge style={{ position: 'absolute', right: '5px', bottom: '5px', height: '18px', zIndex: 100 }}>{unit}</Badge> }
+      </div>
+    )
+  } else {
+    return (
+      <DebouncedInput size='sm' addon={children} {...props} />
+    )
+  }
 }
 
 const paramInputIcons = {
@@ -45,7 +160,7 @@ function units (type) {
   }
 }
 
-export default class ActionForm extends Component {
+export default class ActionForm extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
@@ -69,7 +184,12 @@ export default class ActionForm extends Component {
 
   getData = () => {
     const data = {}
-    this.props.fields.forEach(({ name }, index) => {
+    this.props.fields.forEach(({ name, type }, index) => {
+      // if (type === 'bytes32') {
+      //   data[name] = Utils.stringToByte32(this.state.args[index]).getValue()
+      // } else if (type === 'bytes8') {
+      //   data[name] = Utils.stringToByte8(this.state.args[index]).getValue()
+      // }
       data[name] = this.state.args[index]
     })
     return data
@@ -99,7 +219,25 @@ export default class ActionForm extends Component {
   //   return data
   // }
 
-  getValues = () => [...this.state.args]
+  getValues = () => {
+    const values = []
+    this.props.fields.forEach(({ name, type }, index) => {
+      const value = this.state.args[index]
+      if (type.endsWith('[]')) {
+        values.push(value ? value.map(item => item.value) : [])
+      } else if (type.startsWith('bytes')) {
+        values.push(util.format.bytes(value))
+      } else {
+        values.push(value)
+      }
+      // if (type === 'bytes32') {
+      //   data[name] = Utils.stringToByte32(this.state.args[index]).getValue()
+      // } else if (type === 'bytes8') {
+      //   data[name] = Utils.stringToByte8(this.state.args[index]).getValue()
+      // }
+    })
+    return values
+  }
 
   setArgValue = (value, index) => {
     const args = [...this.state.args]
@@ -140,10 +278,26 @@ export default class ActionForm extends Component {
       )
     }
 
+    if (type.startsWith('bytes')) {
+      return (
+        <ActionParamInput {...props} textarea unit='UTF8'/>
+      )
+    } else if (type.endsWith('[]')) {
+      return (
+        <ActionParamInput {...props}>
+          <a className='btn btn-sm btn-secondary w-5' key={`icon-${index}`}><i className='fas fa-brackets' /></a>
+        </ActionParamInput>
+      )
+    } else if (icon) {
+      return (
+        <ActionParamInput {...props}>
+          <a className='btn btn-sm btn-secondary w-5' key={`icon-${index}`}><i className={icon} /></a>
+        </ActionParamInput>
+      )
+    }
     return type
 
-  //   switch (type) {
-  //     case 'bool':
+      // case 'bool':
   //       return (
   //         <ActionParamInput {...props}>
   //           <a className='btn btn-sm btn-secondary w-5 code px-0' style={{ fontWeight: 600, fontSize: '75%', lineHeight: 1.75 }}>bool</a>
@@ -186,13 +340,9 @@ export default class ActionForm extends Component {
   //           }}
   //         />
   //       )
-  //     default:
-  //       if (type.indexOf('[]') > -1) {
-  //         return <ActionParamInput textarea {...props} />
-  //       } else {
-  //         return <ActionParamInput {...props} />
-  //       }
-  //   }
+    //   default:
+        
+    // }
   }
 
   render () {
