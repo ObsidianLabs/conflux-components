@@ -72,7 +72,7 @@ export default class ContractTable extends Component {
             <code className='mx-1'><b>{selectedAction.name}</b></code>
           </DropdownToggle>
           <DropdownMenu>
-            <DropdownItem header>events</DropdownItem>
+            <DropdownItem header>read functions</DropdownItem>
             {actions.map((item, index) => (
               <DropdownItem
                 key={item.name}
