@@ -230,11 +230,6 @@ export default class ActionForm extends PureComponent {
       } else {
         values.push(value)
       }
-      // if (type === 'bytes32') {
-      //   data[name] = Utils.stringToByte32(this.state.args[index]).getValue()
-      // } else if (type === 'bytes8') {
-      //   data[name] = Utils.stringToByte8(this.state.args[index]).getValue()
-      // }
     })
     return values
   }
