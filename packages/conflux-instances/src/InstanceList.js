@@ -3,9 +3,9 @@ import React, { PureComponent } from 'react'
 import { Card } from '@obsidians/ui-components'
 import { DockerImageButton } from '@obsidians/docker'
 import notification from '@obsidians/notification'
-import { NodeConfigModal } from '@obsidians/conflux-node'
 
 import CreateInstanceButton from './CreateInstanceButton'
+import InstanceConfigModal from './LocalNetwork/InstanceConfigModal'
 
 import InstanceHeader from './InstanceHeader'
 import InstanceRow from './InstanceRow'
@@ -26,6 +26,8 @@ export default class InstanceList extends PureComponent {
       runningInstance: '',
       instances: [],
     }
+
+    this.configModal = React.createRef()
   }
 
   componentDidMount() {
@@ -70,24 +72,6 @@ export default class InstanceList extends PureComponent {
   }
 
   renderTableBody = () => {
-    if (this.props.chain === 'oceanus-mining') {
-      return (
-        <InstanceRow
-          noDelete
-          data={{
-            Name: 'conflux-Conflux Oceanus Miner',
-            Labels: {
-              version: 'v0.6.1',
-              chain: 'oceanus-mining',
-            }
-          }}
-          runningInstance={this.state.runningInstance}
-          lifecycle={this.state.lifecycle}
-          onNodeLifecycle={this.onNodeLifecycle}
-        />
-      )
-    }
-
     if (!this.state.instances.length) {
       return <tr><td align='middle' colSpan={6}>(No Conflux instance)</td></tr>
     }
@@ -100,6 +84,7 @@ export default class InstanceList extends PureComponent {
         lifecycle={this.state.lifecycle}
         onRefresh={this.refreshInstances}
         onNodeLifecycle={this.onNodeLifecycle}
+        onOpenConfig={data => this.configModal.current.openModal(data)}
       />
     ))
   }
@@ -135,7 +120,10 @@ export default class InstanceList extends PureComponent {
             {this.renderTable()}
           </div>
         </Card>
-        <NodeConfigModal />
+        <InstanceConfigModal
+          ref={this.configModal}
+          onRefresh={this.refreshInstances}
+        />
       </React.Fragment>
     )
   }

@@ -52,13 +52,15 @@ export default class CreateInstanceButton extends PureComponent {
 
     this.setState({ creating: 'Creating...' })
 
-    const genesis_secrets = (await Promise.all(this.state.keypairs.map(k => keypairManager.getSigner(k.address))))
-      .map(privateKey => privateKey.substr(2))
-      .join('\n') + '\n'
+    const genesis_secrets = await Promise.all(this.state.keypairs.map(k => keypairManager.getSigner(k.address)))
     await instanceChannel.invoke('create', {
       name: this.state.name,
       version: this.state.version,
       chain: this.props.chain,
+      miner: {
+        address: this.state.keypairs[0].address,
+        secrect: genesis_secrets[0],
+      },
       genesis_secrets,
     })
     this.modal.current.closeModal()

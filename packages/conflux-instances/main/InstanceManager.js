@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const os = require('os')
+const TOML = require('@iarna/toml')
 const semverLt = require('semver/functions/lt')
 const semverValid = require('semver/functions/valid')
 
@@ -16,22 +17,30 @@ class InstanceManager extends IpcChannel {
     })
   }
 
-  async create ({ name, version, genesis_secrets, chain = 'dev' }) {
+  async create ({ name, version, miner, genesis_secrets, chain = 'dev' }) {
+    const tmpdir = os.tmpdir()
+    const configPath = path.join(tmpdir, `conflux.toml`)
+    const logPath = path.join(tmpdir, `log.yaml`)
+    const genesis = path.join(tmpdir, 'genesis_secrets.txt')
+
     await this.exec(`docker volume create --label version=${version},chain=${chain} conflux-${name}`)
 
-    const configPath = path.join(os.tmpdir(), `${chain}.toml`)
-    const logPath = path.join(os.tmpdir(), `log.yaml`)
-    const genesis = path.join(os.tmpdir(), 'genesis_secrets.txt')
+    await this.exec(`docker run -di --rm --name conflux-config-${name} -v conflux-${name}:/conflux-node obsidians/conflux-rust:${version} /bin/bash`)
 
-    const configContent = fs.readFileSync(path.join(__dirname, 'chain-configs', `${chain}.toml`))
-    fs.writeFileSync(configPath, configContent)
+    await this.exec(`docker cp conflux-config-${name}:/root/run/default.toml ${configPath}`)
+    await this.exec(`docker cp conflux-config-${name}:/root/run/log.yaml ${logPath}`)
+    await this.exec(`docker cp conflux-config-${name}:/root/run/genesis_secrets.txt ${genesis}`)
 
-    const logContent = fs.readFileSync(path.join(__dirname, 'chain-configs', 'log.yaml'))
-    fs.writeFileSync(logPath, logContent)
+    const configStr = fs.readFileSync(configPath, 'utf8')
+    const config = TOML.parse(configStr)
+    config.chain_id = 0
+    config.mining_author = miner.address.replace('0x', '');
+    config.mining_key = miner.secrect
+    config.genesis_secrets = 'genesis_secrets.txt'
 
-    fs.writeFileSync(genesis, genesis_secrets)
+    fs.writeFileSync(configPath, TOML.stringify(config))
+    fs.writeFileSync(genesis, genesis_secrets.map(k => k.substr(2)).join('\n') + '\n')
 
-    await this.exec(`docker run -d --rm -i --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
     await this.exec(`docker cp ${configPath} conflux-config-${name}:/conflux-node/default.toml`)
     await this.exec(`docker cp ${logPath} conflux-config-${name}:/conflux-node/log.yaml`)
     await this.exec(`docker cp ${genesis} conflux-config-${name}:/conflux-node/genesis_secrets.txt`)
@@ -53,6 +62,31 @@ class InstanceManager extends IpcChannel {
       return i
     })
     return instancesWithLabels.filter(x => x.Labels.chain === chain)
+  }
+
+  async readConfig ({ name, version }) {
+    const configPath = path.join(os.tmpdir(), `conflux.toml`)
+    try {
+      fs.unlinkSync(configPath)
+    } catch (e) {}
+    await this.exec(`docker run --rm -di --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
+    await this.exec(`docker cp conflux-config-${name}:/conflux-node/default.toml ${configPath}`)
+    let config
+    try {
+      config = fs.readFileSync(configPath, 'utf8')
+    } catch (e) {
+      return ''
+    }
+    await this.exec(`docker stop conflux-config-${name}`)
+    return config
+  }
+
+  async writeConfig ({ name, version, content }) {
+    const configPath = path.join(os.tmpdir(), 'conflux.toml')
+    fs.writeFileSync(configPath, content, 'utf8')
+    await this.exec(`docker run --rm -di --name conflux-config-${name} -v conflux-${name}:/conflux-node confluxchain/conflux-rust:${version} /bin/bash`)
+    await this.exec(`docker cp ${configPath} conflux-config-${name}:/conflux-node/default.toml`)
+    await this.exec(`docker stop conflux-config-${name}`)
   }
 
   async delete (name) {

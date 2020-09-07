@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 
 import {
-  Button,
+  IconButton,
   DeleteButton,
 } from '@obsidians/ui-components'
 
@@ -54,7 +54,7 @@ export default class InstanceRow extends PureComponent {
   }
 
   render () {
-    const { data, noDelete } = this.props
+    const { data } = this.props
     const name = data.Name.substr(8)
     const labels = data.Labels
 
@@ -70,12 +70,15 @@ export default class InstanceRow extends PureComponent {
         <td>{this.renderChainBtn(labels.chain)}</td>
         <td>{this.renderBlockNumber(name)}</td>
         <td align='right'>
-        { !noDelete && 
-          <DeleteButton
-            className='hover-show'
-            onConfirm={() => this.deleteInstance(name)}
-          />
-        }
+          <div className='d-flex align-items-center justify-content-end'>
+            <IconButton
+              color='transparent'
+              className='mr-1 text-muted'
+              onClick={() => this.props.onOpenConfig(data)}
+              icon='fas fa-cog'
+            />
+            <DeleteButton onConfirm={() => this.deleteInstance(name)} />
+          </div>
         </td>
       </tr>
     )
