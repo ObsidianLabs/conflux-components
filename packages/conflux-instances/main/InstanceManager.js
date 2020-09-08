@@ -33,9 +33,9 @@ class InstanceManager extends IpcChannel {
 
     const configStr = fs.readFileSync(configPath, 'utf8')
     const config = TOML.parse(configStr)
+    config.mode = 'dev'
     config.chain_id = 0
-    config.mining_author = miner.address.replace('0x', '');
-    config.mining_key = miner.secrect
+    config.mining_author = miner.replace('0x', '')
     config.genesis_secrets = 'genesis_secrets.txt'
 
     fs.writeFileSync(configPath, TOML.stringify(config))

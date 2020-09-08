@@ -3,10 +3,9 @@ import React, { PureComponent } from 'react'
 import {
   Button,
   Modal,
-  FormGroup,
-  Label,
   DebouncedFormGroup,
-  CustomInput,
+  DropdownInput,
+  Badge,
 } from '@obsidians/ui-components'
 
 import keypairManager from '@obsidians/keypair'
@@ -23,7 +22,7 @@ export default class CreateInstanceButton extends PureComponent {
       name: '',
       version: '',
       keypairs: [],
-      addr: '',
+      miner: '',
       creating: false,
     }
 
@@ -36,7 +35,10 @@ export default class CreateInstanceButton extends PureComponent {
 
   refresh = async () => {
     const keypairs = await keypairManager.loadAllKeypairs()
-    this.setState({ keypairs })
+    this.setState({
+      keypairs,
+      miner: keypairs[0] ? keypairs[0].address : '',
+    })
   }
 
   onClickButton = () => {
@@ -57,10 +59,7 @@ export default class CreateInstanceButton extends PureComponent {
       name: this.state.name,
       version: this.state.version,
       chain: this.props.chain,
-      miner: {
-        address: this.state.keypairs[0].address,
-        secrect: genesis_secrets[0],
-      },
+      miner: this.state.miner,
       genesis_secrets,
     })
     this.modal.current.closeModal()
@@ -68,35 +67,27 @@ export default class CreateInstanceButton extends PureComponent {
     this.props.onRefresh()
   }
 
-  renderGenesisInput = () => {
+  renderMinerInput = () => {
     if (this.props.chain !== 'dev') {
       return null
     }
     return (
-      <FormGroup>
-        <Label>Address</Label>
-        <CustomInput
-          type='select'
-          className='form-control'
-          // value={this.state.addr}
-          // onChange={event => this.setState({ addr: event.target.value })}
-        >
-          {this.renderAddrOptions()}
-        </CustomInput>
-      </FormGroup>
+      <DropdownInput
+        label='Miner'
+        options={this.state.keypairs.map(k => ({
+          id: k.address,
+          display: (
+            <div className='w-100 d-flex align-items-center justify-content-between'>
+              <code>{k.address}</code><Badge color='info' style={{ top: 0 }}>{k.name}</Badge>
+            </div>
+          )
+        }))}
+        renderText={option => <div className='w-100 mr-1'>{option.display}</div>}
+        placeholder='(No Conflux keypairs)'
+        value={this.state.miner}
+        onChange={miner => this.setState({ miner })}
+      />
     )
-  }
-
-  renderAddrOptions = () => {
-    if (this.state.loading) {
-      return 'Loading'
-    }
-
-    if (!this.state.keypairs.length) {
-      return <option disabled key='' value=''>(No Conflux keypairs)</option>
-    }
-
-    return this.state.keypairs.map(k => <option key={k.address} value={k.address}>{k.address}</option>)
   }
 
   render () {
@@ -136,6 +127,7 @@ export default class CreateInstanceButton extends PureComponent {
             selected={this.state.version}
             onSelected={version => this.setState({ version })}
           />
+          {this.renderMinerInput()}
         </Modal>
       </React.Fragment>
     )
