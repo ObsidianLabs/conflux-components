@@ -43,7 +43,7 @@ export default class DropdownCard extends Component {
           isOpen={this.state.isOpen}
           style={{ overflowY: 'auto', overflowX: 'hidden', flex, minHeight, maxHeight }}
         >
-          <Card body>
+          <Card body className='py-2'>
             {children}
           </Card>
         </Collapse>

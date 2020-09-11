@@ -203,19 +203,28 @@ export default class ContractActions extends Component {
             fields={selectedAction.inputs}
             Empty={<div className='small'>(None)</div>}
           />
+          {
+            selectedAction.payable ?
+            <FormGroup className='mb-2'>
+              <Label className='mb-1 small font-weight-bold'>CFX to Transfer</Label>
+              <ActionParamInput
+                type='name'
+                placeholder={`Default: 0`}
+                value={this.state.value}
+                onChange={value => this.setState({ value })}
+              >
+                <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-coins' /></a>
+              </ActionParamInput>
+            </FormGroup> : null
+          }
+        </DropdownCard>
+        <DropdownCard
+          isOpen
+          title='Gas'
+          flex='0 1 auto'
+        >
           <FormGroup className='mb-2'>
-            <Label className='mb-1 small font-weight-bold'>Value</Label>
-            <ActionParamInput
-              type='name'
-              placeholder={`CFX to transfer`}
-              value={this.state.value}
-              onChange={value => this.setState({ value })}
-            >
-              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-user' /></a>
-            </ActionParamInput>
-          </FormGroup>
-          <FormGroup className='mb-2'>
-            <Label className='mb-1 small font-weight-bold'>Gas</Label>
+            <Label className='mb-1 small font-weight-bold'>Gas Limit</Label>
             <ActionParamInput
               placeholder={`Default: 1,000,000`}
               value={this.state.gas}
@@ -238,9 +247,6 @@ export default class ContractActions extends Component {
         <DropdownCard
           isOpen
           title='Authorization'
-          // right={
-          //   <Badge color='primary'>0x123</Badge>
-          // }
         >
           <FormGroup className='mb-2'>
             <Label className='mb-1 small font-weight-bold'>Signer</Label>
@@ -258,7 +264,7 @@ export default class ContractActions extends Component {
           isOpen
           title='Result'
           flex='1 2 auto'
-          minHeight='120px'
+          minHeight='80px'
           right={
             this.state.actionError
               ? <Badge color='danger'>Error</Badge>
