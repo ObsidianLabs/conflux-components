@@ -11,7 +11,7 @@ import {
 } from '@obsidians/ui-components'
 
 import DropdownCard from './DropdownCard'
-import ActionForm from './ActionForm'
+import ContractForm from './ContractForm'
 
 export default class ContractTable extends Component {
   state = {
@@ -153,10 +153,10 @@ export default class ContractTable extends Component {
           //   </Badge>
           // }
         >
-          <ActionForm
+          <ContractForm
             ref={form => { this.form = form }}
-            action={selectedAction}
-            fields={selectedAction.inputs}
+            size='sm'
+            {...selectedAction}
             Empty={<div className='small'>(None)</div>}
           />
         </DropdownCard>

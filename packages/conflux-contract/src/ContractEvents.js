@@ -11,9 +11,6 @@ import {
   Card,
 } from '@obsidians/ui-components'
 
-// import DropdownCard from './DropdownCard'
-// import ActionForm, { ActionParamInput } from './ActionForm'
-
 export default class ContractEvents extends Component {
   state = {
     selected: 0,

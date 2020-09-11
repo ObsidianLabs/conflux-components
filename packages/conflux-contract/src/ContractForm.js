@@ -116,13 +116,13 @@ export class ArrayInput extends PureComponent {
   }
 }
 
-export function ActionParamInput ({ type, value, onChange, placeholder, disabled, textarea, unit, children }) {
+export function ActionParamInput ({ size, type, value, onChange, placeholder, disabled, textarea, unit, children }) {
   const props = { value, onChange, disabled, placeholder: placeholder || type }
   
   if (type && type.endsWith('[]')) {
     return (
       <ArrayInput
-        size='sm'
+        size={size}
         addon={children}
         type={type}
         textarea={textarea}
@@ -132,13 +132,13 @@ export function ActionParamInput ({ type, value, onChange, placeholder, disabled
   } else if (textarea) {
     return (
       <div style={{ position: 'relative' }}>
-        <DebouncedInput type='textarea' size='sm' {...props} />
+        <DebouncedInput type='textarea' size={size} {...props} />
         { unit && <Badge style={{ position: 'absolute', right: '5px', bottom: '5px', height: '18px', zIndex: 100 }}>{unit}</Badge> }
       </div>
     )
   } else {
     return (
-      <DebouncedInput size='sm' addon={children} {...props} />
+      <DebouncedInput size={size} addon={children} {...props} />
     )
   }
 }
@@ -163,11 +163,11 @@ function units (type) {
   }
 }
 
-export default class ActionForm extends PureComponent {
+export default class ContractForm extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
-      args: props.fields?.map(({ value }) => value || '')
+      args: props.inputs?.map(({ value }) => value || '') || []
     }
   }
 
@@ -178,53 +178,22 @@ export default class ActionForm extends PureComponent {
   }
 
   componentWillReceiveProps (props) {
-    if (props.action.name !== this.props.action.name) {
-      this.setState({ args: props.fields.map(({ value }) => value || '') })
+    if (props.inputs !== this.props.inputs) {
+      this.setState({ args: props.inputs?.map(({ value }) => value || '') || [] })
     }
   }
 
-  // isTypeNumber = type => type.indexOf('int') > -1
-
   getData = () => {
     const data = {}
-    this.props.fields.forEach(({ name, type }, index) => {
-      // if (type === 'bytes32') {
-      //   data[name] = Utils.stringToByte32(this.state.args[index]).getValue()
-      // } else if (type === 'bytes8') {
-      //   data[name] = Utils.stringToByte8(this.state.args[index]).getValue()
-      // }
+    this.props.inputs.forEach(({ name, type }, index) => {
       data[name] = this.state.args[index]
     })
     return data
   }
 
-  // getParsedData = () => {
-  //   const data = {}
-  //   this.props.fields.forEach(({ name }, index) => {
-  //     const v = this.state.args[index]
-  //     const type = this.props.fields[index].type
-  //     try {
-  //       if (type === 'string') {
-  //         throw new Error()
-  //       }
-  //       const json = JSON.parse(`{"v":${v}}`)
-  //       if (type === 'bool') {
-  //         data[name] = !!json.v
-  //       } else if (typeof json.v === 'number' && !this.isTypeNumber(type)) {
-  //         data[name] = v
-  //       } else {
-  //         data[name] = json.v
-  //       }
-  //     } catch (e) {
-  //       data[name] = v
-  //     }
-  //   })
-  //   return data
-  // }
-
   getValues = () => {
     const values = []
-    this.props.fields.forEach(({ name, type }, index) => {
+    this.props.inputs.forEach(({ name, type }, index) => {
       const value = this.state.args[index]
       if (type && type.endsWith('[]')) {
         values.push(value ? value.map(item => item.value) : [])
@@ -250,35 +219,17 @@ export default class ActionForm extends PureComponent {
     this.setState({ args })
   }
 
-  // setArgs = newArgs => {
-  //   const args = new Array(this.state.args.length)
-  //   for (var i = 0; i < args.length; i++) {
-  //     args[i] = newArgs[i]
-  //   }
-  //   this.setState({ args })
-  // }
-
-  // setData = data => {
-  //   const args = [...this.state.args]
-  //   this.props.fields.forEach(({ name }, index) => {
-  //     if (typeof data[name] !== 'undefined') {
-  //       args[index] = data[name]
-  //     }
-  //   })
-  //   this.setState({ args })
-  // }
-
   renderActionInput = (type, index, disabled) => {
     const value = this.state.args[index]
     // const unit = units(type)
     const onChange = value => this.setArgValue(value, index)
-    const props = { type, value, onChange, disabled }
+    const props = { size: this.props.size, type, value, onChange, disabled }
 
     const icon = paramInputIcons[type]
     if (icon) {
       return (
         <ActionParamInput {...props}>
-          <a className='btn btn-sm btn-secondary w-5' key={icon}><i className={icon} /></a>
+          <span key={icon}><i className={icon} /></span>
         </ActionParamInput>
       )
     }
@@ -290,83 +241,36 @@ export default class ActionForm extends PureComponent {
     } else if (type.endsWith('[]')) {
       return (
         <ActionParamInput {...props}>
-          <a className='btn btn-sm btn-secondary w-5' key={`icon-${index}`}><i className='fas fa-brackets' /></a>
+          <span key={`icon-${index}`}><i className='fas fa-brackets' /></span>
         </ActionParamInput>
       )
     } else if (icon) {
       return (
         <ActionParamInput {...props}>
-          <a className='btn btn-sm btn-secondary w-5' key={`icon-${index}`}><i className={icon} /></a>
+          <span key={`icon-${index}`}><i className={icon} /></span>
         </ActionParamInput>
       )
     }
     return type
-
-      // case 'bool':
-  //       return (
-  //         <ActionParamInput {...props}>
-  //           <a className='btn btn-sm btn-secondary w-5 code px-0' style={{ fontWeight: 600, fontSize: '75%', lineHeight: 1.75 }}>bool</a>
-  //         </ActionParamInput>
-  //       )
-  //     case 'uint8':
-  //     case 'uint16':
-  //     case 'uint32':
-  //     case 'uint64':
-  //     case 'int8':
-  //     case 'int16':
-  //     case 'int32':
-  //     case 'int32?':
-  //     case 'int64':
-  //     case 'int64?':
-  //     case 'uint128':
-  //     case 'uint128?':
-  //       return (
-  //         <ActionParamInput {...props}>
-  //           <a className='btn btn-sm btn-secondary w-5 code px-0' style={{ fontWeight: 600, fontSize: '75%', lineHeight: 1.75 }}>int</a>
-  //         </ActionParamInput>
-  //       )
-  //     case 'symbol':
-  //       return (
-  //         <ActionParamInput {...props}>
-  //           <a className='btn btn-sm btn-secondary w-5 code px-0' style={{ fontWeight: 600, fontSize: '75%', lineHeight: 1.75 }}>SYM</a>
-  //         </ActionParamInput>
-  //       )
-  //     case 'authority':
-  //       return <ActionParamInput textarea {...props} />
-  //     case 'string':
-  //       return <ActionParamInput textarea {...props} />
-  //     case 'time_point_sec':
-  //       return (
-  //         <DateTimePicker
-  //           onChange={datetime => {
-  //             // convert from local to utc
-  //             const utcDateString = datetime.utc().format('YYYY-MM-DDTHH:mm:ss')
-  //             onChange(utcDateString)
-  //           }}
-  //         />
-  //       )
-    //   default:
-        
-    // }
   }
 
   render () {
-    console.debug('[render] ActionForm', this.props)
+    console.debug('[render] ContractForm', this.props)
 
-    const { action = {}, fields = [], Empty, disabled } = this.props
+    const { size, name: methodName, inputs = [], Empty, disabled } = this.props
 
-    if (!fields.length) {
+    if (!inputs.length) {
       return Empty || null
     }
 
     return (
       <div>
-        {fields.map(({ name, type, value }, index) => (
-          <FormGroup key={`${action.name}-${name}-${index}`} className='mb-2'>
+        {inputs.map(({ name, type, value }, index) => (
+          <FormGroup key={`${methodName}-${index}`} className={size === 'sm' && 'mb-2'}>
             {
               name
-              ? <Label className='mb-1 small font-weight-bold'>{name}</Label>
-              : <Label className='mb-1 small'>(None)</Label>
+              ? <Label className={size === 'sm' && 'mb-1 small font-weight-bold'}>{name}</Label>
+              : <Label className={size === 'sm' && 'mb-1 small'}>(None)</Label>
             }
             {this.renderActionInput(type, index, disabled || !!value)}
           </FormGroup>

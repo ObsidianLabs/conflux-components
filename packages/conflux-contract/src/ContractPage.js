@@ -19,76 +19,7 @@ import ContractTable from './ContractTable'
 import ContractEvents from './ContractEvents'
 import AbiStorageModal from './AbiStorage/AbiStorageModal'
 
-const abiSponsor = [
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "name": "add_privilege",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "",
-        "type": "address[]"
-      }
-    ],
-    "name": "remove_privilege",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "contract_addr",
-        "type": "address"
-      }
-    ],
-    "name": "set_sponsor_for_collateral",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "contract_addr",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "upper_bound",
-        "type": "uint256"
-      }
-    ],
-    "name": "set_sponsor_for_gas",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  }
-]
-
 export default class ContractPage extends PureComponent {
-
   constructor (props) {
     super(props)
     this.abiStorageModal = React.createRef()

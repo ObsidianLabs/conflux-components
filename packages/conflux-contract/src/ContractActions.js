@@ -14,12 +14,13 @@ import {
 
 import notification from '@obsidians/notification'
 import { signatureProvider } from '@obsidians/conflux-sdk'
+import { KeypairSelector } from '@obsidians/keypair'
 
 import { Account, util } from 'js-conflux-sdk'
 import Highlight from 'react-highlight'
 
 import DropdownCard from './DropdownCard'
-import ActionForm, { ActionParamInput } from './ActionForm'
+import ContractForm, { ActionParamInput } from './ContractForm'
 
 export default class ContractActions extends Component {
   state = {
@@ -38,10 +39,7 @@ export default class ContractActions extends Component {
   selectAction (index) {
     this.setState({
       selected: index,
-      gas: '',
-      gasPrice: '',
       value: '',
-      signer: '',
       executing: false,
       actionError: '',
       actionResult: '',
@@ -197,10 +195,10 @@ export default class ContractActions extends Component {
           //   </Badge>
           // }
         >
-          <ActionForm
+          <ContractForm
             ref={form => { this.form = form }}
-            action={selectedAction}
-            fields={selectedAction.inputs}
+            size='sm'
+            {...selectedAction}
             Empty={<div className='small'>(None)</div>}
           />
           {
@@ -208,12 +206,13 @@ export default class ContractActions extends Component {
             <FormGroup className='mb-2'>
               <Label className='mb-1 small font-weight-bold'>CFX to Transfer</Label>
               <ActionParamInput
+                size='sm'
                 type='name'
                 placeholder={`Default: 0`}
                 value={this.state.value}
                 onChange={value => this.setState({ value })}
               >
-                <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-coins' /></a>
+                <span><i className='fas fa-coins' /></span>
               </ActionParamInput>
             </FormGroup> : null
           }
@@ -226,39 +225,37 @@ export default class ContractActions extends Component {
           <FormGroup className='mb-2'>
             <Label className='mb-1 small font-weight-bold'>Gas Limit</Label>
             <ActionParamInput
+              size='sm'
               placeholder={`Default: 1,000,000`}
               value={this.state.gas}
               onChange={gas => this.setState({ gas })}
             >
-              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-burn' /></a>
+              <span><i className='fas fa-burn' /></span>
             </ActionParamInput>
           </FormGroup>
           <FormGroup className='mb-2'>
             <Label className='mb-1 small font-weight-bold'>Gas Price</Label>
             <ActionParamInput
+              size='sm'
               placeholder={`Default: 100 drip`}
               value={this.state.gasPrice}
               onChange={gasPrice => this.setState({ gasPrice })}
             >
-              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-dollar-sign' /></a>
+              <span><i className='fas fa-dollar-sign' /></span>
             </ActionParamInput>
           </FormGroup>
         </DropdownCard>
         <DropdownCard
           isOpen
           title='Authorization'
+          overflow
         >
-          <FormGroup className='mb-2'>
-            <Label className='mb-1 small font-weight-bold'>Signer</Label>
-            <ActionParamInput
-              type='name'
-              placeholder={`Address to sign the transaction`}
-              value={this.state.signer}
-              onChange={signer => this.setState({ signer })}
-            >
-              <a className='btn btn-sm btn-secondary w-5'><i className='fas fa-user' /></a>
-            </ActionParamInput>
-          </FormGroup>
+          <KeypairSelector
+            size='sm'
+            label='Signer'
+            value={this.state.signer}
+            onChange={signer => this.setState({ signer })}
+          />
         </DropdownCard>
         <DropdownCard
           isOpen

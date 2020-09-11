@@ -3,10 +3,15 @@ import React, { PureComponent } from 'react'
 import {
   Modal,
   Button,
-  UncontrolledTooltip
+  UncontrolledTooltip,
+  FormGroup,
+  Label,
 } from '@obsidians/ui-components'
 
 import notification from '@obsidians/notification'
+import { KeypairSelector } from '@obsidians/keypair'
+
+import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 
 import Highlight from 'react-highlight'
 
@@ -17,39 +22,54 @@ export default class DeployerButton extends PureComponent {
     super(props)
     this.state = {
       pending: false,
+      constructorAbi: null,
+      gas: '',
+      gasPrice: '',
+      signer: '',
       result: '',
     }
-    this.modal = React.createRef()
+    this.parametersModal = React.createRef()
+    this.resultModal = React.createRef()
+
   }
 
-  onClick = async () => {
+  componentDidMount () {
+    projectManager.deployButton = this
+  }
+
+  onClick = () => {
     if (this.state.pending) {
       return
     }
+    projectManager.deploy()
+  }
 
-    this.setState({ pending: true, result: '' })
-    this.notification = notification.info(`Deploying...`, ``, 0)
+  getDeploymentParameters = (constructorAbi, callback) => {
+    this.parametersModal.current.openModal()
+    this.setState({ constructorAbi })
+    this.callback = callback
+  }
 
+  confirmDeploymentParameters = () => {
+    let params
     try {
-      const result = await projectManager.deploy()
-      this.setState({ result })
-      this.notification.dismiss()
-      notification.success('Deploy Successful')
-      this.modal.current.openModal()
+      params = this.form.getValues()
     } catch (e) {
-      this.notification.dismiss()
-      notification.error('Deploy Failed', e.message)
+      notification.error('Error', e.message)
+      return
     }
-    this.setState({ pending: false })
+    const { signer, gas, gasPrice } = this.state
+    this.callback({ params, signer, gas: gas || 1000000, gasPrice: gasPrice || 100 })
+  }
+
+  openResultModal = result => {
+    this.setState({ result })
+    this.resultModal.current.openModal()
   }
 
   renderDeployResult = () => {
     return (
-      <Highlight
-        language='javascript'
-        className='pre-box pre-wrap break-all small'
-        element='pre'
-      >
+      <Highlight language='javascript' className='pre-box pre-wrap break-all small' element='pre'>
         <code>{JSON.stringify(this.state.result, null, 2)}</code>
       </Highlight>
     )
@@ -60,6 +80,8 @@ export default class DeployerButton extends PureComponent {
     if (this.state.pending) {
       icon = <span key='deploying-icon'><i className='fas fa-spinner fa-spin' /></span>
     }
+
+    const { constructorAbi } = this.state
 
     return (
       <React.Fragment>
@@ -77,7 +99,47 @@ export default class DeployerButton extends PureComponent {
           { this.state.pending ? 'Deploying' : `Deploy`}
         </UncontrolledTooltip>
         <Modal
-          ref={this.modal}
+          ref={this.parametersModal}
+          overflow
+          title='Deployment Parameters'
+          textConfirm='Deploy'
+          onConfirm={this.confirmDeploymentParameters}
+        >
+          <ContractForm
+            ref={form => { this.form = form }}
+            size='sm'
+            {...constructorAbi}
+          />
+          <KeypairSelector
+            label='Signer'
+            value={this.state.signer}
+            onChange={signer => this.setState({ signer })}
+          />
+          <div className='row'>
+            <FormGroup className='col-6'>
+              <Label>Gas Limit</Label>
+              <ActionParamInput
+                placeholder={`Default: 1,000,000`}
+                value={this.state.gas}
+                onChange={gas => this.setState({ gas })}
+              >
+                <span><i className='fas fa-coins' /></span>
+              </ActionParamInput>
+            </FormGroup>
+            <FormGroup className='col-6'>
+              <Label>Gas Price</Label>
+              <ActionParamInput
+                placeholder={`Default: 100 drip`}
+                value={this.state.gasPrice}
+                onChange={gasPrice => this.setState({ gasPrice })}
+              >
+                <span><i className='fas fa-dollar-sign' /></span>
+              </ActionParamInput>
+            </FormGroup>
+          </div>
+        </Modal>
+        <Modal
+          ref={this.resultModal}
           title='Deployment Result'
           textCancel='Close'
         >
