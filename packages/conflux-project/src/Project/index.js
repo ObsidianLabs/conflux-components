@@ -104,7 +104,6 @@ export default class Project extends PureComponent {
   }
 
   makeContextMenu = contextMenu => node => {
-    console.log(node)
     if (node.children || !node.name.endsWith('.json')) {
       return contextMenu
     }
@@ -113,7 +112,6 @@ export default class Project extends PureComponent {
       text: 'Deploy',
       onClick: () => projectManager.deploy(node.path),
     }, null)
-    console.log(cloned)
     return cloned
   }
 
