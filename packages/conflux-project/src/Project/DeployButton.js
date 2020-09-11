@@ -106,11 +106,12 @@ export default class DeployerButton extends PureComponent {
           textConfirm='Deploy'
           onConfirm={this.confirmDeploymentParameters}
         >
-          <Label>Parameters</Label>
+          <Label>Constructor Parameters</Label>
           <ContractForm
             ref={form => { this.form = form }}
             size='sm'
             {...constructorAbi}
+            Empty={<div className='small'>(None)</div>}
           />
           <div className='mb-2' />
           <KeypairSelector
