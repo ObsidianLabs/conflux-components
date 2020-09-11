@@ -64,45 +64,48 @@ class ProjectManager {
     return settings
   }
 
-  async readContractJson () {
-    const settings = await this.checkSettings()
-    if (!settings || !settings.deploy) {
-      throw new Error('Please set the smart contract to deploy in project settings.')
+  async readContractJson (contractPath) {
+    let contractJson
+    if (contractPath) {
+      contractJson = await fileOps.current.readFile(contractPath)
+    } else {
+      const settings = await this.checkSettings()
+      if (!settings || !settings.deploy) {
+        throw new Error('Please set the smart contract to deploy in project settings.')
+      }
+      const { path } = fileOps.current
+      contractPath = path.join(this.projectRoot, settings.deploy)
+      contractJson = await fileOps.current.readFile(contractPath)
     }
-
-    const { path } = fileOps.current
-    const contractJsonPath = path.join(this.projectRoot, settings.deploy)
-    const contractJson = await fileOps.current.readFile(contractJsonPath)
 
     try {
       return JSON.parse(contractJson)
     } catch (e) {
-      throw new Error(`Error in reading <b>${contractJsonPath}</b>. Not a valid JSON file.`)
+      throw new Error(`Error in reading <b>${contractPath}</b>. Not a valid JSON file.`)
     }
   }
 
   getConstructorAbi (contractObj) {
     if (!contractObj.abi) {
-      throw new Error(`Error in reading <b>${contractJsonPath}</b>. Does not have the field abi.`)
+      throw new Error(`Error in reading the ABI. Does not have the field abi.`)
     }
     if (!Array.isArray(contractObj.abi)) {
-      throw new Error(`Error in reading <b>${contractJsonPath}</b>. Field abi is not an array.`)
+      throw new Error(`Error in reading the ABI. Field abi is not an array.`)
     }
     const constructorAbi = contractObj.abi.find(item => item.type === 'constructor')
     if (!constructorAbi) {
-      throw new Error(`Error in reading <b>${contractJsonPath}</b>. No constructor found in abi.`)
+      throw new Error(`Error in reading the ABI. No constructor found.`)
     }
     return constructorAbi
   }
 
-  async deploy (contractObj) {
-    if (!contractObj) {
-      try {
-        contractObj = await this.readContractJson()
-      } catch (e) {
-        notification.error('Error', e.message)
-        return
-      }
+  async deploy (contractPath) {
+    let contractObj
+    try {
+      contractObj = await this.readContractJson(contractPath)
+    } catch (e) {
+      notification.error('Error', e.message)
+      return
     }
 
     let constructorAbi
@@ -113,7 +116,9 @@ class ProjectManager {
       return
     }
 
-    this.deployButton.getDeploymentParameters(constructorAbi, parameters => this.pushDeployment(contractObj, parameters))
+    this.deployButton.getDeploymentParameters(constructorAbi, contractObj.contractName, 
+      parameters => this.pushDeployment(contractObj, parameters)
+    )
   }
 
   async pushDeployment (contractObj, parameters) {

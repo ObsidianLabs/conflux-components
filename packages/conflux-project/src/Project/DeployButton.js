@@ -23,6 +23,7 @@ export default class DeployerButton extends PureComponent {
     this.state = {
       pending: false,
       constructorAbi: null,
+      contractName: '',
       gas: '',
       gasPrice: '',
       signer: '',
@@ -44,9 +45,9 @@ export default class DeployerButton extends PureComponent {
     projectManager.deploy()
   }
 
-  getDeploymentParameters = (constructorAbi, callback) => {
+  getDeploymentParameters = (constructorAbi, contractName, callback) => {
     this.parametersModal.current.openModal()
-    this.setState({ constructorAbi })
+    this.setState({ constructorAbi, contractName })
     this.callback = callback
   }
 
@@ -101,15 +102,17 @@ export default class DeployerButton extends PureComponent {
         <Modal
           ref={this.parametersModal}
           overflow
-          title='Deployment Parameters'
+          title={<span>Deploy Contract <b>{this.state.contractName}</b></span>}
           textConfirm='Deploy'
           onConfirm={this.confirmDeploymentParameters}
         >
+          <Label>Parameters</Label>
           <ContractForm
             ref={form => { this.form = form }}
             size='sm'
             {...constructorAbi}
           />
+          <div className='mb-2' />
           <KeypairSelector
             label='Signer'
             value={this.state.signer}
