@@ -10,6 +10,8 @@ import {
   CustomInput,
   Button,
   DebouncedFormGroup,
+  DropdownInput,
+  Badge,
 } from '@obsidians/ui-components'
 
 import fileOps from '@obsidians/file-ops'
@@ -174,18 +176,30 @@ export default class NewProjectModal extends Component {
           label='Project name'
           onChange={name => this.setState({ name })}
         />
-        <FormGroup>
-          <Label>Template</Label>
-          <CustomInput
-            type='select'
-            id='project-template'
-            value={this.state.template}
-            onChange={event => this.setState({ template: event.target.value })}
-          >
-            <option value='coin'>coin</option>
-            <option value='metacoin'>[Truffle] metacoin</option>
-          </CustomInput>
-        </FormGroup>
+        <DropdownInput
+          label='Template'
+          options={[
+            {
+              group: '',
+              children: [
+                { id: 'coin', display: 'Coin' },
+              ],
+            },
+            {
+              group: 'Conflux Truffle',
+              children: [
+                { id: 'metacoin', display: 'Metacoin' },
+              ],
+            },
+          ]}
+          renderText={option => (
+            <div className='w-100 mr-1 d-flex align-items-center justify-content-between'>
+              <span>{option.display}</span><Badge color='info' style={{ top: 0 }}>{option.group}</Badge>
+            </div>
+          )}
+          value={this.state.template}
+          onChange={template => this.setState({ template })}
+        />
         {this.renderTruffleVersion()}
         <div style={{ display: this.state.creating ? 'block' : 'none'}}>
           <Terminal
