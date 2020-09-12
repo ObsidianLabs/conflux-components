@@ -103,6 +103,20 @@ export default class Project extends PureComponent {
     this.workspace.current.openFile(this.projectSettings.configPath)
   }
 
+  makeContextMenu = contextMenu => node => {
+    console.log(node)
+    if (node.children || !node.name.endsWith('.json')) {
+      return contextMenu
+    }
+    const cloned = [...contextMenu]
+    cloned.splice(5, 0, {
+      text: 'Deploy',
+      onClick: () => projectManager.deploy(node.path),
+    }, null)
+    console.log(cloned)
+    return cloned
+  }
+
   render () {
     const {
       projectRoot,
@@ -132,6 +146,7 @@ export default class Project extends PureComponent {
         initialFile={this.state.initialFile}
         terminal={terminal}
         defaultSize={272}
+        makeContextMenu={this.makeContextMenu}
         Toolbar={(
           <ProjectToolbar
             projectRoot={projectRoot}

@@ -21,7 +21,8 @@ export default class DropdownCard extends Component {
       children,
       flex = 'none',
       minHeight,
-      maxHeight
+      maxHeight,
+      overflow,
     } = this.props
 
     return (
@@ -41,9 +42,9 @@ export default class DropdownCard extends Component {
         </div>
         <Collapse
           isOpen={this.state.isOpen}
-          style={{ overflowY: 'auto', overflowX: 'hidden', flex, minHeight, maxHeight }}
+          style={{ overflowY: overflow ? '' : 'auto', overflowX: overflow ? '' : 'hidden', flex, minHeight, maxHeight }}
         >
-          <Card body>
+          <Card body className='py-2'>
             {children}
           </Card>
         </Collapse>

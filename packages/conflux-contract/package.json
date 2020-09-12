@@ -20,6 +20,7 @@
     "@obsidians/conflux-contract": "^0.1.0",
     "@obsidians/conflux-node": "^0.1.0",
     "@obsidians/conflux-sdk": "^0.1.0",
+    "@obsidians/keypair": "^0.1.0",
     "@obsidians/notification": "^0.1.0",
     "@obsidians/redux": "^0.1.0",
     "@obsidians/ui-components": "^0.1.0"

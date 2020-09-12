@@ -9,12 +9,8 @@ import moment from 'moment'
 class ProjectManager {
   constructor () {
     this.project = null
-    this.modal = null
-    this.button = null
-  }
-  
-  set terminalButton (button) {
-    this.button = button
+    this.terminalButton = null
+    this.deployButton = null
   }
 
   get projectRoot () {
@@ -36,6 +32,20 @@ class ProjectManager {
     }
   }
 
+  async compile () {
+    await this.project.saveAll()
+    this.toggleTerminal(true)
+
+    try {
+      await compilerManager.build()
+    } catch (e) {
+      console.warn(e)
+      return false
+    }
+
+    return true
+  }
+
   async checkSettings () {
     if (!this.project) {
       return
@@ -54,64 +64,93 @@ class ProjectManager {
     return settings
   }
 
-  async compile () {
-    await this.project.saveAll()
-    this.toggleTerminal(true)
+  async readContractJson (contractPath) {
+    let contractJson
+    if (contractPath) {
+      contractJson = await fileOps.current.readFile(contractPath)
+    } else {
+      const settings = await this.checkSettings()
+      if (!settings || !settings.deploy) {
+        throw new Error('Please set the smart contract to deploy in project settings.')
+      }
+      const { path } = fileOps.current
+      contractPath = path.join(this.projectRoot, settings.deploy)
+      contractJson = await fileOps.current.readFile(contractPath)
+    }
 
     try {
-      await compilerManager.build()
+      return JSON.parse(contractJson)
     } catch (e) {
-      console.warn(e)
-      return false
+      throw new Error(`Error in reading <b>${contractPath}</b>. Not a valid JSON file.`)
     }
-
-    return true
   }
 
-  async readContractJson () {
-    const settings = await this.checkSettings()
-    if (!settings || !settings.deploy) {
-      throw new Error('Please set the smart contract to deploy in project settings.')
+  getConstructorAbi (contractObj) {
+    if (!contractObj.abi) {
+      throw new Error(`Error in reading the ABI. Does not have the field abi.`)
     }
+    if (!Array.isArray(contractObj.abi)) {
+      throw new Error(`Error in reading the ABI. Field abi is not an array.`)
+    }
+    const constructorAbi = contractObj.abi.find(item => item.type === 'constructor')
+    if (!constructorAbi) {
+      throw new Error(`Error in reading the ABI. No constructor found.`)
+    }
+    return constructorAbi
+  }
 
-    const { path } = fileOps.current
-    const contractJsonPath = path.join(this.projectRoot, settings.deploy)
-    const contractJson = await fileOps.current.readFile(contractJsonPath)
-
+  async deploy (contractPath) {
     let contractObj
     try {
-      contractObj = JSON.parse(contractJson)
+      contractObj = await this.readContractJson(contractPath)
     } catch (e) {
-      throw new Error(`Error in reading <b>${contractJsonPath}</b>`)
+      notification.error('Error', e.message)
+      return
     }
-    return contractObj
+
+    let constructorAbi
+    try {
+      constructorAbi = await this.getConstructorAbi(contractObj)
+    } catch (e) {
+      notification.error('Error', e.message)
+      return
+    }
+
+    this.deployButton.getDeploymentParameters(constructorAbi, contractObj.contractName, 
+      parameters => this.pushDeployment(contractObj, parameters)
+    )
   }
 
-  async deploy () {
+  async pushDeployment (contractObj, parameters) {
     if (!nodeManager.sdk) {
-      throw new Error('No running node. Please start one first.')
+      notification.error('Error', 'No running node. Please start one first.')
+      return
     }
 
-    if (!this.selectedAccount) {
-      throw new Error('No selected account. Please select one in the <b>Explorer</b> tab.')
+    if (!parameters.signer) {
+      notification.error('Error', 'No signer specified. Please select one to sign the deployment transaction.')
+      return
     }
 
-    const settings = await this.checkSettings()
-    if (!settings || !settings.deploy) {
-      throw new Error('Please set the smart contract to deploy in project settings.')
-    }
-
-    const contractObj = await this.readContractJson()
+    const contractName = contractObj.contractName
+    const deploying = notification.info(`Deploying...`, `Deploying contract <b>${contractName}</b>...`, 0)
+    this.deployButton.setState({ pending: true, result: '' })
 
     let result
     try {
-      result = await nodeManager.sdk.deploy(contractObj, this.selectedAccount)
+      result = await nodeManager.sdk.deploy(contractObj, parameters)
     } catch (e) {
-      throw e
+      deploying.dismiss()
+      notification.error('Deploy Failed', e.message)
+      this.deployButton.setState({ pending: false })
+      return
     }
 
-    const { path } = fileOps.current
-    const contractName = path.parse(settings.main).base
+    deploying.dismiss()
+    this.deployButton.setState({ pending: false })
+    notification.success('Deploy Successful')
+    this.deployButton.openResultModal(result)
+
 
     redux.dispatch('ABI_ADD', {
       name: contractName,
@@ -119,16 +158,14 @@ class ProjectManager {
       abi: JSON.stringify(contractObj.abi),
     })
 
-    const deployResultPath = path.join(this.projectRoot, 'deploys', `${result.network}_${moment().format('YYYYMMDD_HHmmss')}.json`)
+    const deployResultPath = fileOps.current.path.join(this.projectRoot, 'deploys', `${result.network}_${moment().format('YYYYMMDD_HHmmss')}.json`)
     await fileOps.current.ensureFile(deployResultPath)
     await fileOps.current.writeFile(deployResultPath, JSON.stringify(result, null, 2))
-
-    return result
   }
 
   toggleTerminal (terminal) {
-    if (this.button) {
-      this.button.setState({ terminal })
+    if (this.terminalButton) {
+      this.terminalButton.setState({ terminal })
     }
     if (this.project) {
       this.project.toggleTerminal(terminal)

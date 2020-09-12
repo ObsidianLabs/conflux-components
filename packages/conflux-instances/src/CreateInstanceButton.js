@@ -4,11 +4,9 @@ import {
   Button,
   Modal,
   DebouncedFormGroup,
-  DropdownInput,
-  Badge,
 } from '@obsidians/ui-components'
 
-import keypairManager from '@obsidians/keypair'
+import keypairManager, { KeypairSelector } from '@obsidians/keypair'
 import { DockerImageInputSelector } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 
@@ -29,32 +27,21 @@ export default class CreateInstanceButton extends PureComponent {
     this.modal = React.createRef()
   }
 
-  componentDidMount () {
-    this.refresh()
-  }
-
-  refresh = async () => {
-    const keypairs = await keypairManager.loadAllKeypairs()
-    this.setState({
-      keypairs,
-      miner: keypairs[0] ? keypairs[0].address : '',
-    })
-  }
-
   onClickButton = () => {
-    this.refresh()
     this.modal.current.openModal()
   }
 
   onCreateInstance = async () => {
-    if (!this.state.keypairs || !this.state.keypairs.length) {
+    const keypairs = await keypairManager.loadAllKeypairs()
+
+    if (!keypairs || !keypairs.length) {
       notification.error('Failed', 'Please create or import a keypair in the keypair manager first.')
       return
     }
 
     this.setState({ creating: 'Creating...' })
 
-    const genesis_secrets = await Promise.all(this.state.keypairs.map(k => keypairManager.getSigner(k.address)))
+    const genesis_secrets = await Promise.all(keypairs.map(k => keypairManager.getSigner(k.address)))
     await instanceChannel.invoke('create', {
       name: this.state.name,
       version: this.state.version,
@@ -72,18 +59,8 @@ export default class CreateInstanceButton extends PureComponent {
       return null
     }
     return (
-      <DropdownInput
+      <KeypairSelector
         label='Miner'
-        options={this.state.keypairs.map(k => ({
-          id: k.address,
-          display: (
-            <div className='w-100 d-flex align-items-center justify-content-between'>
-              <code>{k.address}</code><Badge color='info' style={{ top: 0 }}>{k.name}</Badge>
-            </div>
-          )
-        }))}
-        renderText={option => <div className='w-100 mr-1'>{option.display}</div>}
-        placeholder='(No Conflux keypairs)'
         value={this.state.miner}
         onChange={miner => this.setState({ miner })}
       />
