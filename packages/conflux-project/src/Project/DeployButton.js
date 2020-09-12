@@ -128,7 +128,7 @@ export default class DeployerButton extends PureComponent {
                 value={this.state.gas}
                 onChange={gas => this.setState({ gas })}
               >
-                <span><i className='fas fa-coins' /></span>
+                <span><i className='fas fa-burn' /></span>
               </ActionParamInput>
             </FormGroup>
             <FormGroup className='col-6'>
