@@ -5,7 +5,7 @@ const { DockerImageChannel } = require('@obsidians/docker')
 
 class CompilerManager {
   constructor () {
-    this.channel = new DockerImageChannel('confluxchain/conflux-truffle', {
+    this.dockerChannel = new DockerImageChannel('confluxchain/conflux-truffle', {
       filter: tag => semverValid(tag),
       sort: (x, y) => semverLt(x, y) ? 1 : -1
     })

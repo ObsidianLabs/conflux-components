@@ -11,7 +11,7 @@ const { DockerImageChannel } = require('@obsidians/docker')
 class InstanceManager extends IpcChannel {
   constructor () {
     super('conflux-node')
-    this.channel = new DockerImageChannel('confluxchain/conflux-rust', {
+    this.dockerChannel = new DockerImageChannel('confluxchain/conflux-rust', {
       filter: tag => semverValid(tag),
       sort: (x, y) => semverLt(x, y) ? 1 : -1
     })
