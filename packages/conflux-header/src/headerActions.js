@@ -1,19 +1,11 @@
+import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import redux from '@obsidians/redux'
 import nodeManager from '@obsidians/conflux-node'
 
 import { List } from 'immutable'
 
-export const networks = List([
-  {
-    id: 'dev',
-    group: 'default',
-    name: 'Development',
-    fullName: 'Development Network',
-    icon: 'fas fa-laptop-code',
-    notification: 'Switched to <b>Development</b> network.',
-    chainId: 0,
-  },
+const networkList = [
   {
     id: 'testnet',
     group: 'testnet',
@@ -36,7 +28,19 @@ export const networks = List([
     chainId: 2,
     explorer: 'https://confluxscan.io/api',
   }
-])
+]
+if (fileOps.fsType === 'electron') {
+  networkList.unshift({
+    id: 'dev',
+    group: 'default',
+    name: 'Development',
+    fullName: 'Development Network',
+    icon: 'fas fa-laptop-code',
+    notification: 'Switched to <b>Development</b> network.',
+    chainId: 0,
+  })
+}
+export const networks = List(networkList)
 
 
 export class HeaderActions {

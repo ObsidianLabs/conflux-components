@@ -19,6 +19,7 @@
   "dependencies": {
     "@obsidians/conflux-node": "^0.1.0",
     "@obsidians/conflux-project": "^0.1.0",
+    "@obsidians/file-ops": "^0.1.0",
     "@obsidians/keypair": "^0.1.0",
     "@obsidians/navbar": "^0.1.0",
     "@obsidians/notification": "^0.1.0",
