@@ -204,7 +204,6 @@ export default class ContractForm extends PureComponent {
         values.push(this.validateValue(name, value, type))
       }
     })
-    console.log(values)
     return values
   }
 
