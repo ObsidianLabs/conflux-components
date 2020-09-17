@@ -145,7 +145,7 @@ export function ActionParamInput ({ size, type, value, onChange, placeholder, di
 
 const paramInputIcons = {
   address: 'fas fa-map-marker-alt',
-  uint256: 'fas fa-hashtag',
+  'address payable': 'fas fa-map-marker-alt',
   name: 'fas fa-user-tag',
   account_name: 'fas fa-user-tag',
   bool: 'fas fa-check',
@@ -195,22 +195,44 @@ export default class ContractForm extends PureComponent {
     const values = []
     this.props.inputs.forEach(({ name, type }, index) => {
       const value = this.state.args[index]
-      if (type && type.endsWith('[]')) {
-        values.push(value ? value.map(item => item.value) : [])
-      } else if (type && type.startsWith('bytes')) {
-        const length = Number(type.substr(5))
-        const bytes = util.format.bytes(value)
-        if (bytes.length > length) {
-          throw new Error(`Byte length overflow for parameter <b>${name}</b>. Expect ${length} but got ${bytes.length}.`)
-        }
-        const arr = new Uint8Array(length)
-        arr.set(bytes)
-        values.push(arr)
-      } else {
+      if (!type) {
         values.push(value)
+      } else if (type.endsWith('[]')) {
+        const itemType = type.replace('[]', '')
+        values.push(value ? value.map((item, i) => this.validateValue(`name[${i}]`, item.value, itemType)) : [])
+      } else {
+        values.push(this.validateValue(name, value, type))
       }
     })
+    console.log(values)
     return values
+  }
+
+  validateValue = (name, value, type) => {
+    if (type.startsWith('bytes') || type === 'byte') {
+      const length = type === 'byte' ? 1 : Number(type.substr(5))
+      const bytes = util.format.bytes(value)
+      if (length && bytes.length > length) {
+        throw new Error(`Byte length overflow for parameter <b>${name}</b>. Expect ${length} but got ${bytes.length}.`)
+      }
+      const arr = new Uint8Array(length)
+      arr.set(bytes)
+      return arr
+    }
+    
+    if (type.startsWith('int') || type.startsWith('uint')) {
+      const number = Number(value)
+      if (Number.isNaN(number)) {
+        throw new Error(`The entered value of <b>${name}</b> is not a number.`)
+      } else if (Math.floor(number) !== number) {
+        throw new Error(`The entered value of <b>${name}</b> is not an integer.`)
+      } else if (type.startsWith('uint') && number < 0) {
+        throw new Error(`The entered value of <b>${name}</b> is not a unsigned integer.`)
+      }
+      return number
+    }
+    
+    return value
   }
 
   setArgValue = (value, index) => {
@@ -224,6 +246,14 @@ export default class ContractForm extends PureComponent {
     // const unit = units(type)
     const onChange = value => this.setArgValue(value, index)
     const props = { size: this.props.size, type, value, onChange, disabled }
+
+    if (type.startsWith('int') || type.startsWith('uint')) {
+      return (
+        <ActionParamInput {...props}>
+          <b>123</b>
+        </ActionParamInput>
+      )
+    }
 
     const icon = paramInputIcons[type]
     if (icon) {
