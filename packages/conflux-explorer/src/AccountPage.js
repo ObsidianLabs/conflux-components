@@ -39,7 +39,7 @@ export default class AccountPage extends PureComponent {
       return
     }
 
-    if (!nodeManager.sdk.isValidAddress(value)) {
+    if (!nodeManager.sdk?.isValidAddress(value)) {
       this.setState({ error: true, account: null })
       return
     }
@@ -58,6 +58,10 @@ export default class AccountPage extends PureComponent {
 
   render () {
     const { error, account } = this.state
+    
+    if (!nodeManager.sdk) {
+      return null
+    }
 
     if (!this.props.value) {
       return (

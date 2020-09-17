@@ -184,6 +184,10 @@ export default class ContractPage extends PureComponent {
   render () {
     const { error, abi, account, errorType } = this.state
 
+    if (!nodeManager.sdk) {
+      return null
+    }
+
     if (!this.props.value) {
       return (
         <Screen>
