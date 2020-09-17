@@ -143,7 +143,7 @@ export default class ContractActions extends Component {
     if (actionError) {
       return (
         <div>
-          <span>{actionError}</span>
+          <span className='user-select'>{actionError}</span>
         </div>
       )
     }
