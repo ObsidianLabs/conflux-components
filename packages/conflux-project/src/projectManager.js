@@ -93,9 +93,6 @@ class ProjectManager {
       throw new Error(`Error in reading the ABI. Field abi is not an array.`)
     }
     const constructorAbi = contractObj.abi.find(item => item.type === 'constructor')
-    if (!constructorAbi) {
-      throw new Error(`Error in reading the ABI. No constructor found.`)
-    }
     return constructorAbi
   }
 
