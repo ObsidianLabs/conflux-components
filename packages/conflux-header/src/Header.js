@@ -38,10 +38,11 @@ export default class Header extends PureComponent {
     ]
 
     const dropdownKeypairs = this.state.keypairs.map(k => ({ id: k.address, name: k.name || <code>{k.address.substr(0, 6)}...{k.address.substr(-4)}</code> }))
-    dropdownKeypairs.unshift({ header: 'keypair manager' })
     if (!dropdownKeypairs.length) {
       dropdownKeypairs.push({ none: true })
     }
+    dropdownKeypairs.unshift({ header: 'keypair manager' })
+   
     const dropdownStarred = starred.map(item => ({ id: item, name: <code>{item.substr(0, 6)}...{item.substr(-4)}</code> }))
     const dropdownStarredInContract = [{ header: 'starred' }, ...dropdownStarred]
     if (dropdownStarred.length) {
