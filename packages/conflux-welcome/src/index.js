@@ -1,2 +1,2 @@
 export { default } from './Welcome'
-export { default as checkDependencies } from './Welcome/checkDependencies'
+export { default as checkDependencies } from './checkDependencies'

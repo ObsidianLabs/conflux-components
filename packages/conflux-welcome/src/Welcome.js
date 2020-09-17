@@ -5,12 +5,11 @@ import {
 } from '@obsidians/ui-components'
 
 import fileOps from '@obsidians/file-ops'
+import { ListItemDocker, ListItemDockerImage } from '@obsidians/docker'
 
 import instance from '@obsidians/conflux-instances'
 import compiler from '@obsidians/conflux-compiler'
 
-import ListItemDocker from './ListItemDocker'
-import DockerImageItem from './DockerImageItem'
 import checkDependencies from './checkDependencies'
 
 export default class Welcome extends PureComponent {
@@ -62,7 +61,7 @@ export default class Welcome extends PureComponent {
                 ref={this.listItemDocker}
                 onStartedDocker={this.refresh}
               />
-              <DockerImageItem
+              <ListItemDockerImage
                 ref={this.listItemNode}
                 channel={instance.node}
                 title='Conflux Node in Docker'
@@ -71,7 +70,7 @@ export default class Welcome extends PureComponent {
                 onInstalled={this.refresh}
                 downloadingTitle='Downloading Conflux'
               />
-              <DockerImageItem
+              <ListItemDockerImage
                 ref={this.listItemCompiler}
                 channel={compiler.channel}
                 title='Conflux Truffle in Docker'
