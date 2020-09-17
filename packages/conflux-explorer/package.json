@@ -21,7 +21,7 @@
     "@obsidians/conflux-sdk": "^0.1.0",
     "@obsidians/keypair": "^0.1.0",
     "@obsidians/notification": "^0.1.0",
-    "@obsidians/ui-components": "^0.1.0"
+    "@obsidians/ui-components": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
