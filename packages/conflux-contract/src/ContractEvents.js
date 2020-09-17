@@ -124,8 +124,15 @@ export default class ContractEvents extends Component {
     return rows.map((item, index) => (
       <tr key={`table-row-${index}`}>
         <td><code><small>{item.epochNumber}</small></code></td>
-        {columns.map(({ name, type }) => {
-          let content = item.params.object[name].toString()
+        {columns.map(({ name, type }, index2) => {
+          let content = ''
+          if (item.params?.object) {
+            content = item.params.object[name]
+          } else if (item.params?.array) {
+            content = item.params.array[index2]
+          }
+          content = content ? content.toString() : ''
+
           if (type === 'address') {
             content = (
               <a href={`#/account/${content}`} className='text-body'>
