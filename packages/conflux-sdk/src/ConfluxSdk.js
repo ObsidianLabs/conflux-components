@@ -44,7 +44,7 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/address/query?address=${address}`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/address/query?address=${address.toLowerCase()}`)
     const json = JSON.parse(result)
     return json.result.account.all
   }
@@ -54,7 +54,7 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return { noExplorer: true }
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address}&page=${page}&pageSize=${size}&txType=all`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address.toLowerCase()}&page=${page}&pageSize=${size}&txType=all`)
     const json = JSON.parse(result)
     return json.result
   }
