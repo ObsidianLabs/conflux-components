@@ -202,7 +202,7 @@ export default class ContractActions extends Component {
             Empty={<div className='small'>(None)</div>}
           />
           {
-            selectedAction.payable ?
+            (selectedAction.payable || selectedAction.stateMutability === 'payable') ?
             <FormGroup className='mb-2'>
               <Label className='mb-1 small font-weight-bold'>CFX to Transfer</Label>
               <ActionParamInput
