@@ -2,10 +2,11 @@ import React, { PureComponent } from 'react'
 
 import {
   TabsWithNavigationBar,
-  Modal,
 } from '@obsidians/ui-components'
 
 import keypairManager from '@obsidians/keypair'
+
+import CacheRoute from 'react-router-cache-route'
 
 import AccountPage from './AccountPage'
 
@@ -40,7 +41,6 @@ export default class Explorer extends PureComponent {
 
     this.tabs = React.createRef()
     this.accountPage = React.createRef()
-    this.modal = React.createRef()
     this.keypairs = {}
   }
 
@@ -65,18 +65,17 @@ export default class Explorer extends PureComponent {
     this.tabs.current && this.tabs.current.openTab(value)
   }
 
-  // showCellModal = cell => {
-  //   this.setState({ cell })
-  //   this.modal.current.openModal()
-  // }
-
   onValue = value => {
     this.setState({ value })
     this.props.onValueChanged && this.props.onValueChanged(value)
   }
 
+  onPageDisplay = page => {
+    this.currentPage = page
+  }
+
   onRefresh = () => {
-    this.accountPage.current.refresh()
+    this.currentPage?.refresh()
   }
 
   getTabText = tab => {
@@ -114,14 +113,19 @@ export default class Explorer extends PureComponent {
             </React.Fragment>
           )}
         >
-          <AccountPage ref={this.accountPage} value={value} />
+          <CacheRoute
+            path={`/account/:name`}
+            multiple={5}
+            className='h-100'
+            render={props => (
+              <AccountPage
+                cacheLifecycles={props.cacheLifecycles}
+                onDisplay={this.onPageDisplay}
+                value={props.match.params.name}
+              />
+            )}
+          />
         </TabsWithNavigationBar>
-
-        <Modal
-          ref={this.modal}
-          title='Cell Detail'
-        >
-        </Modal>
       </React.Fragment>
     )
   }

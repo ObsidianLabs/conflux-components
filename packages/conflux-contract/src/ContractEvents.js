@@ -121,6 +121,7 @@ export default class ContractEvents extends Component {
     if (!rows.length) {
       return <tr><td align='middle' colSpan={columns.length + 1}>(no data)</td></tr>
     }
+    console.log(JSON.stringify(rows, null, 2))
     return rows.map((item, index) => (
       <tr key={`table-row-${index}`}>
         <td><code><small>{item.epochNumber}</small></code></td>

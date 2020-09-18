@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react'
 
 import {
   Screen,
+  LoadingScreen,
 } from '@obsidians/ui-components'
 
 import nodeManager from '@obsidians/conflux-node'
@@ -14,14 +15,17 @@ export default class AccountPage extends PureComponent {
   state = {
     error: null,
     account: null,
+    loading: true,
   }
 
   constructor (props) {
     super(props)
     this.accountTransactions = React.createRef()
+    props.cacheLifecycles.didRecover(this.componentDidRecover)
   }
 
   componentDidMount () {
+    this.props.onDisplay(this)
     this.refresh()
   }
 
@@ -31,16 +35,24 @@ export default class AccountPage extends PureComponent {
     }
   }
 
+  componentDidRecover = () => {
+    this.props.onDisplay(this)
+  }
+
   refresh = async () => {
+    this.setState({ loading: true })
+
+    await new Promise(resolve => setTimeout(resolve, 10))
+
     const value = this.props.value
 
     if (!value) {
-      this.setState({ error: null, account: null })
+      this.setState({ loading: false, error: null, account: null })
       return
     }
 
     if (!nodeManager.sdk?.isValidAddress(value)) {
-      this.setState({ error: true, account: null })
+      this.setState({ loading: false, error: true, account: null })
       return
     }
 
@@ -48,10 +60,10 @@ export default class AccountPage extends PureComponent {
     try {
       account = await nodeManager.sdk.accountFrom(value)
       account.count = await nodeManager.sdk.getTransactionsCount(value)
-      this.setState({ error: null, account })
+      this.setState({ loading: false, error: null, account })
       this.forceUpdate()
     } catch (e) {
-      this.setState({ error: e.message, account: null })
+      this.setState({ loading: false, error: e.message, account: null })
       return
     }
   }
@@ -70,6 +82,10 @@ export default class AccountPage extends PureComponent {
           <p className='lead'>Please enter an Conflux address.</p>
         </Screen>
       )
+    }
+
+    if (this.state.loading) {
+      return <LoadingScreen />
     }
 
     if (error) {

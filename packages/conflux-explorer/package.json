@@ -42,9 +42,10 @@
     "rollup-plugin-postcss": "^2.3.0"
   },
   "peerDependencies": {
+    "js-conflux-sdk": "^0.13.4",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "js-conflux-sdk": "^0.10.1"
+    "react-router-cache-route": "^1.8.4"
   },
   "eslintConfig": {
     "extends": "react-app"

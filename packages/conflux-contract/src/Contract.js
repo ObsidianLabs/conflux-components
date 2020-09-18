@@ -2,8 +2,9 @@ import React, { PureComponent } from 'react'
 
 import {
   TabsWithNavigationBar,
-  Modal,
 } from '@obsidians/ui-components'
+
+import CacheRoute from 'react-router-cache-route'
 
 import ContractPage from './ContractPage'
 
@@ -37,8 +38,6 @@ export default class Contract extends PureComponent {
     }
 
     this.tabs = React.createRef()
-    this.page = React.createRef()
-    this.modal = React.createRef()
   }
 
   componentDidMount () {
@@ -55,18 +54,17 @@ export default class Contract extends PureComponent {
     this.tabs.current && this.tabs.current.openTab(value)
   }
 
-  // showCellModal = cell => {
-  //   this.setState({ cell })
-  //   this.modal.current.openModal()
-  // }
-
   onValue = value => {
     this.setState({ value })
     this.props.onValueChanged && this.props.onValueChanged(value)
   }
 
+  onPageDisplay = page => {
+    this.currentPage = page
+  }
+
   onRefresh = () => {
-    this.page.current.refresh()
+    this.currentPage?.refresh()
   }
 
   getTabText = tab => {
@@ -97,14 +95,19 @@ export default class Contract extends PureComponent {
           onRefresh={this.onRefresh}
           onTabsUpdated={this.props.onTabsUpdated}
         >
-          <ContractPage ref={this.page} value={value} />
+          <CacheRoute
+            path={`/contract/:name`}
+            multiple={5}
+            className='h-100'
+            render={props => (
+              <ContractPage
+                cacheLifecycles={props.cacheLifecycles}
+                onDisplay={this.onPageDisplay}
+                value={props.match.params.name}
+              />
+            )}
+          />
         </TabsWithNavigationBar>
-
-        <Modal
-          ref={this.modal}
-          title='Cell Detail'
-        >
-        </Modal>
       </React.Fragment>
     )
   }

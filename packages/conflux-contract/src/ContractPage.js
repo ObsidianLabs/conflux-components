@@ -33,9 +33,11 @@ export default class ContractPage extends PureComponent {
       account: null,
       loading: true,
     }
+    props.cacheLifecycles.didRecover(this.componentDidRecover)
   }
 
   componentDidMount () {
+    this.props.onDisplay(this)
     this.refresh()
   }
 
@@ -45,8 +47,14 @@ export default class ContractPage extends PureComponent {
     }
   }
 
+  componentDidRecover = () => {
+    this.props.onDisplay(this)
+  }
+
   refresh = async () => {
     this.setState({ loading: true, error: null, abi: null, abis: [], selectedAbi: null, account: null, errorType: null })
+
+    await new Promise(resolve => setTimeout(resolve, 10))
 
     const value = this.props.value
 
@@ -245,7 +253,7 @@ export default class ContractPage extends PureComponent {
     const views = functions.filter(item => item.stateMutability === 'view')
 
     return (
-      <div className='d-flex p-relative h-100'>
+      <div className='d-flex p-relative h-100 w-100'>
         <SplitPane
           split='vertical'
           defaultSize={320}
