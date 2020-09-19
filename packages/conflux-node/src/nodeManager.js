@@ -38,10 +38,6 @@ class NodeManager {
       return
     }
 
-    if (chain === 'oceanus-mining') {
-      return this.startOceanusMiner()
-    }
-
     const startDocker = this.generateCommands({ name, version })
     await this._terminal.exec(startDocker, { resolveOnFirstLog: true })
     return {
@@ -132,9 +128,7 @@ class NodeManager {
   }
 
   async stop ({ name, version, chain }) {
-    if (chain === 'oceanus-mining') {
-      this._minerTerminal && await this._minerTerminal.stop()
-    } else if (this._terminal) {
+    if (this._terminal) {
       const n = notification.info('Stopping Conflux Node...', '', 0)
       await this._terminal.execAsChildProcess(`docker stop conflux-${name}-${version}`)
       n.dismiss()

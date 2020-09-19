@@ -91,6 +91,6 @@ export default class NavGuard {
   updateSelectedAccount (pathname) {
     const [_, account] = this.parsePathname(pathname)
     const { network } = redux.getState()
-    // redux.dispatch('SELECT_CONTRACT', { network, contract })
+    redux.dispatch('SELECT_ACCOUNT', { network, account })
   }
 }

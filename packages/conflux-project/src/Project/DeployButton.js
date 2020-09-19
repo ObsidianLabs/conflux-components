@@ -14,6 +14,7 @@ import { KeypairSelector } from '@obsidians/keypair'
 import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 
 import Highlight from 'react-highlight'
+import { Link } from 'react-router-dom'
 
 import projectManager from '../projectManager'
 
@@ -158,7 +159,7 @@ export default class DeployerButton extends PureComponent {
           title='Deployment Result'
           textCancel='Close'
         >
-          Open the deployed <a href={`#/contract/${this.state.result.contractCreated}`}>contract</a>
+          Open the deployed <Link to={`/contract/${this.state.result.contractCreated}`}>contract</Link>
           {this.renderDeployResult()}
         </Modal>
       </React.Fragment>

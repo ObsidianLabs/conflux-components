@@ -7,6 +7,9 @@ import {
   TableCardRow,
 } from '@obsidians/ui-components'
 
+import { util } from 'js-conflux-sdk'
+import { Link } from 'react-router-dom'
+
 export default class TransactionModal extends PureComponent {
   constructor (props) {
     super(props)
@@ -32,7 +35,7 @@ export default class TransactionModal extends PureComponent {
           <TableCardRow
             name='Hash'
             icon='fas fa-hashtag'
-            badge={txHash}
+            badge={<code>{txHash}</code>}
           />
           <TableCardRow
             name='Status'
@@ -43,7 +46,15 @@ export default class TransactionModal extends PureComponent {
           <TableCardRow
             name='Contract'
             icon='fas fa-file-invoice'
-            badge={contractAddress}
+            badge={(
+              <Link
+                to={`/contract/${contractAddress}`}
+                className='text-body'
+                onClick={() => this.modal.current.closeModal()}
+              >
+                <code>{contractAddress}</code>
+              </Link>
+            )}
           />
           <TableCardRow
             name='Function'
@@ -53,12 +64,20 @@ export default class TransactionModal extends PureComponent {
           <TableCardRow
             name='CFX Transfered'
             icon='fas fa-coins'
-            badge={value}
+            badge={util.unit.fromDripToCFX(value || 0)}
           />
           <TableCardRow
             name='Signer'
             icon='fas fa-key'
-            badge={signer}
+            badge={(
+              <Link
+                to={`/account/${signer}`}
+                className='text-body'
+                onClick={() => this.modal.current.closeModal()}
+              >
+                <code>{signer}</code>
+              </Link>
+            )}
           />
         </Table>
       )

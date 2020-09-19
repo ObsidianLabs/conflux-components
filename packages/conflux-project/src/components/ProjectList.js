@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import { Link } from 'react-router-dom'
 
 import ProjectPath from './ProjectPath'
 
@@ -11,9 +12,9 @@ export default class ProjectList extends PureComponent {
         <td className='flex-column'>
           <div>
             <div className='mb-1 flex-row-center'>
-              <a href={`#${url}`} className='text-white'>
+              <Link to={url} className='text-white'>
                 <h5 className='mb-0'>{name}</h5>
-              </a>
+              </Link>
             </div>
 
             <div className='mt-2'>

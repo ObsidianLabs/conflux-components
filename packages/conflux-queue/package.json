@@ -42,8 +42,10 @@
   },
   "peerDependencies": {
     "immutable": "^4.0.0-rc.12",
+    "js-conflux-sdk": "^0.13.4",
     "react": "^16.0.0",
-    "react-dom": "^16.0.0"
+    "react-dom": "^16.0.0",
+    "react-router-dom": "^5.1.2"
   },
   "eslintConfig": {
     "extends": "react-app"

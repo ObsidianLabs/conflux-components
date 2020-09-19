@@ -108,15 +108,13 @@ export default class Explorer extends PureComponent {
           onRefresh={this.onRefresh}
           onTabsUpdated={this.props.onTabsUpdated}
           NavbarButtons={(
-            <React.Fragment>
-              { this.props.network !== 'dev' && <FaucetButton address={value} network={this.props.network} /> }
-            </React.Fragment>
+            this.props.network === 'testnet' && <FaucetButton address={value} network={this.props.network} />
           )}
         >
           <CacheRoute
             path={`/account/:name`}
             multiple={5}
-            className='h-100'
+            className='h-100 overflow-auto'
             render={props => (
               <AccountPage
                 cacheLifecycles={props.cacheLifecycles}

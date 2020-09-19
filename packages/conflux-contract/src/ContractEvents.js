@@ -7,9 +7,10 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  Button,
   Card,
 } from '@obsidians/ui-components'
+
+import { Link } from 'react-router-dom'
 
 export default class ContractEvents extends Component {
   state = {
@@ -121,7 +122,6 @@ export default class ContractEvents extends Component {
     if (!rows.length) {
       return <tr><td align='middle' colSpan={columns.length + 1}>(no data)</td></tr>
     }
-    console.log(JSON.stringify(rows, null, 2))
     return rows.map((item, index) => (
       <tr key={`table-row-${index}`}>
         <td><code><small>{item.epochNumber}</small></code></td>
@@ -136,9 +136,9 @@ export default class ContractEvents extends Component {
 
           if (type === 'address') {
             content = (
-              <a href={`#/account/${content}`} className='text-body'>
+              <Link to={`/account/${content}`} className='text-body'>
                 {content}
-              </a>
+              </Link>
             )
           }
           return (

@@ -51,7 +51,7 @@ export default class QueueButton extends PureComponent {
       </DropdownItem>
     ))
     if (pendingItems.length) {
-      pendingItems.push(<DropdownItem divider />)
+      pendingItems.push(<DropdownItem divider key='divider-pending' />)
       pendingItems.unshift(
         <DropdownItem header key='header-pending'>
           <i className='fas fa-spin fa-spinner mr-1' />Pending
@@ -65,7 +65,7 @@ export default class QueueButton extends PureComponent {
       </DropdownItem>
     )).slice(0, 15)
     if (!txsItems.length) {
-      txsItems.push(<DropdownItem disabled>(None)</DropdownItem>)
+      txsItems.push(<DropdownItem disabled key='disable' >(None)</DropdownItem>)
     }
     // txsItems.push(<DropdownItem divider />)
     txsItems.unshift(
