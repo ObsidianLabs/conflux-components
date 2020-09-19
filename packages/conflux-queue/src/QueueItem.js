@@ -34,7 +34,7 @@ export default ({ data, status, ts }) => {
           {moment.unix(ts).format('MM/DD HH:mm:ss')}
         </span>
       </div>
-      <div className='small text-muted'>{data.contractAddress}</div>
+      <div className='small text-muted'><code>{data.contractAddress}</code></div>
     </div>
   )
 }
