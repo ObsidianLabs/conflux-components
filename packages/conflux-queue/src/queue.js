@@ -27,55 +27,70 @@ class Queue {
       this.pending[index].status = status
       this.pending[index].ts = moment().unix()
       this.pending[index].data = { ...this.pending[index].data, ...extraData }
+      this.button.forceUpdate()
+
+      if (status === 'EXECUTED' && this.pending[index].modalWhenExecuted) {
+        this.button.openTransaction(this.pending[index])
+      }
+
+      return this.pending[index].data
     } else {
-      const deleted = this.pending.splice(index, 1)[0]
-      deleted.status = status
-      deleted.ts = moment().unix()
-      deleted.data = { ...deleted.data, ...extraData }
+      const confirmed = this.pending.splice(index, 1)[0]
+      confirmed.status = status
+      confirmed.ts = moment().unix()
+      confirmed.data = { ...confirmed.data, ...extraData }
 
       const { network } = redux.getState()
-      redux.dispatch('ADD_TRANSACTION', { network, tx: deleted })
+      redux.dispatch('ADD_TRANSACTION', { network, tx: confirmed })
+      this.button.forceUpdate()
+      return confirmed.data
     }
-    this.button.forceUpdate()
   }
 
-  async process (pendingTransaction, data) {
+  async process (pendingTransaction, data, callbacks) {
     this.addToQueue({
       id: data.txHash,
       status: 'PUSHING',
       ts: moment().unix(),
+      modalWhenExecuted: data.modalWhenExecuted,
       data,
     })
 
+    let updatedData
+
     const tx = await pendingTransaction.mined()
-    notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
-    this.updateStatus(data.txHash, 'MINED', { tx })
+    // notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
+    updatedData = this.updateStatus(data.txHash, 'MINED', { tx })
+    callbacks.mined && callbacks.mined(updatedData)
 
     const receipt = await pendingTransaction.executed()
     if (receipt.outcomeStatus) {
       notification.error('Transaction Execution Failed', `Outcome status ${receipt.outcomeStatus}`)
-      this.updateStatus(data.txHash, 'FAILED', { receipt })
+      updatedData = this.updateStatus(data.txHash, 'FAILED', { receipt })
+      callbacks.failed && callbacks.failed(new Error(`Execution failed. Outcome status ${receipt.outcomeStatus}`))
       return
     } else {
       const gasUsed = receipt.gasUsed.toString()
       const gasFee = receipt.gasFee.toString()
       notification.info('Transaction Executed', `Gas used ${gasUsed}, gas fee ${gasFee}`)
     }
-    this.updateStatus(data.txHash, 'EXECUTED', { receipt })
+    updatedData = this.updateStatus(data.txHash, 'EXECUTED', { receipt })
+    callbacks.executed && callbacks.executed(updatedData)
 
     await pendingTransaction.confirmed()
     notification.success('Transaction Confirmed', '')
-    this.updateStatus(data.txHash, '', { receipt })
+    updatedData = this.updateStatus(data.txHash, '', { receipt })
+    callbacks.confirmed && callbacks.confirmed(updatedData)
   }
 
-  async add (sender, data) {
+  async add (sender, data, callbacks = {}) {
     const pendingTransaction = sender()
 
     const txHash = await pendingTransaction
     notification.info(`Processing Transaction...`, `Hash: ${txHash}`)
     data.txHash = txHash
     
-    this.process(pendingTransaction, data)
+    this.process(pendingTransaction, data, callbacks)
   }
 }
 

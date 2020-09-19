@@ -42,11 +42,7 @@ export default class QueueButton extends PureComponent {
     }
 
     const pendingItems = queue.pending.map((item, index) => (
-      <DropdownItem
-        key={`pending-${index}`}
-        className='d-flex align-items-center'
-        onClick={() => this.openTransaction(item)}
-      >
+      <DropdownItem key={`pending-${index}`} onClick={() => this.openTransaction(item)}>
         <QueueItem {...item} />
       </DropdownItem>
     ))

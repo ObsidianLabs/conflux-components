@@ -3,6 +3,9 @@ import notification from '@obsidians/notification'
 import redux from '@obsidians/redux'
 import nodeManager from '@obsidians/conflux-node'
 import compilerManager from '@obsidians/conflux-compiler'
+import { signatureProvider } from '@obsidians/conflux-sdk'
+import queue from '@obsidians/conflux-queue'
+import { Account, util } from 'js-conflux-sdk'
 
 import moment from 'moment'
 
@@ -133,9 +136,43 @@ class ProjectManager {
     const deploying = notification.info(`Deploying...`, `Deploying contract <b>${contractName}</b>...`, 0)
     this.deployButton.setState({ pending: true, result: '' })
 
+    const networkId = nodeManager.sdk.networkId
+    const signer = new Account(parameters.signer, signatureProvider)
+    const contractInstance = nodeManager.sdk.contractFrom(contractObj)
+    const { params, gas, gasPrice } = parameters
+    const codeHash = util.sign.sha3(Buffer.from(contractObj.deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
+
     let result
     try {
-      result = await nodeManager.sdk.deploy(contractObj, parameters)
+      result = await new Promise((resolve, reject) => {
+        queue.add(
+          () => contractInstance.constructor
+            .call(...params)
+            .sendTransaction({ from: signer, gas, gasPrice }),
+          {
+            name: 'Deploy',
+            contractName,
+            signer: signer.address,
+            abi: contractObj.abi,
+            params, gas, gasPrice,
+            modalWhenExecuted: true,
+          },
+          {
+            executed: ({ tx, receipt, abi }) => {
+              resolve({
+                network: networkId,
+                contractCreated: receipt.contractCreated,
+                codeHash: `0x${codeHash}`,
+                ...parameters,
+                tx,
+                receipt,
+                abi,
+              })
+            },
+            failed: reject,
+          }
+        ).catch(reject)
+      })
     } catch (e) {
       deploying.dismiss()
       notification.error('Deploy Failed', e.message)
@@ -146,8 +183,7 @@ class ProjectManager {
     deploying.dismiss()
     this.deployButton.setState({ pending: false })
     notification.success('Deploy Successful')
-    this.deployButton.openResultModal(result)
-
+    this.deployButton.closeParametersModal()
 
     redux.dispatch('ABI_ADD', {
       name: contractName,

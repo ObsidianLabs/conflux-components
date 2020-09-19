@@ -4,9 +4,6 @@ import fileOps from '@obsidians/file-ops'
 import { modelSessionManager } from '@obsidians/code-editor'
 
 import {
-  FormGroup,
-  Label,
-  CustomInput,
   DebouncedFormGroup,
 } from '@obsidians/ui-components'
 

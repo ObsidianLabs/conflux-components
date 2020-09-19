@@ -70,11 +70,10 @@ export default class ContractActions extends Component {
     const signer = new Account(this.state.signer, signatureProvider)
     
     let result = {}
+    const value = util.unit.fromCFXToDrip(this.state.value || 0)
+    const gas = this.state.gas || 1000000
+    const gasPrice = this.state.gasPrice || 100
     try {
-      const value = util.unit.fromCFXToDrip(this.state.value || 0)
-      const gas = this.state.gas || 1000000
-      const gasPrice = this.state.gasPrice || 100
-
       await queue.add(
         () => this.props.contract[actionName]
           .call(...params)
@@ -82,6 +81,7 @@ export default class ContractActions extends Component {
         {
           contractAddress: this.props.contract.address,
           name: actionName,
+          functionName: actionName,
           signer: signer.address,
           params, value, gas, gasPrice,
         }

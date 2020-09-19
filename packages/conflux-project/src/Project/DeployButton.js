@@ -63,13 +63,18 @@ export default class DeployerButton extends PureComponent {
       }
     }
     const { signer, gas, gasPrice } = this.state
-    this.callback({ params, signer, gas: gas || 1000000, gasPrice: gasPrice || 100 })
+    this.callback({
+      params: params || [],
+      signer,
+      gas: gas || 1000000,
+      gasPrice: gasPrice || 100
+    })
   }
 
-  openResultModal = result => {
-    this.setState({ result })
+  closeParametersModal = result => {
+    // this.setState({ result })
     this.parametersModal.current.closeModal()
-    this.resultModal.current.openModal()
+    // this.resultModal.current.openModal()
   }
 
   renderDeployResult = () => {

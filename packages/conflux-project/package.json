@@ -21,6 +21,7 @@
     "@obsidians/conflux-compiler": "^0.1.0",
     "@obsidians/conflux-contract": "^0.1.0",
     "@obsidians/conflux-node": "^0.1.0",
+    "@obsidians/conflux-queue": "^0.1.0",
     "@obsidians/docker": "^0.1.0",
     "@obsidians/file-ops": "^0.1.0",
     "@obsidians/ipc": "^0.1.2",
@@ -52,6 +53,7 @@
   },
   "peerDependencies": {
     "immutable": "^4.0.0-rc.12",
+    "js-conflux-sdk": "^0.13.4",
     "moment": "^2.24.0",
     "monaco-ace-tokenizer": "^0.2.0",
     "monaco-editor": "^0.20.0",

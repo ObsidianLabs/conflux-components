@@ -7,7 +7,6 @@ import {
   InputGroup,
   InputGroupAddon,
   Input,
-  CustomInput,
   Button,
   DebouncedFormGroup,
   DropdownInput,

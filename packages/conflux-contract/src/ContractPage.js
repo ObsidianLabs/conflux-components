@@ -246,7 +246,7 @@ export default class ContractPage extends PureComponent {
       )
     }
 
-    const contractInstance = nodeManager.sdk.contractFrom(abi, this.props.value)
+    const contractInstance = nodeManager.sdk.contractFrom({ abi, address: this.props.value })
     const functions = abi.filter(item => item.type === 'function')
     const events = abi.filter(item => item.type === 'event')
     const actions = functions.filter(item => item.stateMutability !== 'view')
