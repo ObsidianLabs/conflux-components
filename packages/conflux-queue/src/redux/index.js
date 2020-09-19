@@ -8,7 +8,7 @@ export default {
   actions: {
     ADD_TRANSACTION: {
       reducer: (state, { payload }) => state.updateIn([payload.network, 'txs'], (txs = List()) => {
-        return txs.push(Immutable.fromJS(payload.tx))
+        return txs.unshift(Immutable.fromJS(payload.tx))
       })
     },
   }

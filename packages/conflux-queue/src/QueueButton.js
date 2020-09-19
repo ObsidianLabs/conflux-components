@@ -63,7 +63,7 @@ export default class QueueButton extends PureComponent {
       <DropdownItem key={`tx-${index}`} onClick={() => this.openTransaction(item)}>
         <QueueItem {...item} />
       </DropdownItem>
-    ))
+    )).slice(0, 15)
     if (!txsItems.length) {
       txsItems.push(<DropdownItem disabled>(None)</DropdownItem>)
     }

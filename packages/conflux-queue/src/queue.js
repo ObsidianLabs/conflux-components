@@ -13,7 +13,7 @@ class Queue {
   }
 
   addToQueue (item) {
-    this.pending.push(item)
+    this.pending.unshift(item)
     this.button.forceUpdate()
   }
 
@@ -47,50 +47,33 @@ class Queue {
       data,
     })
 
-    try {
-      await delay(5000)
+    const tx = await pendingTransaction.mined()
+    notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
+    this.updateStatus(data.txHash, 'MINED', { tx })
 
-      const tx = await pendingTransaction.mined()
-      notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
-      this.updateStatus(data.txHash, 'MINED', { tx })
-
-      await delay(5000)
-
-      const receipt = await pendingTransaction.executed()
-      if (receipt.outcomeStatus) {
-        notification.error('Transaction Execution Failed', `Outcome status ${receipt.outcomeStatus}`)
-        this.updateStatus(data.txHash, 'FAILED', { receipt })
-        return
-      } else {
-        const gasUsed = receipt.gasUsed.toString()
-        const gasFee = receipt.gasFee.toString()
-        notification.info('Transaction Executed', `Gas used ${gasUsed}, gas fee ${gasFee}`)
-      }
-      this.updateStatus(data.txHash, 'EXECUTED', { receipt })
-
-      await delay(5000)
-
-      await pendingTransaction.confirmed()
-      notification.success('Transaction Confirmed', '')
-      this.updateStatus(data.txHash, '', { receipt })
-    } catch (e) {
-      console.warn(e)
-      notification.error('Error', e.message)
-      throw e
+    const receipt = await pendingTransaction.executed()
+    if (receipt.outcomeStatus) {
+      notification.error('Transaction Execution Failed', `Outcome status ${receipt.outcomeStatus}`)
+      this.updateStatus(data.txHash, 'FAILED', { receipt })
+      return
+    } else {
+      const gasUsed = receipt.gasUsed.toString()
+      const gasFee = receipt.gasFee.toString()
+      notification.info('Transaction Executed', `Gas used ${gasUsed}, gas fee ${gasFee}`)
     }
+    this.updateStatus(data.txHash, 'EXECUTED', { receipt })
+
+    await pendingTransaction.confirmed()
+    notification.success('Transaction Confirmed', '')
+    this.updateStatus(data.txHash, '', { receipt })
   }
 
   async add (sender, data) {
     const pendingTransaction = sender()
-    try {
-      const txHash = await pendingTransaction
-      notification.info(`Processing Transaction...`, `Hash: ${txHash}`)
-      data.txHash = txHash
-    } catch (e) {
-      console.warn(e)
-      notification.error('Error', e.message)
-      throw e
-    }
+
+    const txHash = await pendingTransaction
+    notification.info(`Processing Transaction...`, `Hash: ${txHash}`)
+    data.txHash = txHash
     
     this.process(pendingTransaction, data)
   }
