@@ -1,10 +1,11 @@
 import React from 'react'
 import CacheRoute from 'react-router-cache-route'
 
-import { DockerImageSelector } from '@obsidians/docker'
 import { KeypairButton } from '@obsidians/keypair'
-import { TerminalButton } from '@obsidians/conflux-project'
+import { QueueButton } from '@obsidians/conflux-queue'
 import { AbiStorage } from '@obsidians/conflux-contract'
+import { DockerImageSelector } from '@obsidians/docker'
+import { TerminalButton } from '@obsidians/conflux-project'
 import compilerManager from '@obsidians/conflux-compiler'
 
 export default function BottomBar (props) {
@@ -15,8 +16,9 @@ export default function BottomBar (props) {
           <i className='fas fa-key' />
         </div>
       </KeypairButton>
+      <QueueButton txs={props.txs} />
       <AbiStorage>
-        <div className='btn btn-default btn-sm btn-flat'>
+        <div className='btn btn-default btn-sm btn-flat text-muted'>
           <i className='fas fa-list mr-1' />
           ABI Storage
         </div>
@@ -27,6 +29,7 @@ export default function BottomBar (props) {
         render={() => (
           <DockerImageSelector
             channel={compilerManager.channel}
+            size='sm'
             icon='fas fa-hammer'
             title='Conflux Truffle'
             noneName='Conflux Truffle'

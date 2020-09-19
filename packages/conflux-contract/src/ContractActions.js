@@ -7,7 +7,6 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
-  Badge,
   FormGroup,
   Label,
 } from '@obsidians/ui-components'
@@ -15,6 +14,7 @@ import {
 import notification from '@obsidians/notification'
 import { signatureProvider } from '@obsidians/conflux-sdk'
 import { KeypairSelector } from '@obsidians/keypair'
+import queue from '@obsidians/conflux-queue'
 
 import { Account, util } from 'js-conflux-sdk'
 import Highlight from 'react-highlight'
@@ -56,46 +56,42 @@ export default class ContractActions extends Component {
       return
     }
 
-    let values
+    let params
     try {
-      values = this.form.getValues()
+      params = this.form.getValues()
     } catch (e) {
       notification.error('Error', e.message)
       return
     }
 
     this.setState({ executing: true, actionError: '', actionResult: '' })
-    this.notification = notification.info(`Waiting`, `Waiting for transaction confirmation...`, 0)
+    // this.notification = notification.info(`Waiting`, `Waiting for transaction confirmation...`, 0)
 
     const signer = new Account(this.state.signer, signatureProvider)
     
-    let result
+    let result = {}
     try {
-      result = await this.props.contract[actionName]
-        .call(...values)
-        .sendTransaction({
-          from: signer,
-          value: util.unit.fromCFXToDrip(this.state.value || 0),
-          gas: this.state.gas || 1000000,
-          gasPrice: this.state.gasPrice || 100,
-        })
-        .executed()
+      const value = util.unit.fromCFXToDrip(this.state.value || 0)
+      const gas = this.state.gas || 1000000
+      const gasPrice = this.state.gasPrice || 100
+
+      await queue.add(
+        () => this.props.contract[actionName]
+          .call(...params)
+          .sendTransaction({ from: signer, value, gas, gasPrice }),
+        {
+          contractAddress: this.props.contract.address,
+          name: actionName,
+          signer: signer.address,
+          params, value, gas, gasPrice,
+        }
+      )
     } catch (e) {
-      console.warn(e)
-      // if (!this.state.executing) {
-      //   return
-      // }
-      setTimeout(() => this.notification.dismiss(), 50)
-      notification.error('Error', e.message)
       this.setState({ executing: false, actionError: e.message, actionResult: '' })
       return
     }
 
-    // if (!this.state.executing) {
-    //   return
-    // }
-    this.notification.dismiss()
-    notification.success('Success', 'Transaction is confirmed.')
+    // notification.success('Success', 'Transaction is confirmed.')
     this.setState({
       executing: false,
       actionError: '',
@@ -152,7 +148,7 @@ export default class ContractActions extends Component {
       return (
         <Highlight
           language='javascript'
-          className='pre-box pre-wrap break-all small user-select'
+          className='pre-box bg2 pre-wrap break-all small user-select'
           element='pre'
         >
           <code>{actionResult}</code>
@@ -257,7 +253,7 @@ export default class ContractActions extends Component {
             onChange={signer => this.setState({ signer })}
           />
         </DropdownCard>
-        <DropdownCard
+        {/* <DropdownCard
           isOpen
           title='Result'
           flex='1 2 auto'
@@ -269,7 +265,7 @@ export default class ContractActions extends Component {
           }
         >
           {this.renderResult()}
-        </DropdownCard>
+        </DropdownCard> */}
       </div>
     )
 

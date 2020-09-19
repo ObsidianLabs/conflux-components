@@ -1,7 +1,7 @@
 {
-  "name": "@obsidians/conflux-contract",
+  "name": "@obsidians/conflux-queue",
   "version": "0.1.0",
-  "description": "Conflux contract interactions",
+  "description": "Conflux Studio transaction queue",
   "author": "Phil <qft.gtr@gmail.com>",
   "license": "GPL-3.0",
   "source": "src/index.js",
@@ -17,14 +17,10 @@
     "prepare": "yarn build"
   },
   "dependencies": {
-    "@obsidians/conflux-contract": "^0.1.0",
-    "@obsidians/conflux-node": "^0.1.0",
-    "@obsidians/conflux-queue": "^0.1.0",
-    "@obsidians/conflux-sdk": "^0.1.0",
-    "@obsidians/keypair": "^0.1.0",
     "@obsidians/notification": "^0.1.0",
     "@obsidians/redux": "^0.1.0",
-    "@obsidians/ui-components": "^0.2.0"
+    "@obsidians/ui-components": "^0.2.0",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
@@ -33,7 +29,6 @@
     "@babel/plugin-proposal-function-bind": "^7.7.4",
     "@babel/preset-env": "^7.7.5",
     "@babel/preset-react": "^7.7.4",
-    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^7.1.1",
     "@rollup/plugin-url": "^4.0.2",
     "@svgr/rollup": "^5.2.0",
@@ -47,11 +42,8 @@
   },
   "peerDependencies": {
     "immutable": "^4.0.0-rc.12",
-    "js-conflux-sdk": "^0.13.4",
     "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-highlight": "^0.12.0",
-    "react-router-cache-route": "^1.8.4"
+    "react-dom": "^16.0.0"
   },
   "eslintConfig": {
     "extends": "react-app"

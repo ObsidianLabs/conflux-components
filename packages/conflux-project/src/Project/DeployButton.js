@@ -73,7 +73,7 @@ export default class DeployerButton extends PureComponent {
 
   renderDeployResult = () => {
     return (
-      <Highlight language='javascript' className='pre-box pre-wrap break-all small' element='pre'>
+      <Highlight language='javascript' className='pre-box bg2 pre-wrap break-all small' element='pre'>
         <code>{JSON.stringify(this.state.result, null, 2)}</code>
       </Highlight>
     )

@@ -32,7 +32,7 @@ export default class ViewAbiModal extends PureComponent {
       >
         <Highlight
           language='javascript'
-          className='pre-box pre-wrap break-all small'
+          className='pre-box bg2 pre-wrap break-all small'
           element='pre'
         >
           <code>{this.state.abi}</code>
