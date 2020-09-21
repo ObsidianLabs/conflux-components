@@ -19,9 +19,8 @@ export default class CreateInstanceButton extends PureComponent {
     this.state = {
       name: '',
       version: '',
-      keypairs: [],
       miner: '',
-      creating: false,
+      pending: false,
     }
 
     this.modal = React.createRef()
@@ -39,7 +38,7 @@ export default class CreateInstanceButton extends PureComponent {
       return
     }
 
-    this.setState({ creating: 'Creating...' })
+    this.setState({ pending: 'Creating...' })
 
     const genesis_secrets = await Promise.all(keypairs.map(k => keypairManager.getSigner(k.address)))
     await instanceChannel.invoke('create', {
@@ -50,7 +49,7 @@ export default class CreateInstanceButton extends PureComponent {
       genesis_secrets,
     })
     this.modal.current.closeModal()
-    this.setState({ creating: false })
+    this.setState({ pending: false })
     this.props.onRefresh()
   }
 
@@ -85,7 +84,7 @@ export default class CreateInstanceButton extends PureComponent {
           title={`New Instance (${this.props.chain})`}
           textConfirm='Create'
           onConfirm={this.onCreateInstance}
-          pending={this.state.creating}
+          pending={this.state.pending}
           confirmDisabled={!this.state.name || !this.state.version}
         >
           <DebouncedFormGroup
