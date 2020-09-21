@@ -98,7 +98,7 @@ export default class Contract extends PureComponent {
           <CacheRoute
             path={`/contract/:name`}
             multiple={5}
-            className='h-100'
+            className='h-100 overflow-auto'
             render={props => (
               <ContractPage
                 cacheLifecycles={props.cacheLifecycles}

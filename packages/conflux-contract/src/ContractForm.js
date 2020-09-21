@@ -9,6 +9,7 @@ import {
 } from '@obsidians/ui-components'
 
 import { util } from 'js-conflux-sdk'
+import JSBI from 'jsbi'
 
 const optionItemFromValue = (value, type) => {
   let icon = null
@@ -220,12 +221,13 @@ export default class ContractForm extends PureComponent {
     }
     
     if (type.startsWith('int') || type.startsWith('uint')) {
-      const number = Number(value)
-      if (Number.isNaN(number)) {
-        throw new Error(`The entered value of <b>${name}</b> is not a number.`)
-      } else if (Math.floor(number) !== number) {
-        throw new Error(`The entered value of <b>${name}</b> is not an integer.`)
-      } else if (type.startsWith('uint') && number < 0) {
+      let number
+      try {
+        number = JSBI.BigInt(value)
+      } catch (e) {
+        throw new Error(`The entered value of <b>${name}</b> is not an integer number.`)
+      }
+      if (type.startsWith('uint') && JSBI.LT(number, 0)) {
         throw new Error(`The entered value of <b>${name}</b> is not a unsigned integer.`)
       }
       return number
