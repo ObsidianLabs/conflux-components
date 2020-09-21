@@ -169,175 +169,74 @@ export default class ContractActions extends Component {
         <div className='d-flex border-bottom-1'>
           {this.renderActionSelector()}
         </div>
-        <DropdownCard
-          isOpen
-          title='Parameters'
-          overflow
-          // flex='0 1 auto'
-          // right={
-          //   <Badge color='primary' onClick={e => {
-          //     e.stopPropagation()
-          //     e.preventDefault()
-
-          //     const authorization = this.getAuthorization()
-          //     const parsedData = this.form.getParsedData()
-          //     const raw = api.eosjs.create().txScript(
-          //       `${this.props.contract}::${action.name}`,
-          //       authorization,
-          //       parsedData
-          //     )
-          //     $.modals.open('rawActionCommand', raw)
-          //   }}>
-          //     <i className='fas fa-eye mr-1' />
-          //     Command
-          //   </Badge>
-          // }
-        >
-          <ContractForm
-            ref={form => { this.form = form }}
-            size='sm'
-            {...selectedAction}
-            Empty={<div className='small'>(None)</div>}
-          />
-          {
-            (selectedAction.payable || selectedAction.stateMutability === 'payable') ?
+        <div className='d-flex flex-column flex-grow-1 overflow-auto'>
+          <DropdownCard
+            isOpen
+            title='Parameters'
+          >
+            <ContractForm
+              ref={form => { this.form = form }}
+              size='sm'
+              {...selectedAction}
+              Empty={<div className='small'>(None)</div>}
+            />
+            {
+              (selectedAction.payable || selectedAction.stateMutability === 'payable') ?
+              <FormGroup className='mb-2'>
+                <Label className='mb-1 small font-weight-bold'>CFX to Transfer</Label>
+                <ActionParamInput
+                  size='sm'
+                  type='name'
+                  placeholder={`Default: 0`}
+                  value={this.state.value}
+                  onChange={value => this.setState({ value })}
+                >
+                  <span><i className='fas fa-coins' /></span>
+                </ActionParamInput>
+              </FormGroup> : null
+            }
+          </DropdownCard>
+          <DropdownCard
+            isOpen
+            title='Gas'
+          >
             <FormGroup className='mb-2'>
-              <Label className='mb-1 small font-weight-bold'>CFX to Transfer</Label>
+              <Label className='mb-1 small font-weight-bold'>Gas Limit</Label>
               <ActionParamInput
                 size='sm'
-                type='name'
-                placeholder={`Default: 0`}
-                value={this.state.value}
-                onChange={value => this.setState({ value })}
+                placeholder={`Default: 1,000,000`}
+                value={this.state.gas}
+                onChange={gas => this.setState({ gas })}
               >
-                <span><i className='fas fa-coins' /></span>
+                <span><i className='fas fa-burn' /></span>
               </ActionParamInput>
-            </FormGroup> : null
-          }
-        </DropdownCard>
-        <DropdownCard
-          isOpen
-          title='Gas'
-          flex='0 1 auto'
-        >
-          <FormGroup className='mb-2'>
-            <Label className='mb-1 small font-weight-bold'>Gas Limit</Label>
-            <ActionParamInput
+            </FormGroup>
+            <FormGroup className='mb-2'>
+              <Label className='mb-1 small font-weight-bold'>Gas Price</Label>
+              <ActionParamInput
+                size='sm'
+                placeholder={`Default: 100 drip`}
+                value={this.state.gasPrice}
+                onChange={gasPrice => this.setState({ gasPrice })}
+              >
+                <span><i className='fas fa-dollar-sign' /></span>
+              </ActionParamInput>
+            </FormGroup>
+          </DropdownCard>
+          <DropdownCard
+            isOpen
+            title='Authorization'
+            overflow
+          >
+            <KeypairSelector
               size='sm'
-              placeholder={`Default: 1,000,000`}
-              value={this.state.gas}
-              onChange={gas => this.setState({ gas })}
-            >
-              <span><i className='fas fa-burn' /></span>
-            </ActionParamInput>
-          </FormGroup>
-          <FormGroup className='mb-2'>
-            <Label className='mb-1 small font-weight-bold'>Gas Price</Label>
-            <ActionParamInput
-              size='sm'
-              placeholder={`Default: 100 drip`}
-              value={this.state.gasPrice}
-              onChange={gasPrice => this.setState({ gasPrice })}
-            >
-              <span><i className='fas fa-dollar-sign' /></span>
-            </ActionParamInput>
-          </FormGroup>
-        </DropdownCard>
-        <DropdownCard
-          isOpen
-          title='Authorization'
-          overflow
-        >
-          <KeypairSelector
-            size='sm'
-            label='Signer'
-            value={this.state.signer}
-            onChange={signer => this.setState({ signer })}
-          />
-        </DropdownCard>
-        {/* <DropdownCard
-          isOpen
-          title='Result'
-          flex='1 2 auto'
-          minHeight='80px'
-          right={
-            this.state.actionError
-              ? <Badge color='danger'>Error</Badge>
-              : this.state.actionResult ? <Badge color='success'>Success</Badge> : null
-          }
-        >
-          {this.renderResult()}
-        </DropdownCard> */}
+              label='Signer'
+              value={this.state.signer}
+              onChange={signer => this.setState({ signer })}
+            />
+          </DropdownCard>
+        </div>
       </div>
     )
-
-    //   <div style={{ display: 'flex', flexDirection: 'column', width: '100%', flex: 1, overflow: 'auto', maxHeight: '100%', height: '100%' }}>
-    //     <ButtonGroup className='btn-block btn-flat border-bottom-black' style={{ flex: 'none' }}>
-    //       {this.renderActionSelector()}
-
-    //       <div className='flex border-left-black' />
-
-    //       <DropdownToggleButton
-    //         id='action-bookmark'
-    //         Btn={<i className='far fa-heart' />}
-    //         Preheader={
-    //           <DropdownItem onClick={() => {
-    //             $.modals.open('addContractCallToBookmarks', {
-    //               network: this.props.network,
-    //               contract: this.props.contract,
-    //               action,
-    //               fields,
-    //               data: this.form.getData(),
-    //               args: this.form.getValues(),
-    //               actor: this.state.actor,
-    //               permission: this.state.permission
-    //             })
-    //           }}>Add to Bookmarks</DropdownItem>
-    //         }
-    //         header='BOOKMARKS'
-    //         list={List(this.props.bookmarks)}
-    //         renderItem={BookmarkItem}
-    //         onClickItem={BookmarkItem.onClick}
-    //         onClickContextMenu={BookmarkItem.onContextMenu}
-    //       />
-    //       <DropdownToggleButton
-    //         id='action-history'
-    //         Btn={<i className='far fa-clock' />}
-    //         header='HISTORY'
-    //         list={this.props.history}
-    //         renderItem={HistoryItem}
-    //         onClickItem={HistoryItem.onClick}
-    //         onClickContextMenu={HistoryItem.onContextMenu}
-    //       />
-    //     </ButtonGroup>
-
-
-
-    //       <DropdownCard
-    //         title='Ricardian'
-    //         right={action.ricardian_contract ? <span><i className='fas fa-check-circle text-success' /></span> : null}
-    //         flex='0 2 auto'
-    //         maxHeight='200px'
-    //         minHeight={action.ricardian_contract ? '' : '44px'}
-    //       >
-    //         {this.renderRicardian(action.ricardian_contract)}
-    //       </DropdownCard>
-
-    //       <DropdownCard
-    //         title='Result'
-    //         isOpen
-    //         flex='1 2 auto'
-    //         minHeight='120px'
-    //         right={
-    //           this.state.actionError
-    //             ? <Badge color='danger'>Error</Badge>
-    //             : this.state.actionResult ? <Badge color='success'>Success</Badge> : null
-    //         }
-    //       >
-    //         {this.renderResult()}
-    //       </DropdownCard>
-    //     {/* </div> */}
-    //   </div>
-    // )
   }
 }
