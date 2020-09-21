@@ -89,6 +89,9 @@ class NodeManager {
   }
 
   switchNetwork (network) {
+    const cachingKeys = getCachingKeys()
+    cachingKeys.filter(key => key.startsWith('contract-') || key.startsWith('account-')).forEach(dropByCacheKey)
+
     this.network = network
     if (network.url) {
       this._sdk = new Sdk(network)
