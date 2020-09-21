@@ -71,10 +71,8 @@ export default class DeployerButton extends PureComponent {
     })
   }
 
-  closeParametersModal = result => {
-    this.setState({ result })
+  closeParametersModal = () => {
     this.parametersModal.current.closeModal()
-    this.resultModal.current.openModal()
   }
 
   renderDeployResult = () => {

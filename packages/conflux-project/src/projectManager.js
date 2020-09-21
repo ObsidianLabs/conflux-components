@@ -133,7 +133,6 @@ class ProjectManager {
     }
 
     const contractName = contractObj.contractName
-    const deploying = notification.info(`Deploying...`, `Deploying contract <b>${contractName}</b>...`, 0)
     this.deployButton.setState({ pending: true, result: '' })
 
     const networkId = nodeManager.sdk.networkId
@@ -158,6 +157,7 @@ class ProjectManager {
             modalWhenExecuted: true,
           },
           {
+            pushing: () => this.deployButton.closeParametersModal(),
             executed: ({ tx, receipt, abi }) => {
               resolve({
                 network: networkId,
@@ -168,22 +168,20 @@ class ProjectManager {
                 receipt,
                 abi,
               })
+              return true
             },
             failed: reject,
           }
         ).catch(reject)
       })
     } catch (e) {
-      deploying.dismiss()
       notification.error('Deploy Failed', e.message)
       this.deployButton.setState({ pending: false })
       return
     }
 
-    deploying.dismiss()
     this.deployButton.setState({ pending: false })
     notification.success('Deploy Successful')
-    this.deployButton.closeParametersModal(result)
 
     redux.dispatch('ABI_ADD', {
       name: contractName,

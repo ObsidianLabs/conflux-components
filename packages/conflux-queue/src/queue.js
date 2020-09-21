@@ -1,17 +1,10 @@
 import notification from '@obsidians/notification'
 import { BaseQueueManager } from '@obsidians/queue'
 
-import moment from 'moment'
-
 class Queue extends BaseQueueManager {
   async process (pendingTransaction, txHash, data, callbacks) {
-    this.addToQueue({
-      txHash,
-      status: 'PUSHING',
-      ts: moment().unix(),
-      data,
-    })
-    notification.info(`Processing Transaction...`, `Hash: ${txHash}`)
+    this.updateStatus(txHash, 'PUSHING', data, callbacks)
+    notification.info(`Deploying...`, `Deploying contract <b>${data.contractName}</b>...`)
 
     const tx = await pendingTransaction.mined()
     // notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
