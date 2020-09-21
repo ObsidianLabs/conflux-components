@@ -8,6 +8,8 @@ import {
   Modal,
 } from '@obsidians/ui-components'
 
+import { KeypairSelector } from '@obsidians/keypair'
+
 import { util } from 'js-conflux-sdk'
 import JSBI from 'jsbi'
 
@@ -30,7 +32,7 @@ const optionItemFromValue = (value, type) => {
   }
 }
 
-export class ArrayInput extends PureComponent {
+class ArrayInput extends PureComponent {
   constructor (props) {
     super(props)
 
@@ -57,7 +59,7 @@ export class ArrayInput extends PureComponent {
   enterNewItem = async () => {
     this.setState({ newValue: '', title: 'Enter a New Item' })
     this.modal.current.openModal()
-    setTimeout(() => this.input.current.focus(), 100)
+    // setTimeout(() => this.input.current.focus(), 100)
     return new Promise(resolve=> this.onResolve = resolve)
   }
 
@@ -65,7 +67,7 @@ export class ArrayInput extends PureComponent {
     this.setState({ newValue: value, title: 'Modiry an Item' })
     this.modal.current.openModal()
     setTimeout(() => {
-      this.input.current.focus()
+      // this.input.current.focus()
     }, 100)
     return new Promise(resolve=> this.onResolve = resolve)
   }
@@ -86,7 +88,9 @@ export class ArrayInput extends PureComponent {
       size,
       addon,
       type,
+      placeholder,
       textarea,
+      unit,
     } = this.props
     return (
       <React.Fragment>
@@ -100,17 +104,22 @@ export class ArrayInput extends PureComponent {
         />
         <Modal
           ref={this.modal}
+          overflow
           title={this.state.title}
           onConfirm={this.onConfirm}
           confirmDisabled={this.state.errorInData}
         >
-          <DebouncedInput
+          <ActionParamInput
             ref={this.input}
-            textarea={textarea}
-            placeholder={type}
+            type={type}
             value={this.state.newValue}
             onChange={newValue => this.setState({ newValue })}
-          />
+            placeholder={placeholder}
+            textarea={textarea}
+            unit={unit}
+          >
+            {addon}
+          </ActionParamInput>
         </Modal>
       </React.Fragment>
     )
@@ -118,18 +127,25 @@ export class ArrayInput extends PureComponent {
 }
 
 export function ActionParamInput ({ size, type, value, onChange, placeholder, disabled, textarea, unit, children }) {
-  const props = { value, onChange, disabled, placeholder: placeholder || type }
+  const props = { value, onChange, disabled, placeholder }
   
-  if (type && type.endsWith('[]')) {
+  if (!type) {
+    return <DebouncedInput size={size} addon={children} {...props} />
+  }
+  if (type.endsWith('[]')) {
     return (
       <ArrayInput
         size={size}
         addon={children}
-        type={type}
+        type={type.replace('[]', '')}
+        placeholder={placeholder.replace('[]', '')}
         textarea={textarea}
+        unit={unit}
         onChange={onChange}
       />
     )
+  } else if (type === 'address') {
+    return <KeypairSelector size={size} editable maxLength={42} icon='fas fa-map-marker-alt' {...props} />
   } else if (textarea) {
     return (
       <div style={{ position: 'relative' }}>
@@ -246,7 +262,7 @@ export default class ContractForm extends PureComponent {
     const value = this.state.args[index]
     // const unit = units(type)
     const onChange = value => this.setArgValue(value, index)
-    const props = { size: this.props.size, type, value, onChange, disabled }
+    const props = { size: this.props.size, type, placeholder: type, value, onChange, disabled }
 
     if (type.startsWith('int') || type.startsWith('uint')) {
       return (

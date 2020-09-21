@@ -172,7 +172,8 @@ export default class ContractActions extends Component {
         <DropdownCard
           isOpen
           title='Parameters'
-          flex='0 1 auto'
+          overflow
+          // flex='0 1 auto'
           // right={
           //   <Badge color='primary' onClick={e => {
           //     e.stopPropagation()
