@@ -97,7 +97,7 @@ export default class InstanceList extends PureComponent {
           <DockerImageButton
             channel={instanceChannel.node}
             icon='fas fa-server'
-            title='Conflux Versions'
+            title='Conflux Version Manager'
             noneName='Conflux node'
             modalTitle='Conflux Version Manager'
             downloadingTitle='Downloading Conflux'
