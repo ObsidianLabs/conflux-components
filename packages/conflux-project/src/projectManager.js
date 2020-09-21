@@ -183,7 +183,7 @@ class ProjectManager {
     deploying.dismiss()
     this.deployButton.setState({ pending: false })
     notification.success('Deploy Successful')
-    this.deployButton.closeParametersModal()
+    this.deployButton.closeParametersModal(result)
 
     redux.dispatch('ABI_ADD', {
       name: contractName,
