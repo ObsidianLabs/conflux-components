@@ -6,7 +6,7 @@ import {
 
 import moment from 'moment'
 
-export default ({ data, status, ts }) => {
+export default ({ txHash, data, status, ts }) => {
   let iconClassName = 'fas fa-check-circle text-success mr-1'
   let statusComponent = null
   if (status === 'PUSHING') {
@@ -22,7 +22,7 @@ export default ({ data, status, ts }) => {
     iconClassName = 'fas fa-times-circle text-danger mr-1'
   }
   return (
-    <div key={`tx-${data.txHash}`}>
+    <div key={`tx-${txHash}`}>
       <div className='d-flex flex-row justify-content-between align-items-end'>
         <span key={`tx-status-${status}`}>
           <i className={iconClassName} />
@@ -30,7 +30,7 @@ export default ({ data, status, ts }) => {
           {statusComponent}
         </span>
         <span className='small text-muted'>
-          <i className='far fa-clock mr-1' />
+          <i className='far fa-clock mx-1' />
           {moment.unix(ts).format('MM/DD HH:mm:ss')}
         </span>
       </div>

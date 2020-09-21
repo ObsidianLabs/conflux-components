@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react'
 
 import {
-  Modal,
   ButtonOptions,
   Table,
   TableCardRow,
@@ -11,25 +10,18 @@ import { util } from 'js-conflux-sdk'
 import { Link } from 'react-router-dom'
 import Highlight from 'react-highlight'
 
-export default class TransactionModal extends PureComponent {
+export default class TransactionDetails extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
       selected: 'basic',
-      tx: {},
     }
     this.modal = React.createRef()
   }
 
-  open = tx => {
-    this.setState({ tx, selected: 'basic' })
-    this.forceUpdate()
-    this.modal.current.openModal()
-  }
-
   renderContent = (tx, selected) => {
-    const { data, status } = tx
-    const { txHash, contractAddress, functionName, contractName, signer, params, value, tx: txObject, receipt, abi } = data || {}
+    const { txHash, status, data } = tx
+    const { contractAddress, functionName, contractName, signer, params, value, tx: txObject, receipt, abi } = data || {}
     if (selected === 'basic') {
       return (
         <Table>
@@ -41,8 +33,8 @@ export default class TransactionModal extends PureComponent {
           <TableCardRow
             name='Status'
             icon='fad fa-spinner-third'
-            badge={status || 'CONFIRMED'}
-            badgeColor={status === 'FAILED' ? 'danger' : !status ? 'success' : 'warning'}
+            badge={status}
+            badgeColor={status === 'FAILED' ? 'danger' : status === 'CONFIRMED' ? 'success' : 'warning'}
           />
           {
             contractAddress &&
@@ -53,7 +45,7 @@ export default class TransactionModal extends PureComponent {
                 <Link
                   to={`/contract/${contractAddress}`}
                   className='text-body'
-                  onClick={() => this.modal.current.closeModal()}
+                  onClick={() => this.props.closeModal()}
                 >
                   <code>{contractAddress}</code>
                 </Link>
@@ -91,7 +83,7 @@ export default class TransactionModal extends PureComponent {
               <Link
                 to={`/account/${signer}`}
                 className='text-body'
-                onClick={() => this.modal.current.closeModal()}
+                onClick={() => this.props.closeModal()}
               >
                 <code>{signer}</code>
               </Link>
@@ -106,7 +98,7 @@ export default class TransactionModal extends PureComponent {
                 <Link
                   to={`/contract/${receipt.contractCreated}`}
                   className='text-body'
-                  onClick={() => this.modal.current.closeModal()}
+                  onClick={() => this.props.closeModal()}
                 >
                   <code>{receipt.contractCreated}</code>
                 </Link>
@@ -143,28 +135,25 @@ export default class TransactionModal extends PureComponent {
   }
 
   render () {
-    const { tx, selected } = this.state
-    const { data } = tx
+    const tx = this.props.tx || {}
+    const selected = this.state.selected
 
     const options = [
       { key: 'basic', text: 'Basic' },
       { key: 'params', text: 'Parameters' },
     ]
-    if (data && data.tx) {
+    if (tx.data?.tx) {
       options.push({ key: 'tx', text: 'Tx' })
     }
-    if (data && data.receipt) {
+    if (tx.data?.receipt) {
       options.push({ key: 'receipt', text: 'Receipt' })
     }
-    if (data && data.abi) {
+    if (tx.data?.abi) {
       options.push({ key: 'abi', text: 'ABI' })
     }
 
     return (
-      <Modal
-        ref={this.modal}
-        title='Transaction'
-      >
+      <React.Fragment>
         <div>
           <ButtonOptions
             size='sm'
@@ -175,7 +164,7 @@ export default class TransactionModal extends PureComponent {
           />
         </div>
         {this.renderContent(tx, selected)}
-      </Modal>
+      </React.Fragment>
     )
   }
 }
