@@ -4,7 +4,11 @@ import { BaseQueueManager } from '@obsidians/queue'
 class Queue extends BaseQueueManager {
   async process (pendingTransaction, txHash, data, callbacks) {
     this.updateStatus(txHash, 'PUSHING', data, callbacks)
-    notification.info(`Deploying...`, `Deploying contract <b>${data.contractName}</b>...`)
+    if (data.contractName) {
+      notification.info(`Deploying...`, `Deploying contract <b>${data.contractName}</b>...`)
+    } else {
+      notification.info(`Pushing transaction...`, `Transaction hash <b>${txHash}</b>...`)
+    }
 
     const tx = await pendingTransaction.mined()
     // notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
