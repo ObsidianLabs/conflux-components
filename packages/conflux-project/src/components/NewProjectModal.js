@@ -192,8 +192,8 @@ export default class NewProjectModal extends Component {
             },
           ]}
           renderText={option => (
-            <div className='w-100 mr-1 d-flex align-items-center justify-content-between'>
-              <span>{option.display}</span><Badge color='info' style={{ top: 0 }}>{option.group}</Badge>
+            <div className='d-flex align-items-center mr-1'>
+              <Badge color='info' style={{ top: 0 }}>{option.group}</Badge>
             </div>
           )}
           value={this.state.template}
