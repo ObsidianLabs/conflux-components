@@ -130,49 +130,31 @@ export default class ContractTable extends Component {
         <div className='d-flex border-bottom-1'>
           {this.renderTableSelector()}
         </div>
-        <DropdownCard
-          isOpen
-          title='Parameters'
-          flex='0 1 auto'
-          // right={
-          //   <Badge color='primary' onClick={e => {
-          //     e.stopPropagation()
-          //     e.preventDefault()
-
-          //     const authorization = this.getAuthorization()
-          //     const parsedData = this.form.getParsedData()
-          //     const raw = api.eosjs.create().txScript(
-          //       `${this.props.contract}::${action.name}`,
-          //       authorization,
-          //       parsedData
-          //     )
-          //     $.modals.open('rawActionCommand', raw)
-          //   }}>
-          //     <i className='fas fa-eye mr-1' />
-          //     Command
-          //   </Badge>
-          // }
-        >
-          <ContractForm
-            ref={form => { this.form = form }}
-            size='sm'
-            {...selectedAction}
-            Empty={<div className='small'>(None)</div>}
-          />
-        </DropdownCard>
-        <DropdownCard
-          isOpen
-          title='Result'
-          flex='1 2 auto'
-          minHeight='120px'
-          right={
-            this.state.actionError
-              ? <Badge color='danger'>Error</Badge>
-              : this.state.actionResult ? <Badge color='success'>Success</Badge> : null
-          }
-        >
-          {this.renderResult()}
-        </DropdownCard>
+        <div className='d-flex flex-column flex-grow-1 overflow-auto'>
+          <DropdownCard
+            isOpen
+            title='Parameters'
+          >
+            <ContractForm
+              ref={form => { this.form = form }}
+              size='sm'
+              {...selectedAction}
+              Empty={<div className='small'>(None)</div>}
+            />
+          </DropdownCard>
+          <DropdownCard
+            isOpen
+            title='Result'
+            minHeight='120px'
+            right={
+              this.state.actionError
+                ? <Badge color='danger'>Error</Badge>
+                : this.state.actionResult ? <Badge color='success'>Success</Badge> : null
+            }
+          >
+            {this.renderResult()}
+          </DropdownCard>
+        </div>
       </div>
     )
   }
