@@ -92,6 +92,7 @@ export default class Explorer extends PureComponent {
   }
 
   render () {
+    const { network } = this.props
     const { initialSelected, initialTabs, value } = this.state
 
     return (
@@ -113,6 +114,7 @@ export default class Explorer extends PureComponent {
         >
           <CacheRoute
             path={`/account/:name`}
+            cacheKey={props => `account-${network}-${props.match?.params?.name}`}
             multiple={5}
             className='h-100 overflow-auto'
             render={props => (

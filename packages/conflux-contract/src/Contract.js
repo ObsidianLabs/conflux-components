@@ -40,12 +40,6 @@ export default class Contract extends PureComponent {
     this.tabs = React.createRef()
   }
 
-  componentDidMount () {
-  }
-
-  componentDidUpdate (prevProps) {
-  }
-
   get currentValue () {
     return this.state.value
   }
@@ -79,6 +73,7 @@ export default class Contract extends PureComponent {
   }
 
   render () {
+    const { network } = this.props
     const { initialSelected, initialTabs, value } = this.state
 
     return (
@@ -97,6 +92,7 @@ export default class Contract extends PureComponent {
         >
           <CacheRoute
             path={`/contract/:name`}
+            cacheKey={props => `contract-${network}-${props.match?.params?.name}`}
             multiple={5}
             className='h-100 overflow-auto'
             render={props => (

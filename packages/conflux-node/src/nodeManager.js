@@ -1,6 +1,7 @@
 import fileOps from '@obsidians/file-ops'
 import Sdk from '@obsidians/conflux-sdk'
 import notification from '@obsidians/notification'
+import { getCachingKeys, dropByCacheKey } from 'react-router-cache-route'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
@@ -128,6 +129,9 @@ class NodeManager {
   }
 
   async stop ({ name, version, chain }) {
+    const cachingKeys = getCachingKeys()
+    cachingKeys.filter(key => key.startsWith('contract-') || key.startsWith('account-')).forEach(dropByCacheKey)
+
     if (this._terminal) {
       const n = notification.info('Stopping Conflux Node...', '', 0)
       await this._terminal.execAsChildProcess(`docker stop conflux-${name}-${version}`)
