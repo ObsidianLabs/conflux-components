@@ -226,9 +226,9 @@ export default class ContractForm extends PureComponent {
 
   validateValue = (name, value, type) => {
     if (type.startsWith('bytes') || type === 'byte') {
-      const length = type === 'byte' ? 1 : Number(type.substr(5))
       const bytes = util.format.bytes(value)
-      if (length && bytes.length > length) {
+      const length = type === 'byte' ? 1 : (Number(type.substr(5)) || bytes.length)
+      if (bytes.length > length) {
         throw new Error(`Byte length overflow for parameter <b>${name}</b>. Expect ${length} but got ${bytes.length}.`)
       }
       const arr = new Uint8Array(length)
@@ -285,16 +285,16 @@ export default class ContractForm extends PureComponent {
       return (
         <ActionParamInput {...props} textarea unit='UTF8'/>
       )
-    } else if (type.endsWith('[]')) {
-      return (
-        <ActionParamInput {...props}>
-          <span key={`icon-${index}`}><i className='fas fa-brackets' /></span>
-        </ActionParamInput>
-      )
     } else if (icon) {
       return (
         <ActionParamInput {...props}>
           <span key={`icon-${index}`}><i className={icon} /></span>
+        </ActionParamInput>
+      )
+    } else if (type.endsWith('[]')) {
+      return (
+        <ActionParamInput {...props}>
+          <span key={`icon-${index}`}><i className='fas fa-brackets' /></span>
         </ActionParamInput>
       )
     }
