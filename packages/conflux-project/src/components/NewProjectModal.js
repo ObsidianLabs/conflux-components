@@ -98,7 +98,7 @@ export default class NewProjectModal extends Component {
         `--name conflux-create-project`,
         `-v "${projectDir}:/project/${name}"`,
         `-w "/project/${name}"`,
-        `confluxchain/conflux-truffle:${truffleVersion}`,
+        `obsidians/conflux-truffle:${truffleVersion}`,
         `cfxtruffle unbox ${template}`,
       ].join(' ')
       try {
@@ -127,7 +127,7 @@ export default class NewProjectModal extends Component {
     }
     return (
       <DockerImageInputSelector
-        channel={compilerManager.channel}
+        channel={compilerManager.cfxtruffle}
         label='Conflux truffle version'
         noneName='Conflux Truffle'
         modalTitle='Conflux Truffle Manager'

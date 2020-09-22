@@ -32,6 +32,7 @@ export default class CompilerButton extends PureComponent {
   render () {
     const {
       compilerVersion = 'none',
+      solc = 'none',
       className,
       size = 'sm',
       color = 'default',
@@ -60,7 +61,7 @@ export default class CompilerButton extends PureComponent {
           {icon}
         </Button>
         <UncontrolledTooltip trigger='hover' delay={0} placement='bottom' target='tooltip-build-btn'>
-          { this.state.building ? 'Stop Build' : `Build (${compilerVersion})`}
+          { this.state.building ? 'Stop Build' : `Build`}
         </UncontrolledTooltip>
       </React.Fragment>
     )

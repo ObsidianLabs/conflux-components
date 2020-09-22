@@ -118,7 +118,7 @@ export default class Project extends PureComponent {
   render () {
     const {
       projectRoot,
-      nodeVersion,
+      solc,
       compilerVersion,
       InvalidProjectActions = null,
     } = this.props
@@ -148,7 +148,7 @@ export default class Project extends PureComponent {
         Toolbar={(
           <ProjectToolbar
             projectRoot={projectRoot}
-            nodeVersion={nodeVersion}
+            solc={solc}
             compilerVersion={compilerVersion}
           />
         )}

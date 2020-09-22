@@ -28,15 +28,31 @@ export default function BottomBar (props) {
         path={`/guest/:project`}
         render={() => (
           <DockerImageSelector
-            channel={compilerManager.channel}
+            channel={compilerManager.cfxtruffle}
             size='sm'
-            icon='fas fa-hammer'
-            title='Conflux Truffle'
+            icon='far fa-cookie'
+            title='CFX Truffle'
             noneName='Conflux Truffle'
             modalTitle='Conflux Truffle Manager'
             downloadingTitle='Downloading Conflux Truffle'
             selected={props.compilerVersion}
             onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
+          />
+        )}
+      />
+      <CacheRoute
+        path={`/guest/:project`}
+        render={() => (
+          <DockerImageSelector
+            channel={compilerManager.solc}
+            size='sm'
+            icon='fas fa-hammer'
+            title='Solc'
+            noneName='solc'
+            modalTitle='Solc Manager'
+            downloadingTitle='Downloading Solc'
+            selected={props.solc}
+            onSelected={solc => props.onSelectSolc(solc)}
           />
         )}
       />

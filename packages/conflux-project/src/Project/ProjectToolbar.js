@@ -6,12 +6,12 @@ import { CompilerButton } from '@obsidians/conflux-compiler'
 import projectManager from '../projectManager'
 import DeployButton from './DeployButton'
 
-export default function ProjectToolbar ({ projectRoot, compilerVersion, nodeVersion }) {
+export default function ProjectToolbar ({ projectRoot, compilerVersion, solc }) {
   return (
     <React.Fragment>
       <CompilerButton
         className='rounded-0 border-0 flex-none w-5'
-        nodeVersion={nodeVersion}
+        solc={solc}
         compilerVersion={compilerVersion}
         onClick={() => projectManager.compile()}
       />
