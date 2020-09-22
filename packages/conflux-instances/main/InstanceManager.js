@@ -2,8 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const os = require('os')
 const TOML = require('@iarna/toml')
-const semverLt = require('semver/functions/lt')
-const semverValid = require('semver/functions/valid')
 
 const { IpcChannel } = require('@obsidians/ipc')
 const { DockerImageChannel } = require('@obsidians/docker')
@@ -11,10 +9,7 @@ const { DockerImageChannel } = require('@obsidians/docker')
 class InstanceManager extends IpcChannel {
   constructor () {
     super('conflux-node')
-    this.dockerChannel = new DockerImageChannel('confluxchain/conflux-rust', {
-      filter: tag => semverValid(tag),
-      sort: (x, y) => semverLt(x, y) ? 1 : -1
-    })
+    this.dockerChannel = new DockerImageChannel('confluxchain/conflux-rust')
   }
 
   async create ({ name, version, miner, genesis_secrets, chain = 'dev' }) {
