@@ -24,11 +24,10 @@ class Queue extends BaseQueueManager {
 
     const receipt = await pendingTransaction.executed()
     if (receipt.outcomeStatus) {
-      notification.error('Transaction Execution Failed', `Outcome status ${receipt.outcomeStatus}`)
-
-      const cfx = pendingTransaction.cfx
       pendingTransaction.cfx.call(tx, tx.epochHeight - 1).catch(err => {
         const decoded = abi.errorCoder.decodeError({ data: err.data.replace(/\"/g, '') })
+        notification.error('Transaction Failed', decoded.message)
+
         this.updateStatus(txHash, 'FAILED', { receipt, error: {
           code: err.code,
           message: err.message,
