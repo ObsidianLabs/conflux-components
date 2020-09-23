@@ -165,9 +165,9 @@ export default class TransactionDetails extends PureComponent {
         badge={code}
         badgeColor='danger'
       >
-        <p className='mt-2'>{message}</p>
+        <div className='mt-2'>{message}</div>
         { data &&
-          <div>
+          <div className='mt-1'>
             <Badge color='secondary' className='mr-1 p-relative' style={{ top: -1 }}>data</Badge>
             {data}
           </div>
