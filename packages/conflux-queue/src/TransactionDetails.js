@@ -4,6 +4,7 @@ import {
   ButtonOptions,
   Table,
   TableCardRow,
+  Badge,
 } from '@obsidians/ui-components'
 
 import { util } from 'js-conflux-sdk'
@@ -21,7 +22,18 @@ export default class TransactionDetails extends PureComponent {
 
   renderContent = (tx, selected) => {
     const { txHash, status, data } = tx
-    const { contractAddress, functionName, contractName, signer, params, value, tx: txObject, receipt, abi } = data || {}
+    const {
+      contractAddress,
+      functionName,
+      contractName,
+      signer, params,
+      value,
+      tx: txObject,
+      error,
+      receipt,
+      abi,
+    } = data || {}
+
     if (selected === 'basic') {
       return (
         <Table>
@@ -33,9 +45,10 @@ export default class TransactionDetails extends PureComponent {
           <TableCardRow
             name='Status'
             icon='fad fa-spinner-third'
-            badge={status}
-            badgeColor={status === 'FAILED' ? 'danger' : status === 'CONFIRMED' ? 'success' : 'warning'}
+            badge={status === 'FAILED-TIMEOUT' ? 'TIMEOUT' : status}
+            badgeColor={status.startsWith('FAILED') ? 'danger' : status === 'CONFIRMED' ? 'success' : 'warning'}
           />
+          { this.renderError(error) }
           {
             contractAddress &&
             <TableCardRow
@@ -132,6 +145,35 @@ export default class TransactionDetails extends PureComponent {
         </Highlight>
       )
     }
+  }
+
+  renderError = error => {
+    if (!error) {
+      return null
+    }
+
+    const {
+      code = '',
+      message = '',
+      data = '',
+    } = error
+
+    return (
+      <TableCardRow
+        name='Error'
+        icon='fas fa-exclamation-triangle'
+        badge={code}
+        badgeColor='danger'
+      >
+        <p className='mt-2'>{message}</p>
+        { data &&
+          <div>
+            <Badge color='secondary' className='mr-1 p-relative' style={{ top: -1 }}>data</Badge>
+            {data}
+          </div>
+        }
+      </TableCardRow>
+    )
   }
 
   render () {

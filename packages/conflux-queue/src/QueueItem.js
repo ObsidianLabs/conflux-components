@@ -18,6 +18,9 @@ export default ({ txHash, data, status, ts }) => {
   } else if (status === 'EXECUTED') {
     iconClassName = 'fas fa-circle-notch fa-spin mr-1'
     statusComponent = <Badge color='warning' className='ml-1'>EXECUTED</Badge>
+  } else if (status === 'FAILED-TIMEOUT') {
+    iconClassName = 'fas fa-times-circle text-danger mr-1'
+    statusComponent = <Badge color='secondary' className='ml-1'>TIMEOUT</Badge>
   } else if (status === 'FAILED') {
     iconClassName = 'fas fa-times-circle text-danger mr-1'
   }

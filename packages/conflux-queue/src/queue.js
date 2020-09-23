@@ -1,6 +1,8 @@
 import notification from '@obsidians/notification'
 import { BaseQueueManager } from '@obsidians/queue'
 
+import { abi } from 'js-conflux-sdk'
+
 class Queue extends BaseQueueManager {
   async process (pendingTransaction, txHash, data, callbacks) {
     this.updateStatus(txHash, 'PUSHING', data, callbacks)
@@ -10,14 +12,30 @@ class Queue extends BaseQueueManager {
       notification.info(`Pushing transaction...`, `Transaction hash <b>${txHash}</b>...`)
     }
 
-    const tx = await pendingTransaction.mined()
-    // notification.info('Transaction Mined', `Block hash: ${tx.blockHash}`)
+    let tx
+    try {
+      tx = await pendingTransaction.mined()
+    } catch (e) {
+      this.updateStatus(txHash, 'FAILED-TIMEOUT', { error: { message: e.message } }, callbacks)
+      notification.error('Transaction Timeout', e.message)
+      return
+    }
     this.updateStatus(txHash, 'MINED', { tx }, callbacks)
 
     const receipt = await pendingTransaction.executed()
     if (receipt.outcomeStatus) {
       notification.error('Transaction Execution Failed', `Outcome status ${receipt.outcomeStatus}`)
-      this.updateStatus(txHash, 'FAILED', { receipt }, callbacks)
+
+      const cfx = pendingTransaction.cfx
+      pendingTransaction.cfx.call(tx, tx.epochHeight - 1).catch(err => {
+        const decoded = abi.errorCoder.decodeError({ data: err.data.replace(/\"/g, '') })
+        this.updateStatus(txHash, 'FAILED', { receipt, error: {
+          code: err.code,
+          message: err.message,
+          data: decoded.message,
+        } }, callbacks)
+      })
+
       return
     } else {
       const gasUsed = receipt.gasUsed.toString()
