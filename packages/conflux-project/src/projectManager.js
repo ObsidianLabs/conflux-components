@@ -9,6 +9,8 @@ import { Account, util } from 'js-conflux-sdk'
 
 import moment from 'moment'
 
+const regexSolc = /(compilers['"]?\s*:\s*\{[^\}]*solc['"]?\s*:\s*\{[^\}]*version['"]?\s*:\s*['"])(.*)(['"])/
+
 class ProjectManager {
   constructor () {
     this.project = null
@@ -29,10 +31,51 @@ class ProjectManager {
     return accounts.getIn([network, 'selected']) || ''
   }
 
+  projectFilePath (relativePath) {
+    return fileOps.current.path.join(this.projectRoot, relativePath)
+  }
+
   openProjectSettings () {
     if (this.project) {
       this.project.openProjectSettings()
     }
+  }
+
+  async readTruffleConfig () {
+    return await fileOps.current.readFile(this.projectFilePath('truffle-config.js'))
+  }
+
+  async writeTruffleConfig (content) {
+    await fileOps.current.writeFile(this.projectFilePath('truffle-config.js'), content)
+  }
+
+  async getSolcVersionAndUpdate () {
+    const truffleConfig = await this.readTruffleConfig()
+    const match = truffleConfig.match(regexSolc)
+    if (match && match[2]) {
+      redux.dispatch('UPDATE_GLOBAL_CONFIG', { solc: match[2] })
+      return
+    }
+
+    notification.error('Unable to get solc version', 'Unable to find solc version. Please check the file <b>truffle-config.js</b>, and make sure to set the <b>compilers.solc.version</b> field.')
+    redux.dispatch('UPDATE_GLOBAL_CONFIG', { solc: '' })
+  }
+
+  async updateSolcVersion (version) {
+    if (!this.project?.props?.projectRoot) {
+      return false
+    }
+
+    const truffleConfig = await this.readTruffleConfig()
+    const match = truffleConfig.match(regexSolc)
+    if (!match || !match[2]) {
+      notification.error('Unable to get solc version', 'Unable to find solc version. Please check the file <b>truffle-config.js</b>, and make sure to set the <b>compilers.solc.version</b> field.')
+      return false
+    }
+
+    const updated = truffleConfig.replace(regexSolc, `$1${version}$3`)
+    await this.writeTruffleConfig(updated)
+    return true
   }
 
   async compile () {

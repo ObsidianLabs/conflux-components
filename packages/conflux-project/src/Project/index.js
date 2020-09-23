@@ -62,6 +62,8 @@ export default class Project extends PureComponent {
       return
     }
 
+    projectManager.getSolcVersionAndUpdate()
+
     this.projectSettings = new ProjectSettings(projectRoot)
 
     try {
