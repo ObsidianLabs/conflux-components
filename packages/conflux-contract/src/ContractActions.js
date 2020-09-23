@@ -56,9 +56,9 @@ export default class ContractActions extends Component {
       return
     }
 
-    let params
+    let parameters
     try {
-      params = this.form.getValues()
+      parameters = this.form.getParameters()
     } catch (e) {
       notification.error('Error', e.message)
       return
@@ -76,14 +76,15 @@ export default class ContractActions extends Component {
     try {
       await queue.add(
         () => this.props.contract[actionName]
-          .call(...params)
+          .call(...parameters.array)
           .sendTransaction({ from: signer, value, gas, gasPrice }),
         {
           contractAddress: this.props.contract.address,
           name: actionName,
           functionName: actionName,
           signer: signer.address,
-          params, value, gas, gasPrice,
+          params: parameters.obj,
+          value, gas, gasPrice,
         }
       )
     } catch (e) {

@@ -34,13 +34,13 @@ export default class ContractTable extends Component {
     if (this.state.executing) {
       return
     }
-    const values = this.form.getValues()
+    const parameters = this.form.getParameters()
 
     this.setState({ executing: true, actionError: '', actionResult: '' })
 
     let result
     try {
-      result = await this.props.contract[actionName].call(...values)
+      result = await this.props.contract[actionName].call(...parameters.array)
     } catch (e) {
       console.warn(e)
       // if (!this.state.executing) {

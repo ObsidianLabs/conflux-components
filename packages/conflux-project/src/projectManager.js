@@ -117,17 +117,17 @@ class ProjectManager {
     }
 
     this.deployButton.getDeploymentParameters(constructorAbi, contractObj.contractName, 
-      parameters => this.pushDeployment(contractObj, parameters)
+      allParameters => this.pushDeployment(contractObj, allParameters)
     )
   }
 
-  async pushDeployment (contractObj, parameters) {
+  async pushDeployment (contractObj, allParameters) {
     if (!nodeManager.sdk) {
       notification.error('Error', 'No running node. Please start one first.')
       return
     }
 
-    if (!parameters.signer) {
+    if (!allParameters.signer) {
       notification.error('Error', 'No signer specified. Please select one to sign the deployment transaction.')
       return
     }
@@ -136,9 +136,9 @@ class ProjectManager {
     this.deployButton.setState({ pending: true, result: '' })
 
     const networkId = nodeManager.sdk.networkId
-    const signer = new Account(parameters.signer, signatureProvider)
+    const signer = new Account(allParameters.signer, signatureProvider)
     const contractInstance = nodeManager.sdk.contractFrom(contractObj)
-    const { params, gas, gasPrice } = parameters
+    const { parameters, gas, gasPrice } = allParameters
     const codeHash = util.sign.sha3(Buffer.from(contractObj.deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
 
     let result
@@ -146,14 +146,15 @@ class ProjectManager {
       result = await new Promise((resolve, reject) => {
         queue.add(
           () => contractInstance.constructor
-            .call(...params)
+            .call(...parameters.array)
             .sendTransaction({ from: signer, gas, gasPrice }),
           {
             name: 'Deploy',
             contractName,
             signer: signer.address,
             abi: contractObj.abi,
-            params, gas, gasPrice,
+            params: parameters.obj,
+            gas, gasPrice,
             modalWhenExecuted: true,
           },
           {

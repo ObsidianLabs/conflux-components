@@ -53,10 +53,10 @@ export default class DeployerButton extends PureComponent {
   }
 
   confirmDeploymentParameters = () => {
-    let params
+    let parameters
     if (this.state.constructorAbi) {
       try {
-        params = this.form.getValues()
+        parameters = this.form.getParameters()
       } catch (e) {
         notification.error('Error', e.message)
         return
@@ -64,7 +64,7 @@ export default class DeployerButton extends PureComponent {
     }
     const { signer, gas, gasPrice } = this.state
     this.callback({
-      params: params || [],
+      parameters,
       signer,
       gas: gas || 1000000,
       gasPrice: gasPrice || 100

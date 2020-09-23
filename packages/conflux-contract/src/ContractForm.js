@@ -208,23 +208,33 @@ export default class ContractForm extends PureComponent {
     return data
   }
 
-  getValues = () => {
-    const values = []
+  getParameters = () => {
+    const array = []
+    const obj = {}
+
     this.props.inputs.forEach(({ name, type }, index) => {
       const value = this.state.args[index]
+      const key = name || `(param${index})`
       if (!type) {
-        values.push(value)
+        array.push(value)
+        obj[key] = { type, value }
       } else if (type.endsWith('[]')) {
-        const itemType = type.replace('[]', '')
-        values.push(value ? value.map((item, i) => this.validateValue(`name[${i}]`, item.value, itemType)) : [])
+        const typedValue = value
+          ? value.map((item, i) => this.valueByType(item.value, type.replace('[]', ''), `${key}[${i}]`))
+          : []
+        array.push(typedValue.map(v => v.raw))
+        obj[key] = { type, value: typedValue.map(v => v.display) }
       } else {
-        values.push(this.validateValue(name, value, type))
+        const typedValue = this.valueByType(value, type, key)
+        array.push(typedValue.raw)
+        obj[key] = { type, value: typedValue.display }
       }
     })
-    return values
+
+    return { array, obj }
   }
 
-  validateValue = (name, value, type) => {
+  valueByType = (value, type, name) => {
     if (type.startsWith('bytes') || type === 'byte') {
       const bytes = util.format.bytes(value)
       const length = type === 'byte' ? 1 : (Number(type.substr(5)) || bytes.length)
@@ -233,7 +243,10 @@ export default class ContractForm extends PureComponent {
       }
       const arr = new Uint8Array(length)
       arr.set(bytes)
-      return arr
+      return {
+        display: `0x${Buffer.from(arr).toString('hex')}`,
+        raw: arr,
+      }
     }
     
     if (type.startsWith('int') || type.startsWith('uint')) {
@@ -246,10 +259,10 @@ export default class ContractForm extends PureComponent {
       if (type.startsWith('uint') && JSBI.LT(number, 0)) {
         throw new Error(`The entered value of <b>${name}</b> is not a unsigned integer.`)
       }
-      return number
+      return { display: number.toString(), raw: number }
     }
     
-    return value
+    return { display: value, raw: value }
   }
 
   setArgValue = (value, index) => {
@@ -314,11 +327,9 @@ export default class ContractForm extends PureComponent {
       <div>
         {inputs.map(({ name, type, value }, index) => (
           <FormGroup key={`${methodName}-${index}`} className={size === 'sm' && 'mb-2'}>
-            {
-              name
-              ? <Label className={size === 'sm' && 'mb-1 small font-weight-bold'}>{name}</Label>
-              : <Label className={size === 'sm' && 'mb-1 small'}>(None)</Label>
-            }
+            <Label className={size === 'sm' && 'mb-1 small font-weight-bold'}>
+              {name || `(param${index})`}
+            </Label>
             {this.renderActionInput(type, index, disabled || !!value)}
           </FormGroup>
         ))}
