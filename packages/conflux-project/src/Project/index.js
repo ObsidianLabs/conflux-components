@@ -62,6 +62,8 @@ export default class Project extends PureComponent {
       return
     }
 
+    projectManager.getSolcVersionAndUpdate()
+
     this.projectSettings = new ProjectSettings(projectRoot)
 
     try {
@@ -118,7 +120,7 @@ export default class Project extends PureComponent {
   render () {
     const {
       projectRoot,
-      nodeVersion,
+      solc,
       compilerVersion,
       InvalidProjectActions = null,
     } = this.props
@@ -148,7 +150,7 @@ export default class Project extends PureComponent {
         Toolbar={(
           <ProjectToolbar
             projectRoot={projectRoot}
-            nodeVersion={nodeVersion}
+            solc={solc}
             compilerVersion={compilerVersion}
           />
         )}

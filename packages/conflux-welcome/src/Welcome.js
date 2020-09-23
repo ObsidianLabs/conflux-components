@@ -72,10 +72,10 @@ export default class Welcome extends PureComponent {
               />
               <ListItemDockerImage
                 ref={this.listItemCompiler}
-                channel={compiler.channel}
+                channel={compiler.cfxtruffle}
                 title='Conflux Truffle in Docker'
                 subtitle='A Conflux version of truffle used to create and compile a project.'
-                link='https://hub.docker.com/r/confluxchain/conflux-truffle'
+                link='https://hub.docker.com/r/obsidians/conflux-truffle'
                 onInstalled={this.refresh}
                 downloadingTitle='Downloading Conflux Truffle'
               />

@@ -30,7 +30,6 @@ export default class Header extends PureComponent {
       selectedAccount,
       network,
       networkList,
-      compilerVersion,
     } = this.props
 
     const navbarLeft = [
@@ -95,7 +94,7 @@ export default class Header extends PureComponent {
           navbarLeft={navbarLeft}
           navbarRight={navbarRight}
         />
-        <NewProjectModal compilerVersion={compilerVersion} />
+        <NewProjectModal />
       </React.Fragment>
     )
   }

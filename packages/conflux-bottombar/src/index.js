@@ -5,7 +5,7 @@ import { KeypairButton } from '@obsidians/keypair'
 import { QueueButton } from '@obsidians/conflux-queue'
 import { AbiStorage } from '@obsidians/conflux-contract'
 import { DockerImageSelector } from '@obsidians/docker'
-import { TerminalButton } from '@obsidians/conflux-project'
+import { TerminalButton, SolcButton } from '@obsidians/conflux-project'
 import compilerManager from '@obsidians/conflux-compiler'
 
 export default function BottomBar (props) {
@@ -28,16 +28,22 @@ export default function BottomBar (props) {
         path={`/guest/:project`}
         render={() => (
           <DockerImageSelector
-            channel={compilerManager.channel}
+            channel={compilerManager.cfxtruffle}
             size='sm'
-            icon='fas fa-hammer'
-            title='Conflux Truffle'
+            icon='fas fa-cookie'
+            title='CFX Truffle'
             noneName='Conflux Truffle'
             modalTitle='Conflux Truffle Manager'
             downloadingTitle='Downloading Conflux Truffle'
             selected={props.compilerVersion}
             onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
           />
+        )}
+      />
+      <CacheRoute
+        path={`/guest/:project`}
+        render={() => (
+          <SolcButton selected={props.solc} onSelected={solc => props.onSelectSolc(solc)} />
         )}
       />
       <CacheRoute

@@ -4,7 +4,8 @@ import fileOps from '@obsidians/file-ops'
 
 class Compiler {
   constructor () {
-    this.channel = new DockerImageChannel('confluxchain/conflux-truffle')
+    this.cfxtruffle = new DockerImageChannel('obsidians/conflux-truffle')
+    this.solc = new DockerImageChannel('ethereum/solc')
     this._terminal = null
     this._button = null
     this.notification = null
@@ -76,9 +77,10 @@ class Compiler {
     const projectDir = fileOps.current.getDockerMountPath(projectRoot)
     return [
       `docker run -t --rm --name truffle-compile`,
-      `-v "${projectDir}:/project/${name}"`,
-      `-w "/project/${name}"`,
-      `confluxchain/conflux-truffle:${compilerVersion}`,
+      '-v /var/run/docker.sock:/var/run/docker.sock',
+      `-v "${projectDir}:/${projectDir}"`,
+      `-w "${projectDir}"`,
+      `obsidians/conflux-truffle:${compilerVersion}`,
       `cfxtruffle compile`,
     ].join(' ')
   }

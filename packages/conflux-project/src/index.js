@@ -4,6 +4,7 @@ import Project from './Project'
 
 export { default as projectManager } from './projectManager'
 export { default as TerminalButton } from './TerminalButton'
+export { default as SolcButton } from './SolcButton'
 
 export { default as NewProjectModal } from './components/NewProjectModal'
 export { default as ProjectList } from './components/ProjectList'
