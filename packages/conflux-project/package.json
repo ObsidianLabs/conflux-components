@@ -20,7 +20,7 @@
     "@obsidians/code-editor": "^0.1.0",
     "@obsidians/conflux-compiler": "^0.1.0",
     "@obsidians/conflux-contract": "^0.1.0",
-    "@obsidians/conflux-node": "^0.1.0",
+    "@obsidians/conflux-network": "^0.1.0",
     "@obsidians/conflux-queue": "^0.1.0",
     "@obsidians/docker": "^0.1.0",
     "@obsidians/file-ops": "^0.1.0",

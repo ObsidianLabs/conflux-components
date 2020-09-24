@@ -1,1 +1,1 @@
-# `@obsidians/ckb-sdk`
+# `@obsidians/conflux-sdk`

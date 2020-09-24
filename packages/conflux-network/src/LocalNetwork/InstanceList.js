@@ -1,21 +1,21 @@
 import React, { PureComponent } from 'react'
 
 import { Card } from '@obsidians/ui-components'
+import redux from '@obsidians/redux'
 import { DockerImageButton } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 
 import CreateInstanceButton from './CreateInstanceButton'
-import InstanceConfigModal from './LocalNetwork/InstanceConfigModal'
 
 import InstanceHeader from './InstanceHeader'
 import InstanceRow from './InstanceRow'
+import InstanceConfigModal from './InstanceConfigModal'
 
 import instanceChannel from './instanceChannel'
 
 export default class InstanceList extends PureComponent {
   static defaultProps = {
     chain: 'dev',
-    onLifecycle: () => {},
   }
 
   constructor (props) {
@@ -53,11 +53,12 @@ export default class InstanceList extends PureComponent {
     }
     this.setState(runningState)
     if (lifecycle === 'stopped') {
+      redux.dispatch('UPDATE_UI_STATE', { localNetwork: '' })
       notification.info(`Conflux Instance Stopped`, `Conflux instance <b>${name}</b> stops to run.`)
     } else if (lifecycle === 'started') {
+      redux.dispatch('UPDATE_UI_STATE', { localNetwork: runningState })
       notification.success(`Conflux Instance Started`, `Conflux instance <b>${name}</b> is running now.`)
     }
-    this.props.onLifecycle(runningState)
   }
 
   renderTable = () => {
@@ -90,31 +91,27 @@ export default class InstanceList extends PureComponent {
   }
 
   render () {
-    let right = null
-    if (this.props.chain === 'dev') {
-      right = (
-        <React.Fragment>
-          <DockerImageButton
-            channel={instanceChannel.node}
-            icon='fas fa-server'
-            title='Conflux Version Manager'
-            noneName='Conflux node'
-            modalTitle='Conflux Version Manager'
-            downloadingTitle='Downloading Conflux'
-          />
-          <CreateInstanceButton
-            className='ml-2'
-            chain={this.props.chain}
-            onRefresh={this.refreshInstances}
-          />
-        </React.Fragment>
-      )
-    }
     return (
       <React.Fragment>
         <Card
           title={`Conflux Instances (${this.props.chain})`}
-          right={right}
+          right={(
+            <React.Fragment>
+              <DockerImageButton
+                channel={instanceChannel.node}
+                icon='fas fa-server'
+                title='Conflux Version Manager'
+                noneName='Conflux node'
+                modalTitle='Conflux Version Manager'
+                downloadingTitle='Downloading Conflux'
+              />
+              <CreateInstanceButton
+                className='ml-2'
+                chain={this.props.chain}
+                onRefresh={this.refreshInstances}
+              />
+            </React.Fragment>
+          )}
         >
           <div className='flex-grow-1 overflow-auto'>
             {this.renderTable()}

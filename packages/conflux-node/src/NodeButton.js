@@ -59,25 +59,6 @@ export default class NodeButton extends PureComponent {
   }
 
   renderStartBtn () {
-    // if (this.props.miner) {
-    //   return (
-    //     <div key='node-btn-stopped' className='btn-group btn-group-sm'>
-    //       <button type='button' className='btn btn-success' onClick={this.start}>
-    //         <i className='fas fa-play mr-1' />Start
-    //       </button>
-  
-    //       <UncontrolledDropdown group size='sm'>
-    //         <DropdownToggle caret color='success' style={{ paddingLeft: '0.25rem' }} />
-    //         <DropdownMenu>
-    //           <DropdownItem onClick={() => this.start(false)}>
-    //             <i className='fas fa-play mr-2' />Start without miner
-    //           </DropdownItem>
-    //         </DropdownMenu>
-    //       </UncontrolledDropdown>
-    //     </div>
-    //   )
-    // }
-
     return (
       <div key='node-btn-stopped-no-miner' className='btn-group btn-group-sm'>
         <button type='button' className='btn btn-success' onClick={() => this.start(false)}>

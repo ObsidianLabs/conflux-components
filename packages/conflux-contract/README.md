@@ -1,1 +1,1 @@
-# `@obsidians/ckb-explorer`
+# `@obsidians/conflux-contract`

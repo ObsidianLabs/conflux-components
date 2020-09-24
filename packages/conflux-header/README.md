@@ -1,1 +1,1 @@
-# `@obsidians/ckb-header`
+# `@obsidians/conflux-header`

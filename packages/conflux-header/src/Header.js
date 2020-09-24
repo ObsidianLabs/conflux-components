@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import Navbar from '@obsidians/navbar'
 import keypairManager from '@obsidians/keypair'
 import { NewProjectModal, navbarItem } from '@obsidians/conflux-project' 
+import { networkManager } from '@obsidians/conflux-network'
 
 import headerActions from './headerActions'
 
@@ -84,7 +85,10 @@ export default class Header extends PureComponent {
         icon: network.icon,
         selected: network,
         dropdown: networkList,
-        onClickItem: newtorkId => headerActions.setNetwork(newtorkId),
+        onClickItem: networkId => {
+          headerActions.updateNetwork(networkId)
+          networkManager.setNetwork(networkId)
+        },
       },
     ]
 

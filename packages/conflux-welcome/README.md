@@ -1,1 +1,1 @@
-# `@obsidians/ckb-welcome`
+# `@obsidians/conflux-welcome`

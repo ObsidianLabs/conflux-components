@@ -11,7 +11,7 @@ import {
   DropdownItem,
 } from '@obsidians/ui-components'
 
-import nodeManager from '@obsidians/conflux-node'
+import { networkManager } from '@obsidians/conflux-network'
 import redux from '@obsidians/redux'
 
 import ContractActions from './ContractActions'
@@ -75,7 +75,7 @@ export default class ContractPage extends PureComponent {
 
     let account
     try {
-      account = await nodeManager.sdk.accountFrom(value)
+      account = await networkManager.sdk.accountFrom(value)
       this.setState({ account })
     } catch (e) {
       this.setState({ loading: false, error: e.message })
@@ -192,7 +192,7 @@ export default class ContractPage extends PureComponent {
   render () {
     const { error, abi, account, errorType } = this.state
 
-    if (!nodeManager.sdk) {
+    if (!networkManager.sdk) {
       return null
     }
 
@@ -246,7 +246,7 @@ export default class ContractPage extends PureComponent {
       )
     }
 
-    const contractInstance = nodeManager.sdk.contractFrom({ abi, address: this.props.value })
+    const contractInstance = networkManager.sdk.contractFrom({ abi, address: this.props.value })
     const functions = abi.filter(item => item.type === 'function')
     const events = abi.filter(item => item.type === 'event')
     const actions = functions.filter(item => item.stateMutability !== 'view')

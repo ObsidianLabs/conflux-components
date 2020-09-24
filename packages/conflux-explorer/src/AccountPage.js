@@ -5,7 +5,7 @@ import {
   LoadingScreen,
 } from '@obsidians/ui-components'
 
-import nodeManager from '@obsidians/conflux-node'
+import { networkManager } from '@obsidians/conflux-network'
 
 import AccountBalance from './AccountBalance'
 import AccountInfo from './AccountInfo'
@@ -51,15 +51,15 @@ export default class AccountPage extends PureComponent {
       return
     }
 
-    if (!nodeManager.sdk?.isValidAddress(value)) {
+    if (!networkManager.sdk?.isValidAddress(value)) {
       this.setState({ loading: false, error: true, account: null })
       return
     }
 
     let account
     try {
-      account = await nodeManager.sdk.accountFrom(value)
-      account.count = await nodeManager.sdk.getTransactionsCount(value)
+      account = await networkManager.sdk.accountFrom(value)
+      account.count = await networkManager.sdk.getTransactionsCount(value)
       this.setState({ loading: false, error: null, account })
       this.forceUpdate()
     } catch (e) {
@@ -71,7 +71,7 @@ export default class AccountPage extends PureComponent {
   render () {
     const { error, account } = this.state
     
-    if (!nodeManager.sdk) {
+    if (!networkManager.sdk) {
       return null
     }
 

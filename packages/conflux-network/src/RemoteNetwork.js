@@ -5,8 +5,7 @@ import {
   TableCardRow,
 } from '@obsidians/ui-components'
 
-import nodeManager from '@obsidians/conflux-node'
-import moment from 'moment'
+import networkManager from './networkManager'
 
 export default class RemoteNetwork extends PureComponent {
   constructor (props) {
@@ -38,23 +37,23 @@ export default class RemoteNetwork extends PureComponent {
       trend: null,
       status: null,
     })
-    if (!nodeManager.sdk) {
+    if (!networkManager.sdk) {
       return
     }
     const chain = this.props.chain
-    const trend = await nodeManager.sdk?.trend()
+    const trend = await networkManager.sdk?.trend()
     if (this.props.chain === chain) {
       this.setState({ trend })
     }
   }
 
   async refreshBlock () {
-    if (!nodeManager.sdk) {
+    if (!networkManager.sdk) {
       return
     }
     try {
       const chain = this.props.chain
-      const status = await nodeManager.sdk?.client.cfx.getStatus()
+      const status = await networkManager.sdk?.client.cfx.getStatus()
       if (this.props.chain === chain) {
         this.setState({ status })
       }
@@ -73,7 +72,7 @@ export default class RemoteNetwork extends PureComponent {
             <TableCard title={`Conflux Network (${chain})`}>
               <TableCardRow
                 name='Node URL'
-                badge={nodeManager.sdk?.url}
+                badge={networkManager.sdk?.url}
                 badgeColor='primary'
               />
               <TableCardRow

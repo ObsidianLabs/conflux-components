@@ -17,7 +17,7 @@
     "prepare": "yarn build"
   },
   "dependencies": {
-    "@obsidians/conflux-instances": "^0.1.0",
+    "@obsidians/conflux-network": "^0.1.0",
     "@obsidians/conflux-sdk": "^0.1.0",
     "@obsidians/file-ops": "^0.1.0",
     "@obsidians/ipc": "^0.1.2",

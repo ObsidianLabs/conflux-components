@@ -7,7 +7,6 @@ import {
 } from '@obsidians/ui-components'
 
 import Terminal from '@obsidians/terminal'
-import fileOps from '@obsidians/file-ops'
 
 import nodeManager from './nodeManager'
 
@@ -71,10 +70,6 @@ export default class NodeTerminal extends PureComponent {
     setTimeout(() => this.tabs.current.onCloseTab({ key: 'miner' }), 100)
   }
 
-  getConfluxBinFolder () {
-    return fileOps.current.path.join(fileOps.current.workspace, '.bin', 'run')
-  }
-
   render () {
     const { active, miner } = this.props
     const { activeTab } = this.state
@@ -107,7 +102,6 @@ export default class NodeTerminal extends PureComponent {
           <TabPane className='h-100 w-100' tabId='miner'>
             <Terminal
               logId='conflux-miner'
-              cwd={this.getConfluxBinFolder()}
               active={active && activeTab === 'miner'}
               ref={ref => (nodeManager.minerTerminal = ref)}
               onLogReceived={onLogReceived}

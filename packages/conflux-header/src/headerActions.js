@@ -1,47 +1,4 @@
-import fileOps from '@obsidians/file-ops'
-import notification from '@obsidians/notification'
 import redux from '@obsidians/redux'
-import nodeManager from '@obsidians/conflux-node'
-
-import { List } from 'immutable'
-
-const networkList = [
-  {
-    id: 'testnet',
-    group: 'testnet',
-    name: 'Testnet',
-    fullName: 'Conflux Testnet',
-    icon: 'fas fa-vial',
-    notification: 'Switched to <b>Conflux Testnet</b> network.',
-    url: 'http://testnet-jsonrpc.conflux-chain.org:12537',
-    chainId: 1,
-    explorer: 'https://testnet.confluxscan.io/api',
-  },
-  {
-    id: 'oceanus',
-    group: 'mainnet',
-    name: 'Oceanus',
-    fullName: 'Conflux Oceanus',
-    icon: 'fas fa-globe',
-    notification: 'Switched to <b>Conflux Oceanus</b> network.',
-    url: 'http://mainnet-jsonrpc.conflux-chain.org:12537',
-    chainId: 2,
-    explorer: 'https://confluxscan.io/api',
-  }
-]
-if (fileOps.fsType === 'electron') {
-  networkList.unshift({
-    id: 'dev',
-    group: 'default',
-    name: 'Development',
-    fullName: 'Development Network',
-    icon: 'fas fa-laptop-code',
-    notification: 'Switched to <b>Development</b> network.',
-    chainId: 0,
-  })
-}
-export const networks = List(networkList)
-
 
 export class HeaderActions {
   constructor() {
@@ -61,18 +18,8 @@ export class HeaderActions {
     redux.dispatch('REMOVE_ACCOUNT', { network, account })
   }
 
-  async setNetwork (newtorkId) {
-    if (newtorkId === redux.getState().network) {
-      return
-    }
-    const network = networks.find(n => n.id === newtorkId)
-    if (!network) {
-      return
-    }
-    nodeManager.switchNetwork(network)
-    redux.dispatch('SELECT_NETWORK', network.id)
-    notification.success(`Network`, network.notification)
-    this.history.push(`/network/${network.id}`)
+  updateNetwork (networkId) {
+    this.history.push(`/network/${networkId}`)
   }
 }
 

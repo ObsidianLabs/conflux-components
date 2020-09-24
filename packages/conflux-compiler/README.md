@@ -1,1 +1,1 @@
-# `@obsidians/ckb-compiler`
+# `@obsidians/conflux-compiler`

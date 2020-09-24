@@ -9,7 +9,7 @@ import {
   CustomInput,
 } from '@obsidians/ui-components'
 
-import nodeManager from '@obsidians/conflux-node'
+import { networkManager } from '@obsidians/conflux-network'
 import { signatureProvider } from '@obsidians/conflux-sdk'
 import notification from '@obsidians/notification'
 
@@ -39,13 +39,13 @@ export default class TransferButton extends PureComponent {
 
   refresh = async () => {
     const value = this.props.address
-    if (!value || !nodeManager.sdk.isValidAddress(value)) {
+    if (!value || !networkManager.sdk.isValidAddress(value)) {
       return
     }
 
     let account
     try {
-      account = await nodeManager.sdk.accountFrom(value)
+      account = await networkManager.sdk.accountFrom(value)
       if (account.assets) {
         const assetList = Object.entries(account.assets)
         this.setState({ assetList })
@@ -72,13 +72,13 @@ export default class TransferButton extends PureComponent {
     try {
       let result
       if (!assetId) {
-        result = await nodeManager.sdk.transfer({
+        result = await networkManager.sdk.transfer({
           from: this.props.address,
           to: recipient,
           amount: Number(amount)
         }, signatureProvider)
       } else {
-        result = await nodeManager.sdk.transferAsset({
+        result = await networkManager.sdk.transferAsset({
           assetId: Number(assetId),
           from: this.props.address,
           to: recipient,
@@ -166,7 +166,7 @@ class AssetOption extends PureComponent {
   }
 
   async getAssetInfo (assetId) {
-    const assetInfo = await nodeManager.sdk.getAssetInfo(assetId)
+    const assetInfo = await networkManager.sdk.getAssetInfo(assetId)
     this.setState({ assetInfo })
   }
 

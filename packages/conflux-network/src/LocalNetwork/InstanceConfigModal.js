@@ -5,7 +5,7 @@ import {
   DebouncedInput,
 } from '@obsidians/ui-components'
 
-import instanceChannel from '../instanceChannel'
+import instanceChannel from './instanceChannel'
 
 export default class InstanceConfigModal extends PureComponent {
   constructor (props) {

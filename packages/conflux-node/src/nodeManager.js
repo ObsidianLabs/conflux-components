@@ -1,11 +1,7 @@
-import fileOps from '@obsidians/file-ops'
-import Sdk from '@obsidians/conflux-sdk'
+import { networkManager, instanceChannel } from '@obsidians/conflux-network'
 import notification from '@obsidians/notification'
-import instance from '@obsidians/conflux-instances'
 
 import { getCachingKeys, dropByCacheKey } from 'react-router-cache-route'
-
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 class NodeManager {
   constructor () {
@@ -36,18 +32,18 @@ class NodeManager {
     this._status = v
   }
 
-  async start ({ name, version, chain }) {
+  async start ({ name, version }) {
     if (!this._terminal) {
       throw new Error()
     }
 
-    const versions = await instance.node.versions()
+    const versions = await instanceChannel.node.versions()
     if (!versions.find(v => v.Tag === version)) {
       notification.error(`Conflux Node ${version} not Installed`, `Please install the version in <b>Conflux Version Manager</b>`)
       throw new Error('Version not installed')
     }
 
-    const startDocker = this.generateCommands({ name, version })
+    const startDocker = this.generateCommand({ name, version })
     await this._terminal.exec(startDocker, { resolveOnFirstLog: true })
     return {
       url: 'http://localhost:12537',
@@ -56,11 +52,7 @@ class NodeManager {
     }
   }
 
-  getConfluxBinFolder () {
-    return fileOps.current.path.join(fileOps.current.workspace, '.bin', 'run')
-  }
-
-  generateCommands ({ name, version }) {
+  generateCommand ({ name, version }) {
     const containerName = `conflux-${name}-${version}`
 
     return [
@@ -82,21 +74,7 @@ class NodeManager {
       this._status.setState({ lifecycle })
     }
     if (params) {
-      this._sdk = new Sdk(params)
-    } else {
-      // this._sdk = null
-    }
-  }
-
-  switchNetwork (network) {
-    const cachingKeys = getCachingKeys()
-    cachingKeys.filter(key => key.startsWith('contract-') || key.startsWith('account-')).forEach(dropByCacheKey)
-
-    this.network = network
-    if (network.url) {
-      this._sdk = new Sdk(network)
-    } else {
-      this._sdk = null
+      networkManager.updateSdk(params)
     }
   }
 
@@ -106,7 +84,7 @@ class NodeManager {
     }
   }
 
-  async stop ({ name, version, chain }) {
+  async stop ({ name, version }) {
     const cachingKeys = getCachingKeys()
     cachingKeys.filter(key => key.startsWith('contract-') || key.startsWith('account-')).forEach(dropByCacheKey)
 

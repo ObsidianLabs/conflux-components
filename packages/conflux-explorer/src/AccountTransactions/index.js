@@ -4,7 +4,7 @@ import {
   TableCard,
 } from '@obsidians/ui-components'
 
-import nodeManager from '@obsidians/conflux-node'
+import { networkManager } from '@obsidians/conflux-network'
 
 import TransactionRow from './TransactionRow'
 
@@ -31,7 +31,7 @@ export default class AccountTransactions extends PureComponent {
 
   refresh = async account => {
     this.setState({ txs: [], loading: true, page: 1 })
-    const { total, list: txs, noExplorer } = await nodeManager.sdk.getTransactions(account.address, 1, this.state.size)
+    const { total, list: txs, noExplorer } = await networkManager.sdk.getTransactions(account.address, 1, this.state.size)
     if (noExplorer) {
       this.setState({ hide: true })
       return
@@ -41,7 +41,7 @@ export default class AccountTransactions extends PureComponent {
 
   loadMore = async () => {
     this.setState({ loading: true })
-    const { total, list: txs, noExplorer } = await nodeManager.sdk.getTransactions(this.props.account.address, this.state.page, this.state.size)
+    const { total, list: txs, noExplorer } = await networkManager.sdk.getTransactions(this.props.account.address, this.state.page, this.state.size)
     if (noExplorer) {
       this.setState({ hide: true })
       return

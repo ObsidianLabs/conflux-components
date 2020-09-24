@@ -1,1 +1,1 @@
-# `@obsidians/ckb-node`
+# `@obsidians/conflux-node`

@@ -1,1 +1,1 @@
-# `@obsidians/ckb-bottombar`
+# `@obsidians/conflux-bottombar`

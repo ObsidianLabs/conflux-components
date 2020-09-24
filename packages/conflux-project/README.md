@@ -1,1 +1,1 @@
-# `@obsidians/ckb-project`
+# `@obsidians/conflux-project`

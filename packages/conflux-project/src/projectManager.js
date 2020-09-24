@@ -1,7 +1,7 @@
 import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import redux from '@obsidians/redux'
-import nodeManager from '@obsidians/conflux-node'
+import { networkManager } from '@obsidians/conflux-network'
 import compilerManager from '@obsidians/conflux-compiler'
 import { signatureProvider } from '@obsidians/conflux-sdk'
 import queue from '@obsidians/conflux-queue'
@@ -165,7 +165,7 @@ class ProjectManager {
   }
 
   async pushDeployment (contractObj, allParameters) {
-    if (!nodeManager.sdk) {
+    if (!networkManager.sdk) {
       notification.error('Error', 'No running node. Please start one first.')
       return
     }
@@ -178,9 +178,9 @@ class ProjectManager {
     const contractName = contractObj.contractName
     this.deployButton.setState({ pending: true, result: '' })
 
-    const networkId = nodeManager.sdk.networkId
+    const networkId = networkManager.sdk.networkId
     const signer = new Account(allParameters.signer, signatureProvider)
-    const contractInstance = nodeManager.sdk.contractFrom(contractObj)
+    const contractInstance = networkManager.sdk.contractFrom(contractObj)
     const { parameters, gas, gasPrice } = allParameters
     const codeHash = util.sign.sha3(Buffer.from(contractObj.deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
 
