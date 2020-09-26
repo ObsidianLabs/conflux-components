@@ -43,6 +43,7 @@
   },
   "peerDependencies": {
     "js-conflux-sdk": "^0.13.4",
+    "moment": "^2.24.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-router-cache-route": "^1.8.4",
