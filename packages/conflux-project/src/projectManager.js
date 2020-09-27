@@ -214,6 +214,7 @@ class ProjectManager {
               })
               return true
             },
+            'failed-timeout': reject,
             failed: reject,
           }
         ).catch(reject)
