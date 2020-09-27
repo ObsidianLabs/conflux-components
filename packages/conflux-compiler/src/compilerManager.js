@@ -68,6 +68,7 @@ class Compiler {
 
   async stop () {
     if (this._terminal) {
+      this._terminal.execAsChildProcess(`docker stop -t 1 truffle-compile`)
       await this._terminal.stop()
     }
   }
