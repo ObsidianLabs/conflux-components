@@ -53,7 +53,7 @@ export default class DeployerButton extends PureComponent {
   }
 
   confirmDeploymentParameters = () => {
-    let parameters
+    let parameters = { array: [], obj: {} }
     if (this.state.constructorAbi) {
       try {
         parameters = this.form.getParameters()

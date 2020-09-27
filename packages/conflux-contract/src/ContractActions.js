@@ -55,8 +55,8 @@ export default class ContractActions extends Component {
       notification.error('Error', 'No signer is provided.')
       return
     }
-
-    let parameters
+    
+    let parameters = { array: [], obj: {} }
     try {
       parameters = this.form.getParameters()
     } catch (e) {
