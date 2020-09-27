@@ -79,7 +79,7 @@ class Compiler {
     return [
       `docker run -t --rm --name truffle-compile`,
       '-v /var/run/docker.sock:/var/run/docker.sock',
-      `-v "${projectDir}:/${projectDir}"`,
+      `-v "${projectDir}:${projectDir}"`,
       `-w "${projectDir}"`,
       `obsidians/conflux-truffle:${compilerVersion}`,
       `cfxtruffle compile`,
