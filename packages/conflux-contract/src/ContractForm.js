@@ -235,9 +235,14 @@ export default class ContractForm extends PureComponent {
   }
 
   valueByType = (value, type, name) => {
-    if (type.startsWith('bytes') || type === 'byte') {
+    if (type.startsWith('bytes') || type === 'byte' || type === 'string') {
       const bytes = util.format.bytes(value)
-      const length = type === 'byte' ? 1 : (Number(type.substr(5)) || bytes.length)
+      let length = bytes.length
+      if (type === 'byte') {
+        length = 1
+      } else if (type !== 'string' && type.substr(5)) {
+        length = Number(type.substr(5))
+      }
       if (bytes.length > length) {
         throw new Error(`Byte length overflow for parameter <b>${name}</b>. Expect ${length} but got ${bytes.length}.`)
       }
@@ -294,7 +299,7 @@ export default class ContractForm extends PureComponent {
       )
     }
 
-    if (type.startsWith('bytes')) {
+    if (type.startsWith('bytes') || type === 'string') {
       return (
         <ActionParamInput {...props} textarea unit='UTF8'/>
       )
