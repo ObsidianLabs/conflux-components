@@ -44,8 +44,14 @@ class Compiler {
     const compilerVersion = this.compilerVersion
 
     if (!compilerVersion) {
-      notification.error('Build Failed', `Does not have Truffle installed.`)
-      throw new Error('Does not have Truffle installed.')
+      notification.error('Build Failed', `Does not have Conflux Truffle installed.`)
+      throw new Error('Does not have Conflux Truffle installed.')
+    }
+
+    const allVersions = await this.cfxtruffle.versions()
+    if (!allVersions.find(v => v.Tag === compilerVersion)) {
+      notification.error(`Conflux Truffle ${compilerVersion} not Installed`, `Please install the version in <b>Conflux Truffle Manager</b> or select another version at the bottom bar.`)
+      throw new Error('Version not installed')
     }
 
     this._button.setState({ building: true })
