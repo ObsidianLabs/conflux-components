@@ -147,7 +147,7 @@ class ProjectManager {
     try {
       contractObj = await this.readContractJson(contractPath)
     } catch (e) {
-      notification.error('Error', e.message)
+      notification.error('Deploy Error', e.message)
       return
     }
 
@@ -155,7 +155,7 @@ class ProjectManager {
     try {
       constructorAbi = await this.getConstructorAbi(contractObj)
     } catch (e) {
-      notification.error('Error', e.message)
+      notification.error('Deploy Error', e.message)
       return
     }
 
@@ -166,12 +166,18 @@ class ProjectManager {
 
   async pushDeployment (contractObj, allParameters) {
     if (!networkManager.sdk) {
-      notification.error('Error', 'No running node. Please start one first.')
+      notification.error('Deploy Error', 'No running node. Please start one first.')
       return
     }
 
     if (!allParameters.signer) {
-      notification.error('Error', 'No signer specified. Please select one to sign the deployment transaction.')
+      notification.error('Deploy Error', 'No signer specified. Please select one to sign the deployment transaction.')
+      return
+    }
+
+    const deployedBytecode = contractObj.deployedBytecode
+    if (typeof deployedBytecode !== 'string') {
+      notification.error('Deploy Error', 'Invalid <b>deployedBytecode</b> field in the built contract JSON. Please make sure you used Conflux Truffle to build the contract.')
       return
     }
 
@@ -182,7 +188,7 @@ class ProjectManager {
     const signer = new Account(allParameters.signer, signatureProvider)
     const contractInstance = networkManager.sdk.contractFrom(contractObj)
     const { parameters, gas, gasPrice } = allParameters
-    const codeHash = util.sign.sha3(Buffer.from(contractObj.deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
+    const codeHash = util.sign.sha3(Buffer.from(deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
 
     let result
     try {
@@ -220,7 +226,12 @@ class ProjectManager {
         ).catch(reject)
       })
     } catch (e) {
-      notification.error('Deploy Failed', e.message)
+      console.warn(e)
+      if (e.data) {
+        notification.error('Deploy Failed', `${e.message}<br />${e.data}`)
+      } else {
+        notification.error('Deploy Failed', e.message)
+      }
       this.deployButton.setState({ pending: false })
       return
     }
