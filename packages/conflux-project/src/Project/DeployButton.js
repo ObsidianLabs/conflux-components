@@ -58,7 +58,7 @@ export default class DeployerButton extends PureComponent {
       try {
         parameters = this.form.getParameters()
       } catch (e) {
-        notification.error('Error', e.message)
+        notification.error('Error in Constructor Parameters', e.message)
         return
       }
     }

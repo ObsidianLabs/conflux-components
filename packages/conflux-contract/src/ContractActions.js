@@ -60,7 +60,7 @@ export default class ContractActions extends Component {
     try {
       parameters = this.form.getParameters()
     } catch (e) {
-      notification.error('Error', e.message)
+      notification.error('Error in Parameters', e.message)
       return
     }
 

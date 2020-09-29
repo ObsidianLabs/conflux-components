@@ -10,6 +10,7 @@ import {
   Badge,
 } from '@obsidians/ui-components'
 
+import notification from '@obsidians/notification'
 import DropdownCard from './DropdownCard'
 import ContractForm from './ContractForm'
 
@@ -34,7 +35,14 @@ export default class ContractTable extends Component {
     if (this.state.executing) {
       return
     }
-    const parameters = this.form.getParameters()
+
+    let parameters = { array: [], obj: {} }
+    try {
+      parameters = this.form.getParameters()
+    } catch (e) {
+      notification.error('Error in Parameters', e.message)
+      return
+    }
 
     this.setState({ executing: true, actionError: '', actionResult: '' })
 
