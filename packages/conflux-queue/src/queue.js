@@ -43,9 +43,14 @@ class Queue extends BaseQueueManager {
     }
     this.updateStatus(txHash, 'EXECUTED', { receipt }, callbacks)
 
-    await pendingTransaction.confirmed()
+    try {
+      await pendingTransaction.confirmed()
+    } catch (e) {
+      this.updateStatus(txHash, 'CONFIRMED', {}, callbacks)
+      return
+    }
     notification.success('Transaction Confirmed', '')
-    this.updateStatus(txHash, 'CONFIRMED', { receipt }, callbacks)
+    this.updateStatus(txHash, 'CONFIRMED', {}, callbacks)
   }
 }
 
