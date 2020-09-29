@@ -235,12 +235,19 @@ export default class ContractForm extends PureComponent {
   }
 
   valueByType = (value, type, name) => {
-    if (type.startsWith('bytes') || type === 'byte' || type === 'string') {
+    if (type === 'string') {
+      return {
+        display: value,
+        raw: value,
+      }
+    }
+
+    if (type.startsWith('bytes') || type === 'byte') {
       const bytes = util.format.bytes(value)
       let length = bytes.length
       if (type === 'byte') {
         length = 1
-      } else if (type !== 'string' && type.substr(5)) {
+      } else if (type.substr(5)) {
         length = Number(type.substr(5))
       }
       if (bytes.length > length) {
