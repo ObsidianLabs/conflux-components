@@ -249,8 +249,8 @@ export default class ContractPage extends PureComponent {
     const contractInstance = networkManager.sdk.contractFrom({ abi, address: this.props.value })
     const functions = abi.filter(item => item.type === 'function')
     const events = abi.filter(item => item.type === 'event')
-    const actions = functions.filter(item => item.stateMutability !== 'view')
-    const views = functions.filter(item => item.stateMutability === 'view')
+    const actions = functions.filter(item => item.stateMutability !== 'view' && item.stateMutability !== 'pure')
+    const views = functions.filter(item => item.stateMutability === 'view' || item.stateMutability === 'pure')
 
     return (
       <div className='d-flex p-relative h-100 w-100'>
