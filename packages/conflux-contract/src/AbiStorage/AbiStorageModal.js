@@ -125,7 +125,7 @@ export default class AbiStorageModal extends PureComponent {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         <Modal
           ref={this.modal}
           title='ABI Storage'
@@ -148,7 +148,7 @@ export default class AbiStorageModal extends PureComponent {
         </Modal>
         <ViewAbiModal ref={this.viewAbiModal} />
         <AbiInputModal ref={this.abiInputModal} />
-      </React.Fragment>
+      </>
     )
   }
 }

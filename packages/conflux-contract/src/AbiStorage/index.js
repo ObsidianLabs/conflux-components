@@ -14,10 +14,10 @@ export default class AbiStorage extends PureComponent {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         <div onClick={this.openModal}>{this.props.children}</div>
         <AbiStorageModal ref={this.modal} />
-      </React.Fragment>
+      </>
     )
   }
 }

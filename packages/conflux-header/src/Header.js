@@ -93,13 +93,13 @@ export default class Header extends PureComponent {
     ]
 
     return (
-      <React.Fragment>
+      <>
         <Navbar
           navbarLeft={navbarLeft}
           navbarRight={navbarRight}
         />
         <NewProjectModal />
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -53,7 +53,7 @@ export default class TestSelector extends PureComponent {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         <ToolbarButton
           id='test'
           icon='fas fa-vial'
@@ -81,7 +81,7 @@ export default class TestSelector extends PureComponent {
             </CustomInput>
           </FormGroup>
         </Modal>
-      </React.Fragment>
+      </>
     )
   }
 }

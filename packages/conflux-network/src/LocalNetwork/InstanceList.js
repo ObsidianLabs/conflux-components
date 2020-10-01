@@ -92,11 +92,11 @@ export default class InstanceList extends PureComponent {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         <Card
           title={`Conflux Instances (${this.props.chain})`}
           right={(
-            <React.Fragment>
+            <>
               <DockerImageButton
                 channel={instanceChannel.node}
                 icon='fas fa-server'
@@ -110,7 +110,7 @@ export default class InstanceList extends PureComponent {
                 chain={this.props.chain}
                 onRefresh={this.refreshInstances}
               />
-            </React.Fragment>
+            </>
           )}
         >
           <div className='flex-grow-1 overflow-auto'>
@@ -121,7 +121,7 @@ export default class InstanceList extends PureComponent {
           ref={this.configModal}
           onRefresh={this.refreshInstances}
         />
-      </React.Fragment>
+      </>
     )
   }
 }

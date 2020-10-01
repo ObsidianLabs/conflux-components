@@ -57,7 +57,7 @@ export default class ContractEvents extends Component {
     const selectedEvent = events[this.state.selected] || {}
 
     return (
-      <React.Fragment>
+      <>
         <UncontrolledButtonDropdown size='sm'>
           <DropdownToggle color='primary' caret className='rounded-0 border-0 px-2 border-right-1'>
             <i className='fas fa-function' />
@@ -83,7 +83,7 @@ export default class ContractEvents extends Component {
           className='border-right-1'
           onClick={() => this.getEventLogs(selectedEvent)}
         />
-      </React.Fragment>
+      </>
     )
   }
 

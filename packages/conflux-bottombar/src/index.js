@@ -10,7 +10,7 @@ import compilerManager from '@obsidians/conflux-compiler'
 
 export default function BottomBar (props) {
   return (
-    <React.Fragment>
+    <>
       <KeypairButton secretName='Private Key'>
         <div className='btn btn-primary btn-sm btn-flat'>
           <i className='fas fa-key' />
@@ -50,6 +50,6 @@ export default function BottomBar (props) {
         path={`/guest/:project`}
         component={TerminalButton}
       />
-    </React.Fragment>
+    </>
   )
 }

@@ -16,8 +16,8 @@ export { default as redux } from './redux'
 
 export default function (props) {
   return (
-    <React.Fragment>
+    <>
       <Project {...props} />
-    </React.Fragment>
+    </>
   )
 }

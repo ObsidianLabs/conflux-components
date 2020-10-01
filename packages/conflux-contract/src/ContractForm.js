@@ -93,7 +93,7 @@ class ArrayInput extends PureComponent {
       unit,
     } = this.props
     return (
-      <React.Fragment>
+      <>
         <MultiSelect
           size={size}
           addon={addon}
@@ -121,7 +121,7 @@ class ArrayInput extends PureComponent {
             {addon}
           </ActionParamInput>
         </Modal>
-      </React.Fragment>
+      </>
     )
   }
 }

@@ -41,15 +41,15 @@ export default class CompilerButton extends PureComponent {
     let icon = <span key='build-icon'><i className='fas fa-hammer' /></span>
     if (this.state.building) {
       icon = (
-        <React.Fragment>
+        <>
           <span key='building-icon' className='hover-hide'><i className='fas fa-spinner fa-spin' /></span>
           <span key='stop-build-icon' className='hover-show'><i className='fas fa-stop-circle' /></span>
-        </React.Fragment>
+        </>
       )
     }
 
     return (
-      <React.Fragment>
+      <>
         <Button
           color={color}
           size={size}
@@ -63,7 +63,7 @@ export default class CompilerButton extends PureComponent {
         <UncontrolledTooltip trigger='hover' delay={0} placement='bottom' target='tooltip-build-btn'>
           { this.state.building ? 'Stop Build' : `Build`}
         </UncontrolledTooltip>
-      </React.Fragment>
+      </>
     )
   }
 }

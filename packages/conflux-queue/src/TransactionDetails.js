@@ -195,7 +195,7 @@ export default class TransactionDetails extends PureComponent {
     }
 
     return (
-      <React.Fragment>
+      <>
         <div>
           <ButtonOptions
             size='sm'
@@ -206,7 +206,7 @@ export default class TransactionDetails extends PureComponent {
           />
         </div>
         {this.renderContent(tx, selected)}
-      </React.Fragment>
+      </>
     )
   }
 }

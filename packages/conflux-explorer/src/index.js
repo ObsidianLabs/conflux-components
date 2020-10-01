@@ -96,7 +96,7 @@ export default class Explorer extends PureComponent {
     const { initialSelected, initialTabs, value } = this.state
 
     return (
-      <React.Fragment>
+      <>
         <TabsWithNavigationBar
           ref={this.tabs}
           initialSelected={initialSelected}
@@ -126,7 +126,7 @@ export default class Explorer extends PureComponent {
             )}
           />
         </TabsWithNavigationBar>
-      </React.Fragment>
+      </>
     )
   }
 }

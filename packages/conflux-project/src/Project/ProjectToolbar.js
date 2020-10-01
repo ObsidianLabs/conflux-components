@@ -8,7 +8,7 @@ import DeployButton from './DeployButton'
 
 export default function ProjectToolbar ({ projectRoot, compilerVersion, solc }) {
   return (
-    <React.Fragment>
+    <>
       <CompilerButton
         className='rounded-0 border-0 flex-none w-5'
         solc={solc}
@@ -23,6 +23,6 @@ export default function ProjectToolbar ({ projectRoot, compilerVersion, solc }) 
         tooltip='Project Settings'
         onClick={() => projectManager.openProjectSettings()}
       />
-    </React.Fragment>
+    </>
   )
 }

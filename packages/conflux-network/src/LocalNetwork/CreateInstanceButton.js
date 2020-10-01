@@ -68,7 +68,7 @@ export default class CreateInstanceButton extends PureComponent {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         <Button
           key='new-instance'
           color='success'
@@ -105,7 +105,7 @@ export default class CreateInstanceButton extends PureComponent {
           />
           {this.renderMinerInput()}
         </Modal>
-      </React.Fragment>
+      </>
     )
   }
 }

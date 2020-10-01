@@ -26,7 +26,7 @@ export default class DropdownCard extends Component {
     } = this.props
 
     return (
-      <React.Fragment>
+      <>
         <div
           className='btn-secondary d-flex align-items-center justify-content-between border-0 rounded-0 px-1 py-0'
           style={{ flex: 'none', height: '28px' }}
@@ -48,7 +48,7 @@ export default class DropdownCard extends Component {
             {children}
           </Card>
         </Collapse>
-      </React.Fragment>
+      </>
     )
   }
 }

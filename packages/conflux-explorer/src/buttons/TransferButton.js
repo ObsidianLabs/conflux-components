@@ -100,7 +100,7 @@ export default class TransferButton extends PureComponent {
     const { amount, recipient, assetId, pushing } = this.state
 
     return (
-      <React.Fragment>
+      <>
         <ToolbarButton
           id='navbar-transfer'
           size='md'
@@ -148,7 +148,7 @@ export default class TransferButton extends PureComponent {
             onChange={this.onChangeRecipient}
           />
         </Modal>
-      </React.Fragment>
+      </>
     )
   }
 }

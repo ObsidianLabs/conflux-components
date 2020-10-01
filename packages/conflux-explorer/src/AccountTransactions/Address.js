@@ -29,7 +29,7 @@ export default function Address ({ addr, redirect = true, displayText, showToolt
     )
   }
   return (
-    <React.Fragment>
+    <>
       <div>{text}</div>
       {
         showTooltip &&
@@ -37,6 +37,6 @@ export default function Address ({ addr, redirect = true, displayText, showToolt
           { addr }
         </UncontrolledTooltip>
       }
-    </React.Fragment>
+    </>
   )
 }

@@ -106,7 +106,7 @@ export default class ContractActions extends Component {
     const selectedAction = actions[this.state.selected] || {}
 
     return (
-      <React.Fragment>
+      <>
         <UncontrolledButtonDropdown size='sm'>
           <DropdownToggle color='primary' caret className='rounded-0 border-0 px-2 border-right-1'>
             <i className='fas fa-function' />
@@ -132,7 +132,7 @@ export default class ContractActions extends Component {
           className='border-right-1'
           onClick={() => this.executeAction(selectedAction.name)}
         />
-      </React.Fragment>
+      </>
     )
   }
 
