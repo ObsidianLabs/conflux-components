@@ -25,30 +25,28 @@ export default class DropdownCard extends Component {
       overflow,
     } = this.props
 
-    return (
-      <>
-        <div
-          className='btn-secondary d-flex align-items-center justify-content-between border-0 rounded-0 px-1 py-0'
-          style={{ flex: 'none', height: '28px' }}
-          onClick={() => this.setState({ isOpen: !this.state.isOpen })}
-        >
-          <div>
-            <span className='w-3' style={{ display: 'inline-block' }} key={`collapse-parameters-${this.state.isOpen}`}>
-              { this.state.isOpen ? <i className='fas fa-caret-down' /> : <i className='fal fa-caret-right' />}
-            </span>
-            {title}
-          </div>
-          <div className='d-flex'>{right}</div>
+    return <>
+      <div
+        className='btn-secondary d-flex align-items-center justify-content-between border-0 rounded-0 px-1 py-0'
+        style={{ flex: 'none', height: '28px' }}
+        onClick={() => this.setState({ isOpen: !this.state.isOpen })}
+      >
+        <div>
+          <span className='w-3' style={{ display: 'inline-block' }} key={`collapse-parameters-${this.state.isOpen}`}>
+            { this.state.isOpen ? <i className='fas fa-caret-down' /> : <i className='fal fa-caret-right' />}
+          </span>
+          {title}
         </div>
-        <Collapse
-          isOpen={this.state.isOpen}
-          style={{ flex, minHeight, maxHeight }}
-        >
-          <Card body className='py-2'>
-            {children}
-          </Card>
-        </Collapse>
-      </>
-    )
+        <div className='d-flex'>{right}</div>
+      </div>
+      <Collapse
+        isOpen={this.state.isOpen}
+        style={{ flex, minHeight, maxHeight }}
+      >
+        <Card body className='py-2'>
+          {children}
+        </Card>
+      </Collapse>
+    </>
   }
 }

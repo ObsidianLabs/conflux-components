@@ -17,12 +17,10 @@ export default class TransactionFee extends PureComponent {
     }
 
     const id = `tooltip-fee-${amount}-${Math.floor(Math.random() * 1000)}`
-    return (
-      <>
-        <span id={id} style={{ cursor: 'default', display: 'block', textAlign: 'right' }}>
-          { fee }
-        </span>
-      </>
-    )
+    return <>
+      <span id={id} style={{ cursor: 'default', display: 'block', textAlign: 'right' }}>
+        { fee }
+      </span>
+    </>
   }
 }

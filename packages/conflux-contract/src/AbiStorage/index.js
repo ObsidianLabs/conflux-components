@@ -13,11 +13,9 @@ export default class AbiStorage extends PureComponent {
   }
 
   render () {
-    return (
-      <>
-        <div onClick={this.openModal}>{this.props.children}</div>
-        <AbiStorageModal ref={this.modal} />
-      </>
-    )
+    return <>
+      <div onClick={this.openModal}>{this.props.children}</div>
+      <AbiStorageModal ref={this.modal} />
+    </>
   }
 }

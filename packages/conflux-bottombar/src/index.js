@@ -9,47 +9,45 @@ import { TerminalButton, SolcButton } from '@obsidians/conflux-project'
 import compilerManager from '@obsidians/conflux-compiler'
 
 export default function BottomBar (props) {
-  return (
-    <>
-      <KeypairButton secretName='Private Key'>
-        <div className='btn btn-primary btn-sm btn-flat'>
-          <i className='fas fa-key' />
-        </div>
-      </KeypairButton>
-      <QueueButton txs={props.txs} />
-      <AbiStorage>
-        <div className='btn btn-default btn-sm btn-flat text-muted'>
-          <i className='fas fa-list mr-1' />
-          ABI Storage
-        </div>
-      </AbiStorage>
-      <div className='flex-1' />
-      <CacheRoute
-        path={`/guest/:project`}
-        render={() => (
-          <DockerImageSelector
-            channel={compilerManager.cfxtruffle}
-            size='sm'
-            icon='fas fa-cookie'
-            title='CFX Truffle'
-            noneName='Conflux Truffle'
-            modalTitle='Conflux Truffle Manager'
-            downloadingTitle='Downloading Conflux Truffle'
-            selected={props.compilerVersion}
-            onSelected={compilerVersion => props.onSelectCompiler(compilerVersion)}
-          />
-        )}
-      />
-      <CacheRoute
-        path={`/guest/:project`}
-        render={() => (
-          <SolcButton selected={props.solc} onSelected={solc => props.onSelectSolc(solc)} />
-        )}
-      />
-      <CacheRoute
-        path={`/guest/:project`}
-        component={TerminalButton}
-      />
-    </>
-  )
+  return <>
+    <KeypairButton secretName='Private Key'>
+      <div className='btn btn-primary btn-sm btn-flat'>
+        <i className='fas fa-key' />
+      </div>
+    </KeypairButton>
+    <QueueButton txs={props.txs} />
+    <AbiStorage>
+      <div className='btn btn-default btn-sm btn-flat text-muted'>
+        <i className='fas fa-list mr-1' />
+        ABI Storage
+      </div>
+    </AbiStorage>
+    <div className='flex-1' />
+    <CacheRoute
+      path={`/guest/:project`}
+      render={() => (
+        <DockerImageSelector
+          channel={compilerManager.cfxtruffle}
+          size='sm'
+          icon='fas fa-cookie'
+          title='CFX Truffle'
+          noneName='Conflux Truffle'
+          modalTitle='Conflux Truffle Manager'
+          downloadingTitle='Downloading Conflux Truffle'
+          selected={props.cfxtruffle}
+          onSelected={cfxtruffle => props.onSelectCfxTruffle(cfxtruffle)}
+        />
+      )}
+    />
+    <CacheRoute
+      path={`/guest/:project`}
+      render={() => (
+        <SolcButton selected={props.solc} onSelected={solc => props.onSelectSolc(solc)} />
+      )}
+    />
+    <CacheRoute
+      path={`/guest/:project`}
+      component={TerminalButton}
+    />
+  </>
 }

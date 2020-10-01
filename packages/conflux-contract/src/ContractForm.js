@@ -92,37 +92,35 @@ class ArrayInput extends PureComponent {
       textarea,
       unit,
     } = this.props
-    return (
-      <>
-        <MultiSelect
-          size={size}
-          addon={addon}
-          options={this.options}
-          value={this.state.values}
-          onChange={this.onChange}
-          onClickLabel={this.onClickItem}
-        />
-        <Modal
-          ref={this.modal}
-          overflow
-          title={this.state.title}
-          onConfirm={this.onConfirm}
-          confirmDisabled={this.state.errorInData}
+    return <>
+      <MultiSelect
+        size={size}
+        addon={addon}
+        options={this.options}
+        value={this.state.values}
+        onChange={this.onChange}
+        onClickLabel={this.onClickItem}
+      />
+      <Modal
+        ref={this.modal}
+        overflow
+        title={this.state.title}
+        onConfirm={this.onConfirm}
+        confirmDisabled={this.state.errorInData}
+      >
+        <ActionParamInput
+          ref={this.input}
+          type={type}
+          value={this.state.newValue}
+          onChange={newValue => this.setState({ newValue })}
+          placeholder={placeholder}
+          textarea={textarea}
+          unit={unit}
         >
-          <ActionParamInput
-            ref={this.input}
-            type={type}
-            value={this.state.newValue}
-            onChange={newValue => this.setState({ newValue })}
-            placeholder={placeholder}
-            textarea={textarea}
-            unit={unit}
-          >
-            {addon}
-          </ActionParamInput>
-        </Modal>
-      </>
-    )
+          {addon}
+        </ActionParamInput>
+      </Modal>
+    </>
   }
 }
 

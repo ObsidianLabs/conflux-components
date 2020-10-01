@@ -99,57 +99,55 @@ export default class TransferButton extends PureComponent {
   render () {
     const { amount, recipient, assetId, pushing } = this.state
 
-    return (
-      <>
-        <ToolbarButton
-          id='navbar-transfer'
-          size='md'
-          icon='fas fa-sign-out-alt'
-          tooltip='Transfer'
-          onClick={this.openModal}
+    return <>
+      <ToolbarButton
+        id='navbar-transfer'
+        size='md'
+        icon='fas fa-sign-out-alt'
+        tooltip='Transfer'
+        onClick={this.openModal}
+      />
+      <Modal
+        ref={this.modal}
+        overflow
+        title='Transfer'
+        textConfirm='Sign and Push'
+        confirmDisabled={false}
+        onConfirm={this.push}
+        pending={pushing && 'Pushing...'}
+      >
+        <FormGroup>
+          <Label>Asset</Label>
+          <CustomInput
+            id='transfer-token'
+            type='select'
+            value={assetId}
+            onChange={event => {
+              this.setState({ assetId: event.target.value })
+            }}
+          >
+            <option value=''>CFX</option>
+            {this.state.assetList.map(entry => {
+              const [assetId, asset] = entry
+              return <AssetOption key={`transfer-asset-${assetId}`} assetId={assetId} />
+            })}
+          </CustomInput>
+        </FormGroup>
+        <DebouncedFormGroup
+          ref={this.amountInput}
+          label='Amount'
+          maxLength='50'
+          value={amount}
+          onChange={this.onChangeAmount}
         />
-        <Modal
-          ref={this.modal}
-          overflow
-          title='Transfer'
-          textConfirm='Sign and Push'
-          confirmDisabled={false}
-          onConfirm={this.push}
-          pending={pushing && 'Pushing...'}
-        >
-          <FormGroup>
-            <Label>Asset</Label>
-            <CustomInput
-              id='transfer-token'
-              type='select'
-              value={assetId}
-              onChange={event => {
-                this.setState({ assetId: event.target.value })
-              }}
-            >
-              <option value=''>CFX</option>
-              {this.state.assetList.map(entry => {
-                const [assetId, asset] = entry
-                return <AssetOption key={`transfer-asset-${assetId}`} assetId={assetId} />
-              })}
-            </CustomInput>
-          </FormGroup>
-          <DebouncedFormGroup
-            ref={this.amountInput}
-            label='Amount'
-            maxLength='50'
-            value={amount}
-            onChange={this.onChangeAmount}
-          />
-          <DebouncedFormGroup
-            label='Recipient'
-            maxLength='100'
-            value={recipient}
-            onChange={this.onChangeRecipient}
-          />
-        </Modal>
-      </>
-    )
+        <DebouncedFormGroup
+          label='Recipient'
+          maxLength='100'
+          value={recipient}
+          onChange={this.onChangeRecipient}
+        />
+      </Modal>
+    </>
   }
 }
 

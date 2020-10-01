@@ -194,19 +194,17 @@ export default class TransactionDetails extends PureComponent {
       options.push({ key: 'abi', text: 'ABI' })
     }
 
-    return (
-      <>
-        <div>
-          <ButtonOptions
-            size='sm'
-            className='mb-3'
-            options={options}
-            selected={selected}
-            onSelect={selected => this.setState({ selected })}
-          />
-        </div>
-        {this.renderContent(tx, selected)}
-      </>
-    )
+    return <>
+      <div>
+        <ButtonOptions
+          size='sm'
+          className='mb-3'
+          options={options}
+          selected={selected}
+          onSelect={selected => this.setState({ selected })}
+        />
+      </div>
+      {this.renderContent(tx, selected)}
+    </>
   }
 }

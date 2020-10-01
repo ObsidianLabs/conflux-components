@@ -52,36 +52,34 @@ export default class TestSelector extends PureComponent {
   }
 
   render () {
-    return (
-      <>
-        <ToolbarButton
-          id='test'
-          icon='fas fa-vial'
-          tooltip='Test Transaction'
-          onClick={this.openModal}
-        />
-        <Modal
-          ref={this.modal}
-          title='Test Transaction'
-          textConfirm='Run Test Transaction'
-          onConfirm={this.runTest}
-          pending={this.state.running && 'Pushing Transaction...'}
-        >
-          <FormGroup>
-            <Label>Test</Label>
-            <CustomInput
-              id='test-selector'
-              type='select'
-              value={this.state.selected}
-              onChange={event => {
-                this.setState({ selected: event.target.value })
-              }}
-            >
-              {this.state.files.map(file => <option key={file} value={file}>{file}</option>)}
-            </CustomInput>
-          </FormGroup>
-        </Modal>
-      </>
-    )
+    return <>
+      <ToolbarButton
+        id='test'
+        icon='fas fa-vial'
+        tooltip='Test Transaction'
+        onClick={this.openModal}
+      />
+      <Modal
+        ref={this.modal}
+        title='Test Transaction'
+        textConfirm='Run Test Transaction'
+        onConfirm={this.runTest}
+        pending={this.state.running && 'Pushing Transaction...'}
+      >
+        <FormGroup>
+          <Label>Test</Label>
+          <CustomInput
+            id='test-selector'
+            type='select'
+            value={this.state.selected}
+            onChange={event => {
+              this.setState({ selected: event.target.value })
+            }}
+          >
+            {this.state.files.map(file => <option key={file} value={file}>{file}</option>)}
+          </CustomInput>
+        </FormGroup>
+      </Modal>
+    </>
   }
 }

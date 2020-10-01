@@ -124,31 +124,29 @@ export default class AbiStorageModal extends PureComponent {
   }
 
   render () {
-    return (
-      <>
-        <Modal
-          ref={this.modal}
-          title='ABI Storage'
-          textActions={['New']}
-          textCancel='Close'
-          onActions={[this.newAbi]}
+    return <>
+      <Modal
+        ref={this.modal}
+        title='ABI Storage'
+        textActions={['New']}
+        textCancel='Close'
+        onActions={[this.newAbi]}
+      >
+        <Table
+          tableSm
+          TableHead={(
+            <tr>
+              <th style={{ width: '16%' }}>Name</th>
+              <th style={{ width: '75%' }}>Code Hash / Address</th>
+              <th style={{ width: '9%' }}></th>
+            </tr>
+          )}
         >
-          <Table
-            tableSm
-            TableHead={(
-              <tr>
-                <th style={{ width: '16%' }}>Name</th>
-                <th style={{ width: '75%' }}>Code Hash / Address</th>
-                <th style={{ width: '9%' }}></th>
-              </tr>
-            )}
-          >
-            {this.renderTable()}
-          </Table>
-        </Modal>
-        <ViewAbiModal ref={this.viewAbiModal} />
-        <AbiInputModal ref={this.abiInputModal} />
-      </>
-    )
+          {this.renderTable()}
+        </Table>
+      </Modal>
+      <ViewAbiModal ref={this.viewAbiModal} />
+      <AbiInputModal ref={this.abiInputModal} />
+    </>
   }
 }

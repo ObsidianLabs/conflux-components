@@ -56,35 +56,33 @@ export default class ContractEvents extends Component {
     const events = this.props.abi
     const selectedEvent = events[this.state.selected] || {}
 
-    return (
-      <>
-        <UncontrolledButtonDropdown size='sm'>
-          <DropdownToggle color='primary' caret className='rounded-0 border-0 px-2 border-right-1'>
-            <i className='fas fa-function' />
-            <code className='mx-1'><b>{selectedEvent.name}</b></code>
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem header>events</DropdownItem>
-            {events.map((item, index) => (
-              <DropdownItem
-                key={item.name}
-                className={classnames({ active: index === this.state.selected })}
-                onClick={() => this.selectAction(index)}
-              >
-                <code>{item.name}</code>
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </UncontrolledButtonDropdown>
-        <ToolbarButton
-          id='contract-event'
-          icon={this.state.executing ? 'fas fa-spin fa-spinner' : 'fas fa-play'}
-          tooltip='Get event logs'
-          className='border-right-1'
-          onClick={() => this.getEventLogs(selectedEvent)}
-        />
-      </>
-    )
+    return <>
+      <UncontrolledButtonDropdown size='sm'>
+        <DropdownToggle color='primary' caret className='rounded-0 border-0 px-2 border-right-1'>
+          <i className='fas fa-function' />
+          <code className='mx-1'><b>{selectedEvent.name}</b></code>
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem header>events</DropdownItem>
+          {events.map((item, index) => (
+            <DropdownItem
+              key={item.name}
+              className={classnames({ active: index === this.state.selected })}
+              onClick={() => this.selectAction(index)}
+            >
+              <code>{item.name}</code>
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </UncontrolledButtonDropdown>
+      <ToolbarButton
+        id='contract-event'
+        icon={this.state.executing ? 'fas fa-spin fa-spinner' : 'fas fa-play'}
+        tooltip='Get event logs'
+        className='border-right-1'
+        onClick={() => this.getEventLogs(selectedEvent)}
+      />
+    </>
   }
 
   renderLogsTable = () => {

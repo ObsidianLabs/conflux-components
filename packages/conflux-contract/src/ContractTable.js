@@ -72,35 +72,33 @@ export default class ContractTable extends Component {
     const actions = this.props.abi
     const selectedAction = actions[this.state.selected] || {}
 
-    return (
-      <>
-        <UncontrolledButtonDropdown size='sm'>
-          <DropdownToggle color='primary' caret className='rounded-0 border-0 px-2 border-right-1'>
-            <i className='fas fa-function' />
-            <code className='mx-1'><b>{selectedAction.name}</b></code>
-          </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem header>read functions</DropdownItem>
-            {actions.map((item, index) => (
-              <DropdownItem
-                key={item.name}
-                className={classnames({ active: index === this.state.selected })}
-                onClick={() => this.selectAction(index)}
-              >
-                <code>{item.name}</code>
-              </DropdownItem>
-            ))}
-          </DropdownMenu>
-        </UncontrolledButtonDropdown>
-        <ToolbarButton
-          id='contract-execute'
-          icon={this.state.executing ? 'fas fa-spin fa-spinner' : 'fas fa-play'}
-          tooltip='Execute'
-          className='border-right-1'
-          onClick={() => this.executeAction(selectedAction.name)}
-        />
-      </>
-    )
+    return <>
+      <UncontrolledButtonDropdown size='sm'>
+        <DropdownToggle color='primary' caret className='rounded-0 border-0 px-2 border-right-1'>
+          <i className='fas fa-function' />
+          <code className='mx-1'><b>{selectedAction.name}</b></code>
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem header>read functions</DropdownItem>
+          {actions.map((item, index) => (
+            <DropdownItem
+              key={item.name}
+              className={classnames({ active: index === this.state.selected })}
+              onClick={() => this.selectAction(index)}
+            >
+              <code>{item.name}</code>
+            </DropdownItem>
+          ))}
+        </DropdownMenu>
+      </UncontrolledButtonDropdown>
+      <ToolbarButton
+        id='contract-execute'
+        icon={this.state.executing ? 'fas fa-spin fa-spinner' : 'fas fa-play'}
+        tooltip='Execute'
+        className='border-right-1'
+        onClick={() => this.executeAction(selectedAction.name)}
+      />
+    </>
   }
 
   renderResult = () => {

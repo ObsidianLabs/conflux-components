@@ -95,38 +95,36 @@ export default class Explorer extends PureComponent {
     const { network } = this.props
     const { initialSelected, initialTabs, value } = this.state
 
-    return (
-      <>
-        <TabsWithNavigationBar
-          ref={this.tabs}
-          initialSelected={initialSelected}
-          initialTabs={initialTabs}
-          starred={this.props.starred}
-          maxTabWidth={46}
-          getTabText={this.getTabText}
-          onValue={this.onValue}
-          onChangeStarred={this.props.onChangeStarred}
-          onRefresh={this.onRefresh}
-          onTabsUpdated={this.props.onTabsUpdated}
-          NavbarButtons={(
-            this.props.network === 'testnet' && <FaucetButton address={value} network={this.props.network} />
+    return <>
+      <TabsWithNavigationBar
+        ref={this.tabs}
+        initialSelected={initialSelected}
+        initialTabs={initialTabs}
+        starred={this.props.starred}
+        maxTabWidth={46}
+        getTabText={this.getTabText}
+        onValue={this.onValue}
+        onChangeStarred={this.props.onChangeStarred}
+        onRefresh={this.onRefresh}
+        onTabsUpdated={this.props.onTabsUpdated}
+        NavbarButtons={(
+          this.props.network === 'testnet' && <FaucetButton address={value} network={this.props.network} />
+        )}
+      >
+        <CacheRoute
+          path={`/account/:name`}
+          cacheKey={props => `account-${network}-${props.match?.params?.name}`}
+          multiple={5}
+          className='h-100 overflow-auto'
+          render={props => (
+            <AccountPage
+              cacheLifecycles={props.cacheLifecycles}
+              onDisplay={this.onPageDisplay}
+              value={props.match.params.name}
+            />
           )}
-        >
-          <CacheRoute
-            path={`/account/:name`}
-            cacheKey={props => `account-${network}-${props.match?.params?.name}`}
-            multiple={5}
-            className='h-100 overflow-auto'
-            render={props => (
-              <AccountPage
-                cacheLifecycles={props.cacheLifecycles}
-                onDisplay={this.onPageDisplay}
-                value={props.match.params.name}
-              />
-            )}
-          />
-        </TabsWithNavigationBar>
-      </>
-    )
+        />
+      </TabsWithNavigationBar>
+    </>
   }
 }

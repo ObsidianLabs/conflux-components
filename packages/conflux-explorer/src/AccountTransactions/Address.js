@@ -28,15 +28,13 @@ export default function Address ({ addr, redirect = true, displayText, showToolt
       </span>
     )
   }
-  return (
-    <>
-      <div>{text}</div>
-      {
-        showTooltip &&
-        <UncontrolledTooltip trigger='hover' delay={0} target={id} key={id}>
-          { addr }
-        </UncontrolledTooltip>
-      }
-    </>
-  )
+  return <>
+    <div>{text}</div>
+    {
+      showTooltip &&
+      <UncontrolledTooltip trigger='hover' delay={0} target={id} key={id}>
+        { addr }
+      </UncontrolledTooltip>
+    }
+  </>
 }

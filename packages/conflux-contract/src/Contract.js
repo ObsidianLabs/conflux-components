@@ -76,35 +76,33 @@ export default class Contract extends PureComponent {
     const { network } = this.props
     const { initialSelected, initialTabs, value } = this.state
 
-    return (
-      <>
-        <TabsWithNavigationBar
-          ref={this.tabs}
-          initialSelected={initialSelected}
-          initialTabs={initialTabs}
-          starred={this.props.starred}
-          maxTabWidth={46}
-          getTabText={this.getTabText}
-          onValue={this.onValue}
-          onChangeStarred={this.props.onChangeStarred}
-          onRefresh={this.onRefresh}
-          onTabsUpdated={this.props.onTabsUpdated}
-        >
-          <CacheRoute
-            path={`/contract/:name`}
-            cacheKey={props => `contract-${network}-${props.match?.params?.name}`}
-            multiple={5}
-            className='h-100 overflow-auto'
-            render={props => (
-              <ContractPage
-                cacheLifecycles={props.cacheLifecycles}
-                onDisplay={this.onPageDisplay}
-                value={props.match.params.name}
-              />
-            )}
-          />
-        </TabsWithNavigationBar>
-      </>
-    )
+    return <>
+      <TabsWithNavigationBar
+        ref={this.tabs}
+        initialSelected={initialSelected}
+        initialTabs={initialTabs}
+        starred={this.props.starred}
+        maxTabWidth={46}
+        getTabText={this.getTabText}
+        onValue={this.onValue}
+        onChangeStarred={this.props.onChangeStarred}
+        onRefresh={this.onRefresh}
+        onTabsUpdated={this.props.onTabsUpdated}
+      >
+        <CacheRoute
+          path={`/contract/:name`}
+          cacheKey={props => `contract-${network}-${props.match?.params?.name}`}
+          multiple={5}
+          className='h-100 overflow-auto'
+          render={props => (
+            <ContractPage
+              cacheLifecycles={props.cacheLifecycles}
+              onDisplay={this.onPageDisplay}
+              value={props.match.params.name}
+            />
+          )}
+        />
+      </TabsWithNavigationBar>
+    </>
   }
 }
