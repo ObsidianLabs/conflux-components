@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { Link } from 'react-router-dom'
 
-import ProjectPath from './ProjectPath'
+import { ProjectPath } from '@obsidians/workspace'
 
 export default class ProjectList extends PureComponent {
   renderProjectRow = (project, index) => {

@@ -1,6 +1,9 @@
 import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import redux from '@obsidians/redux'
+
+import { ProjectManager } from '@obsidians/workspace'
+
 import { networkManager } from '@obsidians/conflux-network'
 import compilerManager from '@obsidians/conflux-compiler'
 import { signatureProvider } from '@obsidians/conflux-sdk'
@@ -9,81 +12,27 @@ import { Account, util } from 'js-conflux-sdk'
 
 import moment from 'moment'
 
-const regexSolc = /(compilers['"]?\s*:\s*\{[^\}]*solc['"]?\s*:\s*\{[^\}]*version['"]?\s*:\s*['"])(.*)(['"])/
+import ConfluxProjectSettings from './ConfluxProjectSettings'
 
-class ProjectManager {
+class ConfluxProjectManager extends ProjectManager {
   constructor () {
-    this.project = null
-    this.terminalButton = null
+    super()
     this.deployButton = null
+    this.ProjectSettings = ConfluxProjectSettings
   }
 
-  get projectRoot () {
-    return this.project.props.projectRoot
-  }
-
-  get compilerVersion () {
-    return this.project.props.compilerVersion
-  }
-
-  get selectedAccount () {
-    const { accounts, network } = redux.getState()
-    return accounts.getIn([network, 'selected']) || ''
-  }
-
-  projectFilePath (relativePath) {
-    return fileOps.current.path.join(this.projectRoot, relativePath)
-  }
-
-  openProjectSettings () {
-    if (this.project) {
-      this.project.openProjectSettings()
-    }
-  }
-
-  async readTruffleConfig () {
-    return await fileOps.current.readFile(this.projectFilePath('truffle-config.js'))
-  }
-
-  async writeTruffleConfig (content) {
-    await fileOps.current.writeFile(this.projectFilePath('truffle-config.js'), content)
-  }
-
-  async getSolcVersionAndUpdate () {
-    const truffleConfig = await this.readTruffleConfig()
-    const match = truffleConfig.match(regexSolc)
-    if (match && match[2]) {
-      redux.dispatch('UPDATE_GLOBAL_CONFIG', { solc: match[2] })
-      return
-    }
-
-    notification.error('Unable to get solc version', 'Unable to find solc version. Please check the file <b>truffle-config.js</b>, and make sure to set the <b>compilers.solc.version</b> field.')
-    redux.dispatch('UPDATE_GLOBAL_CONFIG', { solc: '' })
-  }
-
-  async updateSolcVersion (version) {
-    if (!this.project?.props?.projectRoot) {
-      return false
-    }
-
-    const truffleConfig = await this.readTruffleConfig()
-    const match = truffleConfig.match(regexSolc)
-    if (!match || !match[2]) {
-      notification.error('Unable to get solc version', 'Unable to find solc version. Please check the file <b>truffle-config.js</b>, and make sure to set the <b>compilers.solc.version</b> field.')
-      return false
-    }
-
-    const updated = truffleConfig.replace(regexSolc, `$1${version}$3`)
-    await this.writeTruffleConfig(updated)
-    return true
+  get settingsFilePath () {
+    return this.pathForProjectFile('config.json')
   }
 
   async compile () {
+    const settings = await this.checkSettings()
+
     await this.project.saveAll()
     this.toggleTerminal(true)
 
     try {
-      await compilerManager.build()
+      await compilerManager.build(settings.compilers)
     } catch (e) {
       console.warn(e)
       return false
@@ -92,57 +41,15 @@ class ProjectManager {
     return true
   }
 
-  async checkSettings () {
-    if (!this.project) {
-      return
-    }
-
-    // notification.info('Not in Code Editor', 'Please switch to code editor and build.')
-    // return
-
-    const projectRoot = this.projectRoot
-    if (!projectRoot) {
-      notification.error('No Project', 'Please open a project first.')
-      return
-    }
-
-    const settings = await this.project.projectSettings.readSettings()
-    return settings
-  }
-
-  async readContractJson (contractPath) {
-    let contractJson
-    if (contractPath) {
-      contractJson = await fileOps.current.readFile(contractPath)
-    } else {
+  async deploy (contractPath) {
+    if (!contractPath) {
       const settings = await this.checkSettings()
-      if (!settings || !settings.deploy) {
+      if (!settings?.deploy) {
         throw new Error('Please set the smart contract to deploy in project settings.')
       }
-      const { path } = fileOps.current
-      contractPath = path.join(this.projectRoot, settings.deploy)
-      contractJson = await fileOps.current.readFile(contractPath)
+      contractPath = this.pathForProjectFile(settings.deploy)
     }
 
-    try {
-      return JSON.parse(contractJson)
-    } catch (e) {
-      throw new Error(`Error in reading <b>${contractPath}</b>. Not a valid JSON file.`)
-    }
-  }
-
-  getConstructorAbi (contractObj) {
-    if (!contractObj.abi) {
-      throw new Error(`Error in reading the ABI. Does not have the field abi.`)
-    }
-    if (!Array.isArray(contractObj.abi)) {
-      throw new Error(`Error in reading the ABI. Field abi is not an array.`)
-    }
-    const constructorAbi = contractObj.abi.find(item => item.type === 'constructor')
-    return constructorAbi
-  }
-
-  async deploy (contractPath) {
     let contractObj
     try {
       contractObj = await this.readContractJson(contractPath)
@@ -162,6 +69,27 @@ class ProjectManager {
     this.deployButton.getDeploymentParameters(constructorAbi, contractObj.contractName, 
       allParameters => this.pushDeployment(contractObj, allParameters)
     )
+  }
+
+  async readContractJson (contractPath) {
+    const contractJson = await fileOps.current.readFile(contractPath)
+
+    try {
+      return JSON.parse(contractJson)
+    } catch (e) {
+      throw new Error(`Error in reading <b>${contractPath}</b>. Not a valid JSON file.`)
+    }
+  }
+
+  getConstructorAbi (contractObj) {
+    if (!contractObj.abi) {
+      throw new Error(`Error in reading the ABI. Does not have the field abi.`)
+    }
+    if (!Array.isArray(contractObj.abi)) {
+      throw new Error(`Error in reading the ABI. Field abi is not an array.`)
+    }
+    const constructorAbi = contractObj.abi.find(item => item.type === 'constructor')
+    return constructorAbi
   }
 
   async pushDeployment (contractObj, allParameters) {
@@ -249,15 +177,6 @@ class ProjectManager {
     await fileOps.current.ensureFile(deployResultPath)
     await fileOps.current.writeFile(deployResultPath, JSON.stringify(result, null, 2))
   }
-
-  toggleTerminal (terminal) {
-    if (this.terminalButton) {
-      this.terminalButton.setState({ terminal })
-    }
-    if (this.project) {
-      this.project.toggleTerminal(terminal)
-    }
-  }
 }
 
-export default new ProjectManager()
+export default new ConfluxProjectManager()

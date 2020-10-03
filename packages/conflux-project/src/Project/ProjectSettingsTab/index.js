@@ -1,72 +1,34 @@
-import React, { PureComponent } from 'react'
-
-import fileOps from '@obsidians/file-ops'
-import { modelSessionManager } from '@obsidians/code-editor'
+import React from 'react'
 
 import {
   DebouncedFormGroup,
 } from '@obsidians/ui-components'
 
-import ProjectPath from '../../components/ProjectPath'
+import {
+  AbstractProjectSettingsTab,
+  ProjectPath,
+} from '@obsidians/workspace'
 
-import set from 'lodash/set'
+import { DockerImageInputSelector } from '@obsidians/docker'
+import compilerManager from '@obsidians/conflux-compiler'
 
-export default class ProjectSettingsTab extends PureComponent {
-  constructor (props) {
-    super(props)
+import projectManager from '../../projectManager'
 
-    this.onChangeHandlers = {}
-    this.state = {
-      invalid: false,
-      settings: {}
-    }
-  }
+import ProjectContext from '../ProjectContext'
+
+export default class ProjectSettingsTab extends AbstractProjectSettingsTab {
+  static contextType = ProjectContext
 
   componentDidMount () {
-    this.refreshSettings(this.props.modelSession.value)
+    projectManager.channel.on('settings', this.debouncedUpdate)
   }
-
-  refreshSettings = settingsJson => {
-    let rawSettings
-    try {
-      rawSettings = JSON.parse(settingsJson || '{}')
-    } catch (e) {
-      this.setState({ invalid: true })
-      return
-    }
-
-    const settings = this.trimSettings(rawSettings)
-    this.setState({ settings })
-  }
-
-  trimSettings = (rawSettings = {}) => {
-    return {
-      main: rawSettings.main || './contracts/MetaCoin.sol',
-      deploy: rawSettings.deploy || './build/contracts/MetaCoin.json',
-    }
-  }
-
-  onChange = key => {
-    if (!this.onChangeHandlers[key]) {
-      this.onChangeHandlers[key] = async value => {
-        const settings = this.state.settings
-        set(settings, key, value)
-        this.forceUpdate()
-        await this.updateProjectSettings(settings)
-      }
-    }
-    return this.onChangeHandlers[key]
-  }
-
-  async updateProjectSettings(rawSettings) {
-    const settings = this.trimSettings(rawSettings)
-    const settingsJson = JSON.stringify(settings, null, 2)
-    await fileOps.current.writeFile(this.props.modelSession.filePath, settingsJson)
+  
+  componentWillUnmount () {
+    projectManager.channel.off('settings')
   }
 
   render () {
-    const projectRoot = modelSessionManager._codeEditor.projectRoot
-    const settings = this.trimSettings(this.state.settings)
+    const { projectRoot, projectSettings } = this.context
 
     return (
       <div className='custom-tab bg2'>
@@ -80,7 +42,7 @@ export default class ProjectSettingsTab extends PureComponent {
               code
               label='Main file'
               className='bg-black'
-              value={settings.main}
+              value={projectSettings?.get('main')}
               onChange={this.onChange('main')}
               placeholder={`Required`}
             />
@@ -88,9 +50,32 @@ export default class ProjectSettingsTab extends PureComponent {
               code
               label='Smart contract to deploy'
               className='bg-black'
-              value={settings.deploy}
+              value={projectSettings?.get('deploy')}
               onChange={this.onChange('deploy')}
               placeholder={`Required`}
+            />
+            <h4 className='mt-4'>Compilers</h4>
+            <DockerImageInputSelector
+              channel={compilerManager.cfxtruffle}
+              disableAutoSelection
+              inputClassName='bg-black'
+              label='Conflux truffle version'
+              noneName='Conflux Truffle'
+              modalTitle='Conflux Truffle Manager'
+              downloadingTitle='Downloading Conflux Truffle'
+              selected={projectSettings?.get('compilers.cfxtruffle')}
+              onSelected={cfxtruffle => this.onChange('compilers.cfxtruffle')(cfxtruffle)}
+            />
+            <DockerImageInputSelector
+              channel={compilerManager.solc}
+              disableAutoSelection
+              inputClassName='bg-black'
+              label='Solc version'
+              noneName='solc'
+              modalTitle='Solc Manager'
+              downloadingTitle='Downloading Solc'
+              selected={projectSettings?.get('compilers.solc')}
+              onSelected={solc => this.onChange('compilers.solc')(solc)}
             />
           </div>
         </div>

@@ -16,7 +16,7 @@ import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 import Highlight from 'react-highlight'
 import { Link } from 'react-router-dom'
 
-import projectManager from '../projectManager'
+import projectManager from '../../projectManager'
 
 export default class DeployerButton extends PureComponent {
   constructor (props) {

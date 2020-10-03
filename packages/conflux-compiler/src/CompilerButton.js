@@ -31,8 +31,6 @@ export default class CompilerButton extends PureComponent {
 
   render () {
     const {
-      compilerVersion = 'none',
-      solc = 'none',
       className,
       size = 'sm',
       color = 'default',

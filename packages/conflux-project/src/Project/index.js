@@ -5,13 +5,13 @@ import fileOps from '@obsidians/file-ops'
 import { useBuiltinCustomTabs, modelSessionManager, defaultModeDetector } from '@obsidians/code-editor'
 import compilerManager, { CompilerTerminal } from '@obsidians/conflux-compiler'
 
+import ProjectContext from './ProjectContext'
 import projectManager from '../projectManager'
-import ProjectSettings from './ProjectSettings'
 
 import ProjectToolbar from './ProjectToolbar'
 import ProjectSettingsTab from './ProjectSettingsTab'
 
-import solidity from './languages/solidity'
+import addSolidityLanguage from './languages/solidity'
 
 useBuiltinCustomTabs(['markdown'])
 modelSessionManager.registerCustomTab('settings', ProjectSettingsTab, 'Project Settings')
@@ -36,12 +36,13 @@ export default class Project extends PureComponent {
       invalid: false,
       initialFile: undefined,
       terminal: false,
+      context: {}
     }
   }
 
   async componentDidMount () {
     projectManager.project = this
-    solidity()
+    addSolidityLanguage()
     this.prepareProject(this.props.projectRoot)
   }
 
@@ -55,38 +56,41 @@ export default class Project extends PureComponent {
   }
 
   async prepareProject (projectRoot) {
-    this.setState({ loading: true, invalid: false })
+    this.setState({ loading: true, invalid: false, context: {} })
 
     if (!await fileOps.current.isDirectory(projectRoot)) {
       this.setState({ loading: false, invalid: true })
       return
     }
 
-    projectManager.getSolcVersionAndUpdate()
-
-    this.projectSettings = new ProjectSettings(projectRoot)
-
+    let projectSettings
     try {
-      await this.projectSettings.readSettings()
+      projectSettings = await projectManager.readProjectSettings()
     } catch (e) {
+      console.warn(e)
       this.setState({
         loading: false,
-        initialFile: this.projectSettings.configPath,
+        initialFile: projectManager.settingsFilePath,
       })
       return
     }
 
-    if (await this.projectSettings.isMainValid()) {
+    this.setState({ context: {
+      projectRoot,
+      projectSettings,
+    } })
+
+    if (await projectManager.isMainValid()) {
       this.setState({
         loading: false,
-        initialFile: this.projectSettings.mainPath,
+        initialFile: projectManager.mainFilePath,
       })
       return
     }
 
     this.setState({
       loading: false,
-      initialFile: this.projectSettings.configPath,
+      initialFile: projectManager.settingsFilePath,
     })
   }
 
@@ -102,7 +106,7 @@ export default class Project extends PureComponent {
   }
 
   openProjectSettings = () => {
-    this.workspace.current.openFile(this.projectSettings.configPath)
+    this.workspace.current.openFile(projectManager.settingsFilePath)
   }
 
   makeContextMenu = contextMenu => node => {
@@ -120,8 +124,6 @@ export default class Project extends PureComponent {
   render () {
     const {
       projectRoot,
-      solc,
-      compilerVersion,
       InvalidProjectActions = null,
     } = this.props
     const { terminal } = this.state
@@ -139,24 +141,20 @@ export default class Project extends PureComponent {
     }
 
     return (
-      <Workspace
-        ref={this.workspace}
-        theme={this.props.theme}
-        projectRoot={projectRoot}
-        initialFile={this.state.initialFile}
-        terminal={terminal}
-        defaultSize={272}
-        makeContextMenu={this.makeContextMenu}
-        Toolbar={(
-          <ProjectToolbar
-            projectRoot={projectRoot}
-            solc={solc}
-            compilerVersion={compilerVersion}
-          />
-        )}
-        onToggleTerminal={terminal => projectManager.toggleTerminal(terminal)}
-        Terminal={<CompilerTerminal active={terminal} cwd={projectRoot} />}
-      />
+      <ProjectContext.Provider value={this.state.context}>
+        <Workspace
+          ref={this.workspace}
+          theme={this.props.theme}
+          projectRoot={projectRoot}
+          initialFile={this.state.initialFile}
+          terminal={terminal}
+          defaultSize={272}
+          makeContextMenu={this.makeContextMenu}
+          ProjectToolbar={ProjectToolbar}
+          onToggleTerminal={terminal => projectManager.toggleTerminal(terminal)}
+          Terminal={<CompilerTerminal active={terminal} cwd={projectRoot} />}
+        />
+      </ProjectContext.Provider>
     )
   }
 }

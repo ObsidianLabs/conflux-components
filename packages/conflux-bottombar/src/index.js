@@ -4,9 +4,7 @@ import CacheRoute from 'react-router-cache-route'
 import { KeypairButton } from '@obsidians/keypair'
 import { QueueButton } from '@obsidians/conflux-queue'
 import { AbiStorage } from '@obsidians/conflux-contract'
-import { DockerImageSelector } from '@obsidians/docker'
-import { TerminalButton, SolcButton } from '@obsidians/conflux-project'
-import compilerManager from '@obsidians/conflux-compiler'
+import { TerminalButton, SolcButton, CfxTruffleButton } from '@obsidians/conflux-project'
 
 export default function BottomBar (props) {
   return <>
@@ -25,25 +23,11 @@ export default function BottomBar (props) {
     <div className='flex-1' />
     <CacheRoute
       path={`/guest/:project`}
-      render={() => (
-        <DockerImageSelector
-          channel={compilerManager.cfxtruffle}
-          size='sm'
-          icon='fas fa-cookie'
-          title='CFX Truffle'
-          noneName='Conflux Truffle'
-          modalTitle='Conflux Truffle Manager'
-          downloadingTitle='Downloading Conflux Truffle'
-          selected={props.cfxtruffle}
-          onSelected={cfxtruffle => props.onSelectCfxTruffle(cfxtruffle)}
-        />
-      )}
+      component={CfxTruffleButton}
     />
     <CacheRoute
       path={`/guest/:project`}
-      render={() => (
-        <SolcButton selected={props.solc} onSelected={solc => props.onSelectSolc(solc)} />
-      )}
+      component={SolcButton}
     />
     <CacheRoute
       path={`/guest/:project`}

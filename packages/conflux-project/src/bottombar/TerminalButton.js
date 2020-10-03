@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 
 import { ToolbarButton } from '@obsidians/ui-components'
 
-import projectManager from './projectManager'
+import projectManager from '../projectManager'
 
 export default class TerminalButton extends PureComponent {
   state = {

@@ -1,18 +1,25 @@
-import React from 'react'
+import React, { PureComponent } from 'react'
 
 import { ToolbarButton } from '@obsidians/ui-components'
 import { CompilerButton } from '@obsidians/conflux-compiler'
 
-import projectManager from '../projectManager'
+import ProjectContext from '../ProjectContext'
+
+import projectManager from '../../projectManager'
 import DeployButton from './DeployButton'
 
-export default function ProjectToolbar ({ projectRoot, compilerVersion, solc }) {
-  return (
-    <>
+export default class ProjectToolbar extends PureComponent {
+  static contextType = ProjectContext
+
+  render () {
+    const projectSettings = this.context.projectSettings
+    const compilers = projectSettings?.get('compilers') || {}
+
+    return <>
       <CompilerButton
         className='rounded-0 border-0 flex-none w-5'
-        solc={solc}
-        compilerVersion={compilerVersion}
+        cfxtruffle={compilers.cfxtruffle}
+        solc={compilers.solc}
         onClick={() => projectManager.compile()}
       />
       <DeployButton />
@@ -24,5 +31,5 @@ export default function ProjectToolbar ({ projectRoot, compilerVersion, solc }) 
         onClick={() => projectManager.openProjectSettings()}
       />
     </>
-  )
+  }
 }

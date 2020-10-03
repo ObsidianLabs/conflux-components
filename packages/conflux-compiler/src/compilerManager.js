@@ -26,13 +26,6 @@ class Compiler {
     return this._terminal.props.cwd
   }
 
-  get compilerVersion () {
-    if (!this._button) {
-      throw new Error('CompilerButton is not instantiated.')
-    }
-    return this._button.props.compilerVersion
-  }
-
   focus () {
     if (this._terminal) {
       this._terminal.focus()
@@ -41,23 +34,33 @@ class Compiler {
 
   async build (config = {}) {
     const projectRoot = this.projectRoot
-    const compilerVersion = this.compilerVersion
 
-    if (!compilerVersion) {
-      notification.error('Build Failed', `Does not have Conflux Truffle installed.`)
-      throw new Error('Does not have Conflux Truffle installed.')
+    if (!config?.cfxtruffle) {
+      notification.error('No Conflux Truffle Version', `Please select a version for conflux truffle in project settings.`)
+      throw new Error('No conflux truffle version.')
     }
 
     const allVersions = await this.cfxtruffle.versions()
-    if (!allVersions.find(v => v.Tag === compilerVersion)) {
-      notification.error(`Conflux Truffle ${compilerVersion} not Installed`, `Please install the version in <b>Conflux Truffle Manager</b> or select another version at the bottom bar.`)
-      throw new Error('Version not installed')
+    if (!allVersions.find(v => v.Tag === config.cfxtruffle)) {
+      notification.error(`Conflux Truffle ${config.cfxtruffle} not Installed`, `Please install the version in <b>Conflux Truffle Manager</b> or select another version in project settings.`)
+      throw new Error('Conflux Truffle version not installed')
+    }
+
+    if (!config.solc) {
+      notification.error('No Solc Version', `Please select a version for solc in project settings.`)
+      throw new Error('No solc version.')
+    }
+
+    const allSolcVersions = await this.solc.versions()
+    if (config.solc !== 'default' && !allSolcVersions.find(v => v.Tag === config.solc)) {
+      notification.error(`Solc ${config.solc} not Installed`, `Please install the version in <b>Solc Manager</b> or select another version in project settings.`)
+      throw new Error('Solc version not installed')
     }
 
     this._button.setState({ building: true })
     this.notification = notification.info(`Building Project`, `Building...`, 0)
 
-    const cmd = this.generateBuildCmd({ projectRoot, compilerVersion })
+    const cmd = this.generateBuildCmd({ projectRoot, config })
     const result = await this._terminal.exec(cmd)
     if (result.code) {
       this._button.setState({ building: false })
@@ -79,17 +82,24 @@ class Compiler {
     }
   }
 
-  generateBuildCmd({ projectRoot, compilerVersion }) {
-    const { base: name } = fileOps.current.path.parse(projectRoot)
+  generateBuildCmd({ projectRoot, config }) {
+    // const { base: name } = fileOps.current.path.parse(projectRoot)
     const projectDir = fileOps.current.getDockerMountPath(projectRoot)
-    return [
+    const cmd = [
       `docker run -t --rm --name truffle-compile`,
       '-v /var/run/docker.sock:/var/run/docker.sock',
       `-v "${projectDir}:${projectDir}"`,
       `-w "${projectDir}"`,
-      `obsidians/conflux-truffle:${compilerVersion}`,
+      `obsidians/conflux-truffle:${config.cfxtruffle}`,
       `cfxtruffle compile`,
-    ].join(' ')
+    ]
+    
+    if (config.solc !== 'default') {
+      cmd.push(`--compilers.solc.version '${config.solc}'`)
+      cmd.push(`--compilers.solc.docker 1`)
+    }
+    
+    return cmd.join(' ')
   }
 }
 
