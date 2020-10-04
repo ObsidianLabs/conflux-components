@@ -64,7 +64,7 @@ export default class ContractTable extends Component {
     this.setState({
       executing: false,
       actionError: '',
-      actionResult: result.toString()
+      actionResult: JSON.stringify(result, null, 2)
     })
   }
 
@@ -113,9 +113,9 @@ export default class ContractTable extends Component {
     
     if (actionResult) {
       return (
-        <div>
-          <span className='user-select'>{actionResult}</span>
-        </div>
+        <pre className='text-body pre-wrap break-all small user-select'>
+          {actionResult}
+        </pre>
       )
     }
 
