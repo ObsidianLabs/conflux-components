@@ -17,6 +17,7 @@ import Highlight from 'react-highlight'
 import { Link } from 'react-router-dom'
 
 import projectManager from '../../projectManager'
+import storage from 'redux-persist/es/storage'
 
 export default class DeployerButton extends PureComponent {
   constructor (props) {
@@ -27,6 +28,7 @@ export default class DeployerButton extends PureComponent {
       contractName: '',
       gas: '',
       gasPrice: '',
+      storage: '',
       signer: '',
       result: '',
     }
@@ -62,12 +64,13 @@ export default class DeployerButton extends PureComponent {
         return
       }
     }
-    const { signer, gas, gasPrice } = this.state
+    const { signer, gas, gasPrice, storage } = this.state
     this.callback({
       parameters,
       signer,
       gas: gas || 1000000,
-      gasPrice: gasPrice || 100
+      gasPrice: gasPrice || 100,
+      storageLimit: storage || undefined
     })
   }
 
@@ -132,9 +135,10 @@ export default class DeployerButton extends PureComponent {
           onChange={signer => this.setState({ signer })}
         />
         <div className='row'>
-          <FormGroup className='col-6'>
+          <FormGroup className='col-4'>
             <Label>Gas Limit</Label>
             <ActionParamInput
+              size='sm'
               placeholder={`Default: 1,000,000`}
               value={this.state.gas}
               onChange={gas => this.setState({ gas })}
@@ -142,14 +146,25 @@ export default class DeployerButton extends PureComponent {
               <span><i className='fas fa-burn' /></span>
             </ActionParamInput>
           </FormGroup>
-          <FormGroup className='col-6'>
+          <FormGroup className='col-4'>
             <Label>Gas Price</Label>
             <ActionParamInput
+              size='sm'
               placeholder={`Default: 100 drip`}
               value={this.state.gasPrice}
               onChange={gasPrice => this.setState({ gasPrice })}
             >
               <span><i className='fas fa-dollar-sign' /></span>
+            </ActionParamInput>
+          </FormGroup>
+          <FormGroup className='col-4'>
+            <Label>Storage Limit</Label>
+            <ActionParamInput
+              size='sm'
+              value={this.state.storage}
+              onChange={storage => this.setState({ storage })}
+            >
+              <span><i className='fas fa-hdd' /></span>
             </ActionParamInput>
           </FormGroup>
         </div>

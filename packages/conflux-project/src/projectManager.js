@@ -115,7 +115,7 @@ class ConfluxProjectManager extends ProjectManager {
     const networkId = networkManager.sdk.networkId
     const signer = new Account(allParameters.signer, signatureProvider)
     const contractInstance = networkManager.sdk.contractFrom(contractObj)
-    const { parameters, gas, gasPrice } = allParameters
+    const { parameters, gas, gasPrice, storageLimit } = allParameters
     const codeHash = util.sign.sha3(Buffer.from(deployedBytecode.replace('0x', ''), 'hex')).toString('hex')
 
     let result
@@ -124,14 +124,14 @@ class ConfluxProjectManager extends ProjectManager {
         queue.add(
           () => contractInstance.constructor
             .call(...parameters.array)
-            .sendTransaction({ from: signer, gas, gasPrice }),
+            .sendTransaction({ from: signer, gas, gasPrice, storageLimit }),
           {
             name: 'Deploy',
             contractName,
             signer: signer.address,
             abi: contractObj.abi,
             params: parameters.obj,
-            gas, gasPrice,
+            gas, gasPrice, storageLimit,
             modalWhenExecuted: true,
           },
           {

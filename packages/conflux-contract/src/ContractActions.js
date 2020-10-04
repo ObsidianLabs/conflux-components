@@ -73,18 +73,19 @@ export default class ContractActions extends Component {
     const value = util.unit.fromCFXToDrip(this.state.value || 0)
     const gas = this.state.gas || 1000000
     const gasPrice = this.state.gasPrice || 100
+    const storageLimit = this.state.storage || undefined
     try {
       await queue.add(
         () => this.props.contract[actionName]
           .call(...parameters.array)
-          .sendTransaction({ from: signer, value, gas, gasPrice }),
+          .sendTransaction({ from: signer, value, gas, gasPrice, storageLimit }),
         {
           contractAddress: this.props.contract.address,
           name: actionName,
           functionName: actionName,
           signer: signer.address,
           params: parameters.obj,
-          value, gas, gasPrice,
+          value, gas, gasPrice, storageLimit,
         }
       )
     } catch (e) {
@@ -197,7 +198,7 @@ export default class ContractActions extends Component {
           </DropdownCard>
           <DropdownCard
             isOpen
-            title='Gas'
+            title={`Gas & Storage`}
           >
             <FormGroup className='mb-2'>
               <Label className='mb-1 small font-weight-bold'>Gas Limit</Label>
@@ -219,6 +220,16 @@ export default class ContractActions extends Component {
                 onChange={gasPrice => this.setState({ gasPrice })}
               >
                 <span><i className='fas fa-dollar-sign' /></span>
+              </ActionParamInput>
+            </FormGroup>
+            <FormGroup className='mb-2'>
+              <Label className='mb-1 small font-weight-bold'>Storage Limit</Label>
+              <ActionParamInput
+                size='sm'
+                value={this.state.storage}
+                onChange={storage => this.setState({ storage })}
+              >
+                <span><i className='fas fa-hdd' /></span>
               </ActionParamInput>
             </FormGroup>
           </DropdownCard>
