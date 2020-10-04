@@ -10,21 +10,18 @@ import projectManager from '../projectManager'
 
 let n
 
-export default props => {
+export default () => {
   const [selected, onSelected] = React.useState('')
 
-  React.useEffect(() => {
-    projectManager.channel.off('settings:compilers.solc')
-    projectManager.channel.on('settings:compilers.solc', v => {
-      n?.dismiss()
-      if (v === 'default') {
-        n = notification.info('Default Solc Selected', 'The version of solc used in compilation will be determined by <b>truffle-config.js</b>.', 4)
-      } else if (v) {
-        n = notification.info(`Solc v${v} Selected`, `This will overwrite the configuration of <b>truffle-config.js</b> in compilation.`, 4)
-      }
-      onSelected(v)
-    })
-  }, [props.match?.params?.project])
+  React.useEffect(projectManager.effect('settings:compilers.solc', v => {
+    n?.dismiss()
+    if (v === 'default') {
+      n = notification.info('Default Solc Selected', 'The version of solc used in compilation will be determined by <b>truffle-config.js</b>.', 4)
+    } else if (v) {
+      n = notification.info(`Solc v${v} Selected`, `This will overwrite the configuration of <b>truffle-config.js</b> in compilation.`, 4)
+    }
+    onSelected(v)
+  }), [])
 
   return (
     <DockerImageSelector

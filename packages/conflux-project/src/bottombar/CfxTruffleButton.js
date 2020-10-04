@@ -5,15 +5,10 @@ import compilerManager from '@obsidians/conflux-compiler'
 
 import projectManager from '../projectManager'
 
-export default props => {
-  React.useEffect(() => {
-    projectManager.channel.off('settings:compilers.cfxtruffle')
-    projectManager.channel.on('settings:compilers.cfxtruffle', v => {
-      onSelected(v)
-    })
-  }, [props.match?.params?.project])
-
+export default () => {
   const [selected, onSelected] = React.useState('')
+
+  React.useEffect(projectManager.effect('settings:compilers.cfxtruffle', onSelected), [])
 
   return (
     <DockerImageSelector
