@@ -23,7 +23,7 @@ export default class ProjectSettingsTab extends AbstractProjectSettingsTab {
   }
   
   componentWillUnmount () {
-    projectManager.channel.off('settings')
+    projectManager.channel.off('settings', this.debouncedUpdate)
   }
 
   render () {
@@ -73,6 +73,11 @@ export default class ProjectSettingsTab extends AbstractProjectSettingsTab {
               noneName='solc'
               modalTitle='Solc Manager'
               downloadingTitle='Downloading Solc'
+              extraOptions={[{
+                id: 'default',
+                display: 'Default Solc',
+                onClick: () => this.onChange('compilers.solc')('default')
+              }]}
               selected={projectSettings?.get('compilers.solc')}
               onSelected={solc => this.onChange('compilers.solc')(solc)}
             />
