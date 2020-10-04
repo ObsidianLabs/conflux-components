@@ -1,15 +1,14 @@
 import React, { PureComponent } from 'react'
 
+import { WorkspaceContext } from '@obsidians/workspace'
 import { ToolbarButton } from '@obsidians/ui-components'
 import { CompilerButton } from '@obsidians/conflux-compiler'
-
-import ProjectContext from '../ProjectContext'
 
 import projectManager from '../../projectManager'
 import DeployButton from './DeployButton'
 
 export default class ProjectToolbar extends PureComponent {
-  static contextType = ProjectContext
+  static contextType = WorkspaceContext
 
   render () {
     const projectSettings = this.context.projectSettings
