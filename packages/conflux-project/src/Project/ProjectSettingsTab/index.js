@@ -57,7 +57,7 @@ export default class ProjectSettingsTab extends AbstractProjectSettingsTab {
             <DockerImageInputSelector
               channel={compilerManager.cfxtruffle}
               disableAutoSelection
-              inputClassName='bg-black'
+              bg='bg-black'
               label='Conflux truffle version'
               noneName='Conflux Truffle'
               modalTitle='Conflux Truffle Manager'
@@ -68,7 +68,7 @@ export default class ProjectSettingsTab extends AbstractProjectSettingsTab {
             <DockerImageInputSelector
               channel={compilerManager.solc}
               disableAutoSelection
-              inputClassName='bg-black'
+              bg='bg-black'
               label='Solc version'
               noneName='solc'
               modalTitle='Solc Manager'

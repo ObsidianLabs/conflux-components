@@ -178,24 +178,15 @@ export default class NewProjectModal extends Component {
         <DropdownInput
           label='Template'
           options={[
-            {
-              group: '',
-              children: [
-                { id: 'coin', display: 'Coin' },
-              ],
-            },
+            { id: 'coin', display: 'Coin' },
             {
               group: 'Conflux Truffle',
+              badge: 'Conflux Truffle',
               children: [
                 { id: 'metacoin', display: 'Metacoin' },
               ],
             },
           ]}
-          renderText={option => (
-            <div className='d-flex align-items-center mr-1'>
-              <Badge color='info' style={{ top: 0 }}>{option.group}</Badge>
-            </div>
-          )}
           value={this.state.template}
           onChange={template => this.setState({ template })}
         />
