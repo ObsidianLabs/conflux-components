@@ -44,7 +44,10 @@ class NodeManager {
     }
 
     const startDocker = this.generateCommand({ name, version })
-    await this._terminal.exec(startDocker, { resolveOnFirstLog: true })
+    await this._terminal.exec(startDocker, {
+      resolveOnFirstLog: true,
+      stopCommand: `docker stop -t 1 conflux-${name}-${version}`,
+    })
     return {
       url: 'http://localhost:12537',
       chainId: 0,
@@ -84,13 +87,12 @@ class NodeManager {
     }
   }
 
-  async stop ({ name, version }) {
+  async stop () {
     const cachingKeys = getCachingKeys()
     cachingKeys.filter(key => key.startsWith('contract-') || key.startsWith('account-')).forEach(dropByCacheKey)
-
     if (this._terminal) {
       const n = notification.info('Stopping Conflux Node...', '', 0)
-      await this._terminal.execAsChildProcess(`docker stop conflux-${name}-${version}`)
+      await this._terminal.stop()
       n.dismiss()
     }
   }
