@@ -234,10 +234,14 @@ export default class ContractForm extends PureComponent {
 
   valueByType = (value, type, name) => {
     if (type === 'string') {
-      return {
-        display: value,
-        raw: value,
+      return { display: value, raw: value }
+    }
+
+    if (type === 'bool') {
+      if (!value || value === '0' || value === 'false' || value === 'False' || value === 'FALSE') {
+        return { display: 'false', raw: false }
       }
+      return { display: 'true', raw: true }
     }
 
     if (type.startsWith('bytes') || type === 'byte') {
