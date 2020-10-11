@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react'
+import React, { PureComponent } from 'react'
 import classnames from 'classnames'
 
 import {
@@ -12,7 +12,9 @@ import {
 
 import { Link } from 'react-router-dom'
 
-export default class ContractEvents extends Component {
+import { networkManager } from '@obsidians/conflux-network'
+
+export default class ContractEvents extends PureComponent {
   state = {
     selected: 0,
     loading: false,
@@ -38,7 +40,11 @@ export default class ContractEvents extends Component {
     const { contract, value } = this.props
     let logs
     try {
-      logs = await contract[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs()
+      const status = await networkManager.sdk.getStatus()
+      logs = await contract[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs({
+        fromEpoch: status.epochNumber - 9999,
+        toEpoch: status.epochNumber,
+      })
     } catch (e) {
       console.warn(e)
       this.setState({ loading: false, error: e.message, logs: '' })

@@ -169,14 +169,6 @@ const paramInputIcons = {
   public_key: 'fas fa-key',
   checksum256: 'fas fa-hashtag'
 }
-function units (type) {
-  if (type === 'asset') {
-
-    // return 'EOS';
-  } else if (type.indexOf('[]') > -1) {
-    return 'ARRAY'
-  }
-}
 
 export default class ContractForm extends PureComponent {
   constructor (props) {

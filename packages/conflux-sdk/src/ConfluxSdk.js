@@ -13,6 +13,10 @@ export default class ConfluxSdk {
     this.networkId = id
   }
 
+  async getStatus () {
+    return await this.client.cfx.getStatus()
+  }
+
   isValidAddress (address) {
     try {
       util.format.address(address)
