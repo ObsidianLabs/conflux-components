@@ -42,8 +42,8 @@ export default class ContractEvents extends PureComponent {
     try {
       const status = await networkManager.sdk.getStatus()
       logs = await contract[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs({
-        fromEpoch: status.epochNumber - 9999,
-        toEpoch: status.epochNumber,
+        fromEpoch: status.epochNumber - 10009,
+        toEpoch: status.epochNumber - 10,
       })
     } catch (e) {
       console.warn(e)
