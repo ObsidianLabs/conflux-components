@@ -17,7 +17,6 @@ import Highlight from 'react-highlight'
 import { Link } from 'react-router-dom'
 
 import projectManager from '../../projectManager'
-import storage from 'redux-persist/es/storage'
 
 export default class DeployerButton extends PureComponent {
   constructor (props) {
