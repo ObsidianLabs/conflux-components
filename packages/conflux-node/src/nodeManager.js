@@ -46,7 +46,7 @@ class NodeManager {
     const startDocker = this.generateCommand({ name, version })
     await this._terminal.exec(startDocker, {
       resolveOnFirstLog: true,
-      stopCommand: `docker stop -t 1 conflux-${name}-${version}`,
+      stopCommand: `docker stop conflux-${name}-${version}`,
     })
     return {
       url: 'http://localhost:12537',
