@@ -5,7 +5,7 @@ import { ProjectPath } from '@obsidians/workspace'
 
 export default class ProjectList extends PureComponent {
   renderProjectRow = (project, index) => {
-    const { author, id, name, path } = project
+    const { author = 'guest', id, name, path } = project
     const url = `/${author}/${id}`
     return (
       <tr key={`project-row-${index}`}>

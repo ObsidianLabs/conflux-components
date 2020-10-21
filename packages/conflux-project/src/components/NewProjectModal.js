@@ -38,7 +38,7 @@ export default class NewProjectModal extends Component {
     this.terminal = React.createRef()
     this.path = fileOps.current.path
     this.fs = fileOps.current.fs
-    this.channel = new IpcChannel('conflux-project')
+    this.channel = new IpcChannel('project')
 
     actions.newProjectModal = this
   }

@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const fse = require('fs-extra')
-const { IpcChannel } = require('@obsidians/ipc')
+const { FileTreeChannel } = require('@obsidians/filetree')
 
 const copyRecursiveSync = (src, dest, name) => {
   const exists = fs.existsSync(src)
@@ -24,11 +24,7 @@ const copyRecursiveSync = (src, dest, name) => {
   }
 }
 
-class ProjectChannel extends IpcChannel {
-  constructor () {
-    super('conflux-project')
-  }
-
+class ProjectChannel extends FileTreeChannel {
   async createProject ({ template, projectRoot, name }) {
     const templateFolder = path.join(__dirname, 'templates', template)
     try {

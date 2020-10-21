@@ -2,7 +2,7 @@ import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
 import redux from '@obsidians/redux'
 
-import { ProjectManager } from '@obsidians/workspace'
+import { ProjectManager, BaseProjectManager } from '@obsidians/workspace'
 
 import { networkManager } from '@obsidians/conflux-network'
 import compilerManager from '@obsidians/conflux-compiler'
@@ -14,11 +14,12 @@ import moment from 'moment'
 
 import ConfluxProjectSettings from './ConfluxProjectSettings'
 
+BaseProjectManager.ProjectSettings = ConfluxProjectSettings
+
 class ConfluxProjectManager extends ProjectManager {
   constructor () {
     super()
     this.deployButton = null
-    this.ProjectSettings = ConfluxProjectSettings
   }
 
   get settingsFilePath () {
