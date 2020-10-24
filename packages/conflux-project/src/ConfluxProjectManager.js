@@ -16,9 +16,9 @@ import ConfluxProjectSettings from './ConfluxProjectSettings'
 
 BaseProjectManager.ProjectSettings = ConfluxProjectSettings
 
-class ConfluxProjectManager extends ProjectManager {
-  constructor () {
-    super()
+export default class ConfluxProjectManager extends ProjectManager {
+  constructor (project, projectRoot) {
+    super(project, projectRoot)
     this.deployButton = null
   }
 
@@ -179,5 +179,3 @@ class ConfluxProjectManager extends ProjectManager {
     await fileOps.current.writeFile(deployResultPath, JSON.stringify(result, null, 2))
   }
 }
-
-export default new ConfluxProjectManager()

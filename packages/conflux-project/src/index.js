@@ -1,8 +1,5 @@
 export { default } from './Project'
 
-export { default as projectManager } from './projectManager'
-
-export { default as TerminalButton } from './bottombar/TerminalButton'
 export { default as SolcButton } from './bottombar/SolcButton'
 export { default as CfxTruffleButton } from './bottombar/CfxTruffleButton'
 

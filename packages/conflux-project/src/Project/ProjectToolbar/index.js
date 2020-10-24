@@ -4,14 +4,13 @@ import { WorkspaceContext } from '@obsidians/workspace'
 import { ToolbarButton } from '@obsidians/ui-components'
 import { CompilerButton } from '@obsidians/conflux-compiler'
 
-import projectManager from '../../projectManager'
 import DeployButton from './DeployButton'
 
 export default class ProjectToolbar extends PureComponent {
   static contextType = WorkspaceContext
 
   render () {
-    const projectSettings = this.context.projectSettings
+    const { projectSettings, projectManager } = this.context
     const compilers = projectSettings?.get('compilers') || {}
 
     return <>
@@ -21,7 +20,7 @@ export default class ProjectToolbar extends PureComponent {
         solc={compilers.solc}
         onClick={() => projectManager.compile()}
       />
-      <DeployButton />
+      <DeployButton projectManager={projectManager} />
       <div className='flex-1' />
       <ToolbarButton
         id='settings'

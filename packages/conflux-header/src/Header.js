@@ -24,6 +24,7 @@ export default class Header extends PureComponent {
 
   render () {
     const {
+      profile,
       projects,
       selectedProject,
       starred,
@@ -95,6 +96,7 @@ export default class Header extends PureComponent {
     return (
       <>
         <Navbar
+          profile={profile}
           navbarLeft={navbarLeft}
           navbarRight={navbarRight}
         />

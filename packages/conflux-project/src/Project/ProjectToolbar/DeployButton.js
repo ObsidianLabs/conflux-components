@@ -16,8 +16,6 @@ import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 import Highlight from 'react-highlight'
 import { Link } from 'react-router-dom'
 
-import projectManager from '../../projectManager'
-
 export default class DeployerButton extends PureComponent {
   constructor (props) {
     super(props)
@@ -33,18 +31,17 @@ export default class DeployerButton extends PureComponent {
     }
     this.parametersModal = React.createRef()
     this.resultModal = React.createRef()
-
   }
 
   componentDidMount () {
-    projectManager.deployButton = this
+    this.props.projectManager.deployButton = this
   }
 
   onClick = () => {
     if (this.state.pending) {
       return
     }
-    projectManager.deploy()
+    this.props.projectManager.deploy()
   }
 
   getDeploymentParameters = (constructorAbi, contractName, callback) => {
