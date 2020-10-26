@@ -1,3 +1,4 @@
+import platform from '@obsidians/platform'
 import fileOps from '@obsidians/file-ops'
 import { List } from 'immutable'
 
@@ -25,7 +26,7 @@ const networkList = [
     explorer: 'https://confluxscan.io/api',
   }
 ]
-if (fileOps.fsType === 'electron') {
+if (platform.isDesktop) {
   networkList.unshift({
     id: 'dev',
     group: 'default',
