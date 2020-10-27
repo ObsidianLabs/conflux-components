@@ -1,11 +1,9 @@
 export { default } from './Project'
 
-export { default as SolcButton } from './bottombar/SolcButton'
-export { default as CfxTruffleButton } from './bottombar/CfxTruffleButton'
+export { navbarItem } from '@obsidians/workspace'
+export { default as redux } from './redux'
 
 export { default as NewProjectModal } from './components/NewProjectModal'
-export { default as ProjectList } from './components/ProjectList'
 
-export { default as actions } from './actions'
-export { default as navbarItem } from './navbarItem'
-export { default as redux } from './redux'
+export { default as SolcButton } from './bottombar/SolcButton'
+export { default as CfxTruffleButton } from './bottombar/CfxTruffleButton'

@@ -34,8 +34,9 @@ export default class Header extends PureComponent {
       networkList,
     } = this.props
 
+    const username = profile.get('username') || 'local'
     const navbarLeft = [
-      navbarItem(projects, selectedProject)
+      navbarItem(projects, selectedProject, username)
     ]
 
     const dropdownKeypairs = this.state.keypairs.map(k => ({ id: k.address, name: k.name || <code>{k.address.substr(0, 6)}...{k.address.substr(-4)}</code> }))

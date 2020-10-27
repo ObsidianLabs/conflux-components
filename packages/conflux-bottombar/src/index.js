@@ -24,15 +24,15 @@ export default function BottomBar (props) {
     </AbiStorage>
     <div className='flex-1' />
     <CacheRoute
-      path={`/guest/:project`}
+      path={`/local/:project`}
       component={CfxTruffleButton}
     />
     <CacheRoute
-      path={`/guest/:project`}
+      path={`/local/:project`}
       component={SolcButton}
     />
     <CacheRoute
-      path={`/guest/:project`}
+      path={`/local/:project`}
       component={TerminalButton}
     />
   </>
