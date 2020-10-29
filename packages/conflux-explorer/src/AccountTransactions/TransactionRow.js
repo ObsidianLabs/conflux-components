@@ -27,7 +27,7 @@ export default class TransactionRow extends PureComponent {
         </td>
         <td>{TxComponent}</td>
         <td>
-          <TransactionFee amount={tx.gas}/>
+          <TransactionFee amount={tx.gasFee}/>
         </td>
         <td>
           <TransactionFee amount={tx.gasPrice}/>
