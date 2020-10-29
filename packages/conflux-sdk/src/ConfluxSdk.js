@@ -37,9 +37,9 @@ export default class ConfluxSdk {
 
   async trend () {
     const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `${this.explorer}/dashboard/trend?span=86400`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/plot?interval=514&limit=7`)
     const json = JSON.parse(result)
-    return json.result
+    return json.list[json.total - 1]
   }
 
   async getTransactionsCount (address) {

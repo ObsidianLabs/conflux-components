@@ -64,6 +64,7 @@ export default class RemoteNetwork extends PureComponent {
 
   render () {
     const { chain } = this.props
+    const { status, trend } = this.state
 
     return (
       <div className='d-flex flex-1 flex-column overflow-auto'>
@@ -77,11 +78,11 @@ export default class RemoteNetwork extends PureComponent {
               />
               <TableCardRow
                 name='Chain ID'
-                badge={this.state.status?.chainId}
+                badge={status?.chainId}
               />
               <TableCardRow
                 name='TPS'
-                badge={this.state.trend && Number(this.state.trend?.tps.value).toFixed(6)}
+                badge={trend && Number(trend?.tps).toFixed(6)}
               />
             </TableCard>
           </div>
@@ -89,23 +90,23 @@ export default class RemoteNetwork extends PureComponent {
             <TableCard title='Blocks'>
               <TableCardRow
                 name='Epoch'
-                badge={this.state.status?.epochNumber}
+                badge={status?.epochNumber}
               />
               <TableCardRow
                 name='Block Number'
-                badge={this.state.status?.blockNumber}
+                badge={status?.blockNumber}
               />
               <TableCardRow
                 name='Block Time'
-                badge={this.state.trend ? `${Number(this.state.trend?.blockTime.value).toFixed(2)} s` : ''}
+                badge={trend ? `${Number(trend.blockTime).toFixed(2)} s` : ''}
               />
               <TableCardRow
                 name='Difficulty'
-                badge={this.state.trend?.difficulty.value}
+                badge={trend && Number(trend.difficulty).toFixed(0)}
               />
               <TableCardRow
                 name='Hash Rate'
-                badge={this.state.trend && Number(this.state.trend?.hashRate.value).toFixed(0)}
+                badge={trend && Number(trend.hashRate).toFixed(0)}
               />
             </TableCard>
           </div>
