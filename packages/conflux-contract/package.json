@@ -24,7 +24,7 @@
     "@obsidians/keypair": "^0.1.0",
     "@obsidians/notification": "^0.1.0",
     "@obsidians/redux": "^0.1.0",
-    "@obsidians/ui-components": "^0.2.0"
+    "@obsidians/ui-components": "^0.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
