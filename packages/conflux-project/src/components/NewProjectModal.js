@@ -15,12 +15,11 @@ import {
 
 import fileOps from '@obsidians/file-ops'
 import notification from '@obsidians/notification'
+import { actions } from '@obsidians/workspace'
 import { IpcChannel } from '@obsidians/ipc'
 import Terminal from '@obsidians/terminal'
 import { DockerImageInputSelector } from '@obsidians/docker'
 import compilerManager from '@obsidians/conflux-compiler'
-
-import actions from '../actions'
 
 export default class NewProjectModal extends Component {
   constructor (props) {
@@ -38,7 +37,7 @@ export default class NewProjectModal extends Component {
     this.terminal = React.createRef()
     this.path = fileOps.current.path
     this.fs = fileOps.current.fs
-    this.channel = new IpcChannel('conflux-project')
+    this.channel = new IpcChannel('project')
 
     actions.newProjectModal = this
   }

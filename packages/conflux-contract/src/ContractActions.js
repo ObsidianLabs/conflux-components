@@ -9,6 +9,7 @@ import {
   DropdownItem,
   FormGroup,
   Label,
+  Badge,
 } from '@obsidians/ui-components'
 
 import notification from '@obsidians/notification'
@@ -44,6 +45,36 @@ export default class ContractActions extends Component {
       actionError: '',
       actionResult: '',
     })
+  }
+
+  estimate = async actionName => {
+    let parameters = { array: [], obj: {} }
+    try {
+      parameters = this.form.getParameters()
+    } catch (e) {
+      notification.error('Error in Parameters', e.message)
+      return
+    }
+
+    const signer = new Account(this.state.signer, signatureProvider)
+    
+    const value = util.unit.fromCFXToDrip(this.state.value || 0)
+
+    let result
+    try {
+      result = await this.props.contract[actionName]
+        .call(...parameters.array)
+        .estimateGasAndCollateral({ from: signer, value })
+    } catch (e) {
+      notification.error('Estimate Error', e.message)
+      return
+    }
+
+    if (result) {
+      const gas = result.gasUsed?.toString() || ''
+      const storage = result.storageCollateralized?.toString() || ''
+      this.setState({ gas, storage })
+    }
   }
 
   executeAction = async actionName => {
@@ -199,6 +230,12 @@ export default class ContractActions extends Component {
           <DropdownCard
             isOpen
             title={`Gas & Storage`}
+            right={
+              <Badge color='primary' onClick={evt => {
+                evt.stopPropagation()
+                this.estimate(selectedAction.name)
+              }}>Estimate</Badge>
+            }
           >
             <FormGroup className='mb-2'>
               <Label className='mb-1 small font-weight-bold'>Gas Limit</Label>

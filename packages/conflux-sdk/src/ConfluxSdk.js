@@ -37,9 +37,9 @@ export default class ConfluxSdk {
 
   async trend () {
     const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `${this.explorer}/dashboard/trend?span=86400`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/plot?interval=514&limit=7`)
     const json = JSON.parse(result)
-    return json.result
+    return json.list[json.total - 1]
   }
 
   async getTransactionsCount (address) {
@@ -47,9 +47,9 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/address/query?address=${address.toLowerCase()}`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/account/${address.toLowerCase()}`)
     const json = JSON.parse(result)
-    return json.result.account.all
+    return json.nonce
   }
 
   async getTransactions (address, page = 1, size = 10) {
@@ -57,9 +57,9 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return { noExplorer: true }
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/transaction/list?accountAddress=${address.toLowerCase()}&page=${page}&pageSize=${size}&txType=all`)
+    const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${address.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
-    return json.result
+    return json
   }
 
   contractFrom (options) {

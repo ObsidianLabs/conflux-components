@@ -21,12 +21,12 @@ export default class NavGuard {
     }
 
     const [first] = this.parsePathname(pathname)
-    if (first === 'guest') {
-      this.updateSelectedProject(pathname)
-    } else if (first === 'contract') {
+    if (first === 'contract') {
       this.updateSelectedContract(pathname)
     } else if (first === 'account') {
       this.updateSelectedAccount(pathname)
+    } else if (first !== 'network') {
+      this.updateSelectedProject(pathname)
     }
   }
 
@@ -54,6 +54,18 @@ export default class NavGuard {
     return [first || '', second || '']
   }
 
+  updateSelectedContract (pathname) {
+    const [_, contract] = this.parsePathname(pathname)
+    const { network } = redux.getState()
+    redux.dispatch('SELECT_CONTRACT', { network, contract })
+  }
+
+  updateSelectedAccount (pathname) {
+    const [_, account] = this.parsePathname(pathname)
+    const { network } = redux.getState()
+    redux.dispatch('SELECT_ACCOUNT', { network, account })
+  }
+
   updateSelectedProject (pathname) {
     const [author, id] = this.parsePathname(pathname)
 
@@ -78,19 +90,9 @@ export default class NavGuard {
     if (found) {
       project.name = found.get('name')
       project.path = found.get('path')
+    } else if (id) {
+      project.name = `${author}/${id}`
     }
     redux.dispatch('SELECT_PROJECT', { project })
-  }
-
-  updateSelectedContract (pathname) {
-    const [_, contract] = this.parsePathname(pathname)
-    const { network } = redux.getState()
-    redux.dispatch('SELECT_CONTRACT', { network, contract })
-  }
-
-  updateSelectedAccount (pathname) {
-    const [_, account] = this.parsePathname(pathname)
-    const { network } = redux.getState()
-    redux.dispatch('SELECT_ACCOUNT', { network, account })
   }
 }

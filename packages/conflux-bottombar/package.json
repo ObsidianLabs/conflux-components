@@ -20,7 +20,8 @@
     "@obsidians/conflux-contract": "^0.1.0",
     "@obsidians/conflux-project": "^0.1.0",
     "@obsidians/conflux-queue": "^0.1.0",
-    "@obsidians/keypair": "^0.1.0"
+    "@obsidians/keypair": "^0.1.0",
+    "@obsidians/workspace": "^0.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",

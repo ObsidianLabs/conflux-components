@@ -3,7 +3,7 @@ import fileOps from '@obsidians/file-ops'
 import { useBuiltinCustomTabs, modelSessionManager, defaultModeDetector } from '@obsidians/code-editor'
 import compilerManager, { CompilerTerminal } from '@obsidians/conflux-compiler'
 
-import projectManager from '../projectManager'
+import ConfluxProjectManager from '../ConfluxProjectManager'
 
 import ProjectToolbar from './ProjectToolbar'
 import ProjectSettingsTab from './ProjectSettingsTab'
@@ -23,7 +23,7 @@ modelSessionManager.registerModeDetector(filePath => {
   }
 })
 
-const makeContextMenu = contextMenu => node => {
+const makeContextMenu = (contextMenu, projectManager) => node => {
   if (node.children || !node.name.endsWith('.json')) {
     return contextMenu
   }
@@ -36,7 +36,7 @@ const makeContextMenu = contextMenu => node => {
 }
 
 Workspace.defaultProps = {
-  projectManager,
+  ProjectManager: ConfluxProjectManager,
   compilerManager,
   ProjectToolbar,
   CompilerTerminal,

@@ -13,7 +13,7 @@ export default class AccountTransactions extends PureComponent {
     hasMore: true,
     loading: true,
     txs: [],
-    page: 1,
+    page: 0,
     total: -1,
     size: 10,
     hide: false
@@ -30,13 +30,13 @@ export default class AccountTransactions extends PureComponent {
   }
 
   refresh = async account => {
-    this.setState({ txs: [], loading: true, page: 1 })
-    const { total, list: txs, noExplorer } = await networkManager.sdk.getTransactions(account.address, 1, this.state.size)
+    this.setState({ txs: [], loading: true, page: 0 })
+    const { total, list: txs, noExplorer } = await networkManager.sdk.getTransactions(account.address, 0, this.state.size)
     if (noExplorer) {
       this.setState({ hide: true })
       return
     }
-    this.setState({ txs, page: 2, hasMore: txs.length < total, loading: false })
+    this.setState({ txs, page: 1, hasMore: txs.length < total, loading: false })
   }
 
   loadMore = async () => {

@@ -24,6 +24,7 @@
     "@obsidians/conflux-queue": "^0.1.0",
     "@obsidians/docker": "^0.1.0",
     "@obsidians/file-ops": "^0.1.0",
+    "@obsidians/filetree": "^0.1.1",
     "@obsidians/ipc": "^0.1.2",
     "@obsidians/keypair": "^0.1.0",
     "@obsidians/notification": "^0.1.0",

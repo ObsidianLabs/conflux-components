@@ -1,14 +1,13 @@
 import React from 'react'
 
 import { DockerImageSelector } from '@obsidians/docker'
+import { BaseProjectManager } from '@obsidians/workspace'
 import compilerManager from '@obsidians/conflux-compiler'
-
-import projectManager from '../projectManager'
 
 export default () => {
   const [selected, onSelected] = React.useState('')
 
-  React.useEffect(projectManager.effect('settings:compilers.cfxtruffle', onSelected), [])
+  React.useEffect(BaseProjectManager.effect('settings:compilers.cfxtruffle', onSelected), [])
 
   return (
     <DockerImageSelector
@@ -21,7 +20,7 @@ export default () => {
       modalTitle='Conflux Truffle Manager'
       downloadingTitle='Downloading Conflux Truffle'
       selected={selected}
-      onSelected={v => projectManager.projectSettings?.set('compilers.cfxtruffle', v)}
+      onSelected={v => BaseProjectManager.instance.projectSettings?.set('compilers.cfxtruffle', v)}
     />
   )
 }

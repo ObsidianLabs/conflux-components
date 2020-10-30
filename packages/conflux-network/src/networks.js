@@ -1,4 +1,4 @@
-import fileOps from '@obsidians/file-ops'
+import platform from '@obsidians/platform'
 import { List } from 'immutable'
 
 const networkList = [
@@ -9,23 +9,23 @@ const networkList = [
     fullName: 'Conflux Testnet',
     icon: 'fas fa-vial',
     notification: 'Switched to <b>Conflux Testnet</b> network.',
-    url: 'http://testnet-jsonrpc.conflux-chain.org:12537',
+    url: 'https://wallet-test.confluxrpc.org',
     chainId: 1,
-    explorer: 'https://testnet.confluxscan.io/api',
+    explorer: 'https://testnet.confluxscan.io/v1',
   },
   {
-    id: 'oceanus',
+    id: 'tethys',
     group: 'mainnet',
-    name: 'Oceanus',
-    fullName: 'Conflux Oceanus',
+    name: 'Tethys',
+    fullName: 'Conflux Tethys',
     icon: 'fas fa-globe',
-    notification: 'Switched to <b>Conflux Oceanus</b> network.',
-    url: 'http://mainnet-jsonrpc.conflux-chain.org:12537',
-    chainId: 2,
-    explorer: 'https://confluxscan.io/api',
+    notification: 'Switched to <b>Conflux Tethys</b> network.',
+    url: 'https://wallet-main.confluxrpc.org',
+    chainId: 1029,
+    explorer: 'https://confluxscan.io/v1',
   }
 ]
-if (fileOps.fsType === 'electron') {
+if (platform.isDesktop) {
   networkList.unshift({
     id: 'dev',
     group: 'default',

@@ -4,16 +4,15 @@ import { DropdownItem } from '@obsidians/ui-components'
 
 import notification from '@obsidians/notification'
 import { DockerImageSelector } from '@obsidians/docker'
+import { BaseProjectManager } from '@obsidians/workspace'
 import compilerManager from '@obsidians/conflux-compiler'
-
-import projectManager from '../projectManager'
 
 let n
 
 export default () => {
   const [selected, onSelected] = React.useState('')
 
-  React.useEffect(projectManager.effect('settings:compilers.solc', v => {
+  React.useEffect(BaseProjectManager.effect('settings:compilers.solc', v => {
     n?.dismiss()
     if (v === 'default') {
       n = notification.info('Default Solc Selected', 'The version of solc used in compilation will be determined by <b>truffle-config.js</b>.', 4)
@@ -34,11 +33,11 @@ export default () => {
       modalTitle='Solc Manager'
       downloadingTitle='Downloading Solc'
       selected={selected}
-      onSelected={v => projectManager.projectSettings?.set('compilers.solc', v)}
+      onSelected={v => BaseProjectManager.instance.projectSettings?.set('compilers.solc', v)}
     >
       <DropdownItem
         active={selected === 'default'}
-        onClick={() => projectManager.projectSettings?.set('compilers.solc', 'default')}
+        onClick={() => BaseProjectManager.instance.projectSettings?.set('compilers.solc', 'default')}
       >
         Default Solc
       </DropdownItem>

@@ -2,9 +2,11 @@ import React from 'react'
 import CacheRoute from 'react-router-cache-route'
 
 import { KeypairButton } from '@obsidians/keypair'
+import { TerminalButton } from '@obsidians/workspace'
+
 import { QueueButton } from '@obsidians/conflux-queue'
 import { AbiStorage } from '@obsidians/conflux-contract'
-import { TerminalButton, SolcButton, CfxTruffleButton } from '@obsidians/conflux-project'
+import { SolcButton, CfxTruffleButton } from '@obsidians/conflux-project'
 
 export default function BottomBar (props) {
   return <>
@@ -22,15 +24,15 @@ export default function BottomBar (props) {
     </AbiStorage>
     <div className='flex-1' />
     <CacheRoute
-      path={`/guest/:project`}
+      path={`/local/:project`}
       component={CfxTruffleButton}
     />
     <CacheRoute
-      path={`/guest/:project`}
+      path={`/local/:project`}
       component={SolcButton}
     />
     <CacheRoute
-      path={`/guest/:project`}
+      path={`/local/:project`}
       component={TerminalButton}
     />
   </>

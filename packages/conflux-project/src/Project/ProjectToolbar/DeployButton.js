@@ -16,8 +16,6 @@ import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 import Highlight from 'react-highlight'
 import { Link } from 'react-router-dom'
 
-import projectManager from '../../projectManager'
-
 export default class DeployerButton extends PureComponent {
   constructor (props) {
     super(props)
@@ -33,24 +31,50 @@ export default class DeployerButton extends PureComponent {
     }
     this.parametersModal = React.createRef()
     this.resultModal = React.createRef()
-
   }
 
   componentDidMount () {
-    projectManager.deployButton = this
+    this.props.projectManager.deployButton = this
   }
 
   onClick = () => {
     if (this.state.pending) {
       return
     }
-    projectManager.deploy()
+    this.props.projectManager.deploy()
   }
 
-  getDeploymentParameters = (constructorAbi, contractName, callback) => {
+  getDeploymentParameters = (constructorAbi, contractName, callback, estimate) => {
     this.parametersModal.current.openModal()
     this.setState({ constructorAbi, contractName })
     this.callback = callback
+    this.estimateCallback = estimate
+  }
+
+  estimate = async () => {
+    let parameters = { array: [], obj: {} }
+    if (this.state.constructorAbi) {
+      try {
+        parameters = this.form.getParameters()
+      } catch (e) {
+        return
+      }
+    }
+
+    const { signer, gas, gasPrice, storage } = this.state
+    const result = await this.estimateCallback({
+      parameters,
+      signer,
+      gas: gas || 1000000,
+      gasPrice: gasPrice || 100,
+      storageLimit: storage || undefined
+    })
+
+    if (result) {
+      const gas = result.gasUsed?.toString() || ''
+      const storage = result.storageCollateralized?.toString() || ''
+      this.setState({ gas, storage })
+    }
   }
 
   confirmDeploymentParameters = () => {
@@ -126,6 +150,8 @@ export default class DeployerButton extends PureComponent {
         title={<span>Deploy Contract <b>{this.state.contractName}</b></span>}
         textConfirm='Deploy'
         onConfirm={this.confirmDeploymentParameters}
+        textActions={['Estimate Gas & Collateral']}
+        onActions={[this.estimate]}
       >
         {constructorParameters}
         <KeypairSelector

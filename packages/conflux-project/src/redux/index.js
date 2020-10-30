@@ -54,5 +54,8 @@ export default {
     //       .update('local', data => data.filter((d, i) => i === index || d.get('path') !== payload.newPath))
     //   }
     // },
+    UPDATE_PROJECT_LIST: {
+      reducer: (state, { payload }) => state.set('local', Immutable.fromJS(payload))
+    },
   }
 }
