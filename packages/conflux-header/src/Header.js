@@ -60,7 +60,7 @@ export default class Header extends PureComponent {
       {
         route: 'contract',
         title: 'Contract',
-        icon: 'fa-file-invoice',
+        icon: 'fas fa-file-invoice',
         selected: { id: selectedContract, name: selectedContract && <code>{selectedContract}</code> },
         dropdown: dropdownStarredInContract,
         onClickItem: selected => headerActions.selectContract(network.id, selected),
@@ -72,7 +72,7 @@ export default class Header extends PureComponent {
       {
         route: 'account',
         title: 'Explorer',
-        icon: 'fa-file-invoice',
+        icon: 'fas fa-file-invoice',
         selected: { id: selectedAccount, name: accountName },
         dropdown: [...dropdownKeypairs, ...dropdownStarred],
         onClickItem: selected => headerActions.selectAccount(network.id, selected),
