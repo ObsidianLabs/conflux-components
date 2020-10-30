@@ -69,7 +69,8 @@ function makeProjectManager (Base) {
       }
   
       this.deployButton.getDeploymentParameters(constructorAbi, contractObj.contractName, 
-        allParameters => this.pushDeployment(contractObj, allParameters)
+        allParameters => this.pushDeployment(contractObj, allParameters),
+        allParameters => this.estimate(contractObj, allParameters)
       )
     }
   
@@ -93,7 +94,41 @@ function makeProjectManager (Base) {
       const constructorAbi = contractObj.abi.find(item => item.type === 'constructor')
       return constructorAbi
     }
+    
+    async estimate (contractObj, allParameters) {
+      if (!networkManager.sdk) {
+        notification.error('Estimate Error', 'No running node. Please start one first.')
+        return
+      }
   
+      if (!allParameters.signer) {
+        notification.error('Estimate Error', 'No signer specified. Please select one to sign the deployment transaction.')
+        return
+      }
+  
+      const deployedBytecode = contractObj.deployedBytecode
+      if (typeof deployedBytecode !== 'string') {
+        notification.error('Estimate Error', 'Invalid <b>deployedBytecode</b> field in the built contract JSON. Please make sure you used Conflux Truffle to build the contract.')
+        return
+      }
+  
+      const signer = new Account(allParameters.signer, signatureProvider)
+      const contractInstance = networkManager.sdk.contractFrom(contractObj)
+      const { parameters } = allParameters
+
+      let result
+      try {
+        result = await contractInstance.constructor
+          .call(...parameters.array)
+          .estimateGasAndCollateral({ from: signer })
+      } catch (e) {
+        notification.error('Estimate Error', e.message)
+        return
+      }
+
+      return result
+    }
+
     async pushDeployment (contractObj, allParameters) {
       if (!networkManager.sdk) {
         notification.error('Deploy Error', 'No running node. Please start one first.')
