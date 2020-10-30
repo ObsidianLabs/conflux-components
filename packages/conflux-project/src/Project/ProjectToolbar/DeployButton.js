@@ -46,7 +46,13 @@ export default class DeployerButton extends PureComponent {
 
   getDeploymentParameters = (constructorAbi, contractName, callback, estimate) => {
     this.parametersModal.current.openModal()
-    this.setState({ constructorAbi, contractName })
+    this.setState({
+      constructorAbi,
+      contractName,
+      gas: '',
+      gasPrice: '',
+      storage: '',
+    })
     this.callback = callback
     this.estimateCallback = estimate
   }
