@@ -3,6 +3,24 @@ const fs = require('fs')
 const fse = require('fs-extra')
 const { FileTreeChannel } = require('@obsidians/filetree')
 
+const isDirectoryNotEmpty = dirPath => {
+  try {
+    const stat = fs.statSync(dirPath)
+    if (!stat.isDirectory()) {
+      return false
+    }
+  } catch (e) {
+    return false
+  }
+
+  const files = fs.readdirSync(dirPath)
+  if (files && files.length) {
+    return true
+  }
+
+  return false
+}
+
 const copyRecursiveSync = (src, dest, name) => {
   const exists = fs.existsSync(src)
   const stats = exists && fs.statSync(src)
@@ -24,18 +42,23 @@ const copyRecursiveSync = (src, dest, name) => {
   }
 }
 
+
 class ProjectChannel extends FileTreeChannel {
-  async createProject ({ template, projectRoot, name }) {
+  async post (_, { template, projectRoot, name }) {
+    if (await isDirectoryNotEmpty(projectRoot)) {
+      throw new Error(`<b>${projectRoot}</b> is not an empty directory.`)
+    }
+
     const templateFolder = path.join(__dirname, 'templates', template)
     try {
       fs.readdirSync(templateFolder)
     } catch (e) {
-      fse.ensureDirSync(projectRoot)
-      return
-      // throw new Error(`Template "${template}" does not exist.`)
+      throw new Error(`Template "${template}" does not exist.`)
     }
 
     copyRecursiveSync(templateFolder, projectRoot, name)
+
+    return { projectRoot, name }
   }
 }
 
