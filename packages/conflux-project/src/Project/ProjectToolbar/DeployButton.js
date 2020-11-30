@@ -13,9 +13,6 @@ import { KeypairSelector } from '@obsidians/keypair'
 
 import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 
-import Highlight from 'react-highlight'
-import { Link } from 'react-router-dom'
-
 export default class DeployerButton extends PureComponent {
   constructor (props) {
     super(props)
@@ -27,10 +24,8 @@ export default class DeployerButton extends PureComponent {
       gasPrice: '',
       storage: '',
       signer: '',
-      result: '',
     }
-    this.parametersModal = React.createRef()
-    this.resultModal = React.createRef()
+    this.modal = React.createRef()
   }
 
   componentDidMount () {
@@ -45,7 +40,7 @@ export default class DeployerButton extends PureComponent {
   }
 
   getDeploymentParameters = (constructorAbi, contractName, callback, estimate) => {
-    this.parametersModal.current.openModal()
+    this.modal.current.openModal()
     this.setState({
       constructorAbi,
       contractName,
@@ -103,16 +98,8 @@ export default class DeployerButton extends PureComponent {
     })
   }
 
-  closeParametersModal = () => {
-    this.parametersModal.current.closeModal()
-  }
-
-  renderDeployResult = () => {
-    return (
-      <Highlight language='javascript' className='pre-box bg2 pre-wrap break-all small' element='pre'>
-        <code>{JSON.stringify(this.state.result, null, 2)}</code>
-      </Highlight>
-    )
+  closeModal = () => {
+    this.modal.current.closeModal()
   }
 
   render () {
@@ -151,7 +138,7 @@ export default class DeployerButton extends PureComponent {
         { this.state.pending ? 'Deploying' : `Deploy`}
       </UncontrolledTooltip>
       <Modal
-        ref={this.parametersModal}
+        ref={this.modal}
         overflow
         title={<span>Deploy Contract <b>{this.state.contractName}</b></span>}
         textConfirm='Deploy'
@@ -199,14 +186,6 @@ export default class DeployerButton extends PureComponent {
             </ActionParamInput>
           </FormGroup>
         </div>
-      </Modal>
-      <Modal
-        ref={this.resultModal}
-        title='Deployment Result'
-        textCancel='Close'
-      >
-        Open the deployed <Link to={`/contract/${this.state.result.contractCreated}`}>contract</Link>
-        {this.renderDeployResult()}
       </Modal>
     </>
   }

@@ -172,7 +172,7 @@ function makeProjectManager (Base) {
               modalWhenExecuted: true,
             },
             {
-              pushing: () => this.deployButton.closeParametersModal(),
+              pushing: () => this.deployButton.closeModal(),
               executed: ({ tx, receipt, abi }) => {
                 resolve({
                   network: networkId,
