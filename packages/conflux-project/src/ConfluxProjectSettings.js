@@ -1,9 +1,10 @@
 import { ProjectSettings } from '@obsidians/workspace'
 
 export default class ConfluxProjectSettings extends ProjectSettings {
+  static configFileName = 'config.json'
+
   constructor (settingFilePath, channel) {
     super(settingFilePath, channel)
-    this.configFileName = 'config.json'
   }
 
   trimSettings = (rawSettings = {}) => {

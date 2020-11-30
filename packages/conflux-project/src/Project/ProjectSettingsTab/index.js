@@ -80,6 +80,7 @@ export default class ProjectSettingsTab extends AbstractProjectSettingsTab {
               selected={projectSettings?.get('compilers.solc')}
               onSelected={solc => this.onChange('compilers.solc')(solc)}
             />
+            <AbstractProjectSettingsTab.DeleteButton context={this.context} />
           </div>
         </div>
       </div>
