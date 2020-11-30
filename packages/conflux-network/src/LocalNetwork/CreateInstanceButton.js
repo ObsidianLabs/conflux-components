@@ -40,7 +40,7 @@ export default class CreateInstanceButton extends PureComponent {
 
     this.setState({ pending: 'Creating...' })
 
-    const genesis_secrets = await Promise.all(keypairs.map(k => keypairManager.getSigner(k.address)))
+    const genesis_secrets = await Promise.all(keypairs.map(k => keypairManager.getSecret(k.address)))
     await instanceChannel.invoke('create', {
       name: this.state.name,
       version: this.state.version,
