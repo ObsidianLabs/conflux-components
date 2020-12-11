@@ -31,15 +31,15 @@ contract Coin {
       return balances[tokenOwner];
     }
 
-    function add_privilege(address account) public payable {
+    function addPrivilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.add_privilege(a);
+        SPONSOR.addPrivilege(a);
     }
 
-    function remove_privilege(address account) public payable {
+    function removePrivilege(address account) public payable {
         address[] memory a = new address[](1);
         a[0] = account;
-        SPONSOR.remove_privilege(a);
+        SPONSOR.removePrivilege(a);
     }
 }
