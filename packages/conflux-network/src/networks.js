@@ -9,7 +9,7 @@ const networkList = [
     fullName: 'Conflux Testnet',
     icon: 'fas fa-vial',
     notification: 'Switched to <b>Conflux Testnet</b> network.',
-    url: 'https://wallet-test.confluxrpc.org',
+    url: 'https://test.confluxrpc.org',
     chainId: 1,
     explorer: 'https://testnet.confluxscan.io/v1',
   },
@@ -20,7 +20,7 @@ const networkList = [
     fullName: 'Conflux Tethys',
     icon: 'fas fa-globe',
     notification: 'Switched to <b>Conflux Tethys</b> network.',
-    url: 'https://wallet-main.confluxrpc.org',
+    url: 'https://main.confluxrpc.org',
     chainId: 1029,
     explorer: 'https://confluxscan.io/v1',
   }
