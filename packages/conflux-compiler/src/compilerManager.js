@@ -1,11 +1,14 @@
 import { DockerImageChannel } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 import fileOps from '@obsidians/file-ops'
+import semver from 'semver'
 
 class Compiler {
   constructor () {
     this.cfxtruffle = new DockerImageChannel('obsidians/conflux-truffle')
-    this.solc = new DockerImageChannel('ethereum/solc')
+    this.solc = new DockerImageChannel('ethereum/solc', {
+      filter: v => semver.valid(v) && !v.endsWith('alpine')
+    })
     this._terminal = null
     this._button = null
     this.notification = null
