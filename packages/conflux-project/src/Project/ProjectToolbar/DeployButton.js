@@ -9,7 +9,7 @@ import {
 } from '@obsidians/ui-components'
 
 import notification from '@obsidians/notification'
-import { KeypairSelector } from '@obsidians/keypair'
+import { KeypairInputSelector } from '@obsidians/keypair'
 
 import { ContractForm, ActionParamInput } from '@obsidians/conflux-contract'
 
@@ -147,7 +147,7 @@ export default class DeployerButton extends PureComponent {
         onActions={[this.estimate]}
       >
         {constructorParameters}
-        <KeypairSelector
+        <KeypairInputSelector
           label='Signer'
           value={this.state.signer}
           onChange={signer => this.setState({ signer })}

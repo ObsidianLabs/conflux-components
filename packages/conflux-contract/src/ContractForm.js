@@ -8,7 +8,7 @@ import {
   Modal,
 } from '@obsidians/ui-components'
 
-import { KeypairSelector } from '@obsidians/keypair'
+import { KeypairInputSelector } from '@obsidians/keypair'
 
 import { util } from 'js-conflux-sdk'
 import JSBI from 'jsbi'
@@ -143,7 +143,7 @@ export function ActionParamInput ({ size, type, value, onChange, placeholder, di
       />
     )
   } else if (type === 'address') {
-    return <KeypairSelector size={size} editable maxLength={42} icon='fas fa-map-marker-alt' {...props} />
+    return <KeypairInputSelector size={size} editable maxLength={42} icon='fas fa-map-marker-alt' {...props} />
   } else if (textarea) {
     return (
       <div style={{ position: 'relative' }}>

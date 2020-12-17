@@ -14,7 +14,7 @@ import {
 
 import notification from '@obsidians/notification'
 import { signatureProvider } from '@obsidians/conflux-sdk'
-import { KeypairSelector } from '@obsidians/keypair'
+import { KeypairInputSelector } from '@obsidians/keypair'
 import queue from '@obsidians/conflux-queue'
 
 import { Account, util } from 'js-conflux-sdk'
@@ -275,7 +275,7 @@ export default class ContractActions extends Component {
             title='Authorization'
             overflow
           >
-            <KeypairSelector
+            <KeypairInputSelector
               size='sm'
               label='Signer'
               value={this.state.signer}

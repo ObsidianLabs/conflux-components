@@ -6,7 +6,7 @@ import {
   DebouncedFormGroup,
 } from '@obsidians/ui-components'
 
-import keypairManager, { KeypairSelector } from '@obsidians/keypair'
+import keypairManager, { KeypairInputSelector } from '@obsidians/keypair'
 import { DockerImageInputSelector } from '@obsidians/docker'
 import notification from '@obsidians/notification'
 
@@ -58,7 +58,7 @@ export default class CreateInstanceButton extends PureComponent {
       return null
     }
     return (
-      <KeypairSelector
+      <KeypairInputSelector
         label='Miner'
         value={this.state.miner}
         onChange={miner => this.setState({ miner })}
