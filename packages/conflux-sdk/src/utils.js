@@ -1,4 +1,4 @@
-import { util } from 'js-conflux-sdk'
+import { util, abi } from 'js-conflux-sdk'
 
 export default {
   sign: {
@@ -11,5 +11,6 @@ export default {
     fromValue: util.unit.fromDripToCFX,
     toValue: util.unit.fromCFXToDrip,
     valueToGvalue: util.unit.fromDripToGDrip
-  }
+  },
+  decodeError: data => abi.errorCoder.decodeError({ data }).message
 }
