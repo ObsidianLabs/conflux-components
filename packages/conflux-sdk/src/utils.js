@@ -2,7 +2,7 @@ import { util } from 'js-conflux-sdk'
 
 export default {
   sign: {
-    sha3: util.sign.sha3
+    sha3: str => `0x${util.sign.sha3(Buffer.from(str.replace('0x', ''), 'hex')).toString('hex')}`
   },
   format: {
     bytes: util.format.bytes

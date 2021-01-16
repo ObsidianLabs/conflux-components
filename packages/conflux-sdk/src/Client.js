@@ -1,6 +1,6 @@
 import { Conflux, util } from 'js-conflux-sdk'
 
-export default class ConfluxClient {
+export default class Client {
   constructor (url, chainId) {
     this.cfx = new Conflux({
       url,

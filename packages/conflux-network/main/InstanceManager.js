@@ -12,14 +12,14 @@ class InstanceManager extends IpcChannel {
     this.dockerChannel = new DockerImageChannel(process.env.DOCKER_IMAGE_NODE)
   }
 
-  async create ({ name, version, miner, genesis_secrets, chain = 'dev' }) {
+  async create ({ name, version, miner, keys, networkId = 'dev' }) {
     const tmpdir = os.tmpdir()
     const configPath = path.join(tmpdir, `conflux.toml`)
     const logPath = path.join(tmpdir, `log.yaml`)
     const genesis = path.join(tmpdir, 'genesis_secrets.txt')
     const PROJECT = process.env.PROJECT
 
-    await this.exec(`docker volume create --label version=${version},chain=${chain} ${PROJECT}-${name}`)
+    await this.exec(`docker volume create --label version=${version},chain=${networkId} ${PROJECT}-${name}`)
 
     await this.exec(`docker run -di --rm --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${process.env.DOCKER_IMAGE_NODE}:${version} /bin/bash`)
 
@@ -31,11 +31,11 @@ class InstanceManager extends IpcChannel {
     const config = TOML.parse(configStr)
     config.mode = 'dev'
     config.chain_id = 0
-    config.mining_author = miner.replace('0x', '')
+    config.mining_author = miner.address.replace('0x', '')
     config.genesis_secrets = 'genesis_secrets.txt'
 
     fs.writeFileSync(configPath, TOML.stringify(config))
-    fs.writeFileSync(genesis, genesis_secrets.map(k => k.substr(2)).join('\n') + '\n')
+    fs.writeFileSync(genesis, keys.map(k => k.substr(2)).join('\n') + '\n')
 
     await this.exec(`docker cp ${configPath} ${PROJECT}-config-${name}:/${PROJECT}-node/default.toml`)
     await this.exec(`docker cp ${logPath} ${PROJECT}-config-${name}:/${PROJECT}-node/log.yaml`)
@@ -45,7 +45,7 @@ class InstanceManager extends IpcChannel {
     fs.unlinkSync(genesis)
   }
 
-  async list (chain = 'dev') {
+  async list (networkId = 'dev') {
     const { logs: volumes } = await this.exec(`docker volume ls --format "{{json . }}"`)
     const instances = volumes.split('\n').filter(Boolean).map(JSON.parse).filter(x => x.Name.startsWith(`${process.env.PROJECT}-`))
     const instancesWithLabels = instances.map(i => {
@@ -57,7 +57,7 @@ class InstanceManager extends IpcChannel {
       i.Labels = labels
       return i
     })
-    return instancesWithLabels.filter(x => x.Labels.chain === chain)
+    return instancesWithLabels.filter(x => x.Labels.chain === networkId)
   }
 
   async readConfig ({ name, version }) {
