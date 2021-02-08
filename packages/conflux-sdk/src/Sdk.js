@@ -45,7 +45,7 @@ export default class ConfluxSdk {
     const hexAddress = util.format.hexAddress(address)
     const account = await this.client.cfx.getAccount(hexAddress)
     return {
-      address,
+      address: util.format.address(address, this.chainId, true).toUpperCase(),
       balance: util.unit.fromValue(account.balance),
       codeHash: account.codeHash,
     }
@@ -95,7 +95,15 @@ export default class ConfluxSdk {
     }
     const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${address.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
-    return json
+    return {
+      ...json,
+      list: json.list.map(tx => ({
+        ...tx,
+        to: tx.to || tx.contractCreated,
+        timeStamp: tx.timestamp,
+        blockNumber: tx.epochNumber
+      }))
+    }
   }
 
   // contractFrom (options) {
