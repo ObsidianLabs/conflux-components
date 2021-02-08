@@ -23,7 +23,7 @@ export default class ConfluxSdk {
 
   isValidAddress (address) {
     try {
-      util.format.address(address)
+      util.format.address(address, this.chainId)
       return true
     } catch(e) {
       return false

@@ -7,7 +7,8 @@ export default class Client {
       defaultGasPrice: 100, // The default gas price of your following transactions
       defaultGas: 1000000, // The default gas of your following transactions
       // logger: console,
-      useHexAddressInParameter: true
+      useHexAddressInParameter: true,
+      networkId: chainId
     })
   }
 }
