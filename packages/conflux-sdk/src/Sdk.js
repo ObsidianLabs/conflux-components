@@ -1,6 +1,6 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { Account } from 'js-conflux-sdk'
+import { Account, address as addressUtil } from 'js-conflux-sdk'
 
 import Client from './Client'
 import Contract from './Contract'
@@ -22,12 +22,27 @@ export default class ConfluxSdk {
   }
 
   isValidAddress (address) {
+    // address can be hex40 or Conflux base32
     try {
+      if (address.toUpperCase().startsWith('CFXTEST:') && this.chainId !== 1) {
+        // Testnet
+        return false
+      } else if (address.toUpperCase().startsWith('CFX:') && this.chainId !== 1029) {
+        // Mainnet
+        return false
+      }
       util.format.address(address, this.chainId)
       return true
     } catch(e) {
       return false
     }
+  }
+
+  convertAddress (address) {
+    if (addressUtil.hasNetworkPrefix(address)) {
+      return util.format.hexAddress(address)
+    }
+    return util.format.address(address, this.chainId, true)
   }
 
   async networkInfo () {
@@ -83,7 +98,8 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/account/${address.toLowerCase()}`)
+    const hexAddress = util.format.hexAddress(address)
+    const result = await ipc.invoke('fetch', `${this.explorer}/account/${hexAddress.toLowerCase()}`)
     const json = JSON.parse(result)
     return json.nonce
   }
@@ -93,8 +109,12 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return { noExplorer: true }
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${address.toLowerCase()}&skip=${page * size}&limit=${size}`)
+    const hexAddress = util.format.hexAddress(address)
+    const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
+    if (!json.list) {
+      return json
+    }
     return {
       ...json,
       list: json.list.map(tx => ({

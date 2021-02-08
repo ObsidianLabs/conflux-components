@@ -33,7 +33,7 @@ if (platform.isDesktop) {
     icon: 'fas fa-laptop-code',
     notification: 'Switched to <b>Development</b> network.',
     url: 'http://localhost:12537',
-    chainId: 0,
+    chainId: 999,
   })
 }
 
