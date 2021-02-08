@@ -1,11 +1,12 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { Account, util } from 'js-conflux-sdk'
+import { Account } from 'js-conflux-sdk'
 
 import Client from './Client'
 import Contract from './Contract'
 import Tx from './Tx'
 import signatureProvider from './signatureProvider'
+import util from './utils'
 
 export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id }) {
@@ -41,10 +42,11 @@ export default class ConfluxSdk {
   }
 
   async accountFrom (address) {
-    const account = await this.client.cfx.getAccount(address)
+    const hexAddress = util.format.hexAddress(address)
+    const account = await this.client.cfx.getAccount(hexAddress)
     return {
       address,
-      balance: util.unit.fromDripToCFX(account.balance),
+      balance: util.unit.fromValue(account.balance),
       codeHash: account.codeHash,
     }
   }
@@ -54,7 +56,7 @@ export default class ConfluxSdk {
   }
 
   async getTransferTransaction ({ from, to, amount }, override) {
-    const value = util.unit.fromCFXToDrip(amount)
+    const value = util.unit.fromValue(amount)
     return new Tx(this.cfx, { from, to, value, ...override })
   }
 
