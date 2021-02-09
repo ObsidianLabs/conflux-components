@@ -1,12 +1,12 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { Account, address as addressUtil } from 'js-conflux-sdk'
+import { address as addressUtil, Drip } from 'js-conflux-sdk'
 
 import Client from './Client'
 import Contract from './Contract'
 import Tx from './Tx'
 import signatureProvider from './signatureProvider'
-import util from './utils'
+import utils from './utils'
 
 export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id }) {
@@ -31,7 +31,7 @@ export default class ConfluxSdk {
         // Mainnet
         return false
       }
-      util.format.address(address, this.chainId)
+      utils.format.address(address, this.chainId)
       return true
     } catch(e) {
       return false
@@ -40,9 +40,9 @@ export default class ConfluxSdk {
 
   convertAddress (address) {
     if (addressUtil.hasNetworkPrefix(address)) {
-      return util.format.hexAddress(address)
+      return utils.format.hexAddress(address)
     }
-    return util.format.address(address, this.chainId, true)
+    return utils.format.address(address, this.chainId, true)
   }
 
   async networkInfo () {
@@ -57,11 +57,11 @@ export default class ConfluxSdk {
   }
 
   async accountFrom (address) {
-    const hexAddress = util.format.hexAddress(address)
+    const hexAddress = utils.format.hexAddress(address)
     const account = await this.client.cfx.getAccount(hexAddress)
     return {
-      address: util.format.address(address, this.chainId, true).toUpperCase(),
-      balance: util.unit.fromValue(account.balance),
+      address: utils.format.address(address, this.chainId, true).toUpperCase(),
+      balance: utils.unit.fromValue(account.balance),
       codeHash: account.codeHash,
     }
   }
@@ -71,14 +71,15 @@ export default class ConfluxSdk {
   }
 
   async getTransferTransaction ({ from, to, amount }, override) {
-    const value = util.unit.fromValue(amount)
-    return new Tx(this.cfx, { from, to, value, ...override })
+    const hexFrom = utils.format.hexAddress(from)
+    const value = Drip.fromCFX(amount)
+    return new Tx(this.cfx, { from: hexFrom, to, value, ...override })
   }
 
   async getDeployTransaction ({ abi, bytecode, parameters }, override) {
     const factory = this.cfx.Contract({ abi, bytecode })
     const tx = factory.constructor.call(...parameters)
-    return new Tx(tx, override)
+    return new Tx(this.cfx, { ...tx, ...override })
   }
 
   async estimate (tx) {
@@ -89,8 +90,8 @@ export default class ConfluxSdk {
   }
 
   sendTransaction (tx) {
-    const signer = new Account(tx.from, signatureProvider)
-    return tx.send(signer)
+    const sp = signatureProvider(tx.from)
+    return tx.send(sp)
   }
 
   async getTransactionsCount (address) {
@@ -98,7 +99,7 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const hexAddress = util.format.hexAddress(address)
+    const hexAddress = utils.format.hexAddress(address)
     const result = await ipc.invoke('fetch', `${this.explorer}/account/${hexAddress.toLowerCase()}`)
     const json = JSON.parse(result)
     return json.nonce
@@ -109,7 +110,7 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return { noExplorer: true }
     }
-    const hexAddress = util.format.hexAddress(address)
+    const hexAddress = utils.format.hexAddress(address)
     const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
     if (!json.list) {

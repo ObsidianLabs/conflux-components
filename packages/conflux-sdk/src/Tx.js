@@ -1,18 +1,19 @@
 export default class Tx {
-  constructor (tx, override) {
+  constructor (cfx, tx) {
+    this.cfx = cfx
     this.tx = tx
-    this.override = override
   }
 
   get from () {
-    return this.override.from
+    return this.tx.from
   }
 
-  send (signer) {
-    return this.tx.sendTransaction({ ...this.override, from: signer })
+  send (sp) {
+    this.cfx.wallet.addExternalAccount(this.from, sp)
+    return this.cfx.sendTransaction(this.tx)
   }
 
   async estimate ({ from }) {
-    return await this.tx.estimateGasAndCollateral({ from })
+    return await this.cfx.estimateGasAndCollateral({ from })
   }
 }

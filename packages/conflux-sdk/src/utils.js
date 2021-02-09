@@ -1,4 +1,4 @@
-import { util, abi, format, sign, Drip } from 'js-conflux-sdk'
+import { address, abi, format, sign, Drip } from 'js-conflux-sdk'
 
 const display = value => {
   const amount = Drip(value).toCFX()
@@ -19,11 +19,16 @@ export default {
   format: {
     bytes: format.bytes,
     address: format.address,
-    hexAddress: format.hexAddress
+    hexAddress: addr => {
+      if (address.hasNetworkPrefix(addr)) {
+        return format.hexAddress(addr)
+      }
+      return addr
+    }
   },
   unit: {
     fromValue: value => Drip(value).toCFX(),
-    toValue: Drip.fromCFX,
+    toValue: cfx => Drip.fromCFX(cfx).toString(),
     valueToGvalue: value => Drip(value).toGDrip()
   },
   display,

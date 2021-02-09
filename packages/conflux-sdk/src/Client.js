@@ -1,4 +1,5 @@
-import { Conflux, util } from 'js-conflux-sdk'
+import { Conflux } from 'js-conflux-sdk'
+import ExternalWallet from './wallet/ExternalWallet'
 
 export default class Client {
   constructor (url, chainId) {
@@ -10,5 +11,7 @@ export default class Client {
       useHexAddressInParameter: true,
       networkId: chainId
     })
+
+    this.cfx.wallet = new ExternalWallet(chainId)
   }
 }
