@@ -1,4 +1,4 @@
-import Tx from './Tx'
+import { ContractTx } from './Tx'
 
 export default class Contract {
   constructor ({ address, abi }, cfx) {
@@ -14,6 +14,6 @@ export default class Contract {
 
   execute (method, args, override) {
     const tx = this.instance[method].call(...args)
-    return new Tx(tx, override)
+    return new ContractTx(this.cfx, tx, override)
   }
 }

@@ -14,7 +14,7 @@ const display = value => {
 
 export default {
   sign: {
-    sha3: str => `0x${sign.sha3(Buffer.from(str.replace('0x', ''), 'hex')).toString('hex')}`
+    sha3: str => `0x`
   },
   format: {
     bytes: format.bytes,

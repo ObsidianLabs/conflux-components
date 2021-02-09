@@ -4,7 +4,7 @@ import { address as addressUtil, Drip } from 'js-conflux-sdk'
 
 import Client from './Client'
 import Contract from './Contract'
-import Tx from './Tx'
+import { TransferTx, ContractTx } from './Tx'
 import signatureProvider from './signatureProvider'
 import utils from './utils'
 
@@ -73,13 +73,14 @@ export default class ConfluxSdk {
   async getTransferTransaction ({ from, to, amount }, override) {
     const hexFrom = utils.format.hexAddress(from)
     const value = Drip.fromCFX(amount)
-    return new Tx(this.cfx, { from: hexFrom, to, value, ...override })
+    return new TransferTx(this.cfx, { from: hexFrom, to, value, ...override })
   }
 
   async getDeployTransaction ({ abi, bytecode, parameters }, override) {
     const factory = this.cfx.Contract({ abi, bytecode })
     const tx = factory.constructor.call(...parameters)
-    return new Tx(this.cfx, { ...tx, ...override })
+    tx.from = override.from
+    return new ContractTx(this.cfx, tx)
   }
 
   async estimate (tx) {
