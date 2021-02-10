@@ -8,7 +8,7 @@ const networks = [
     fullName: 'Conflux Testnet',
     icon: 'fas fa-vial',
     notification: 'Switched to <b>Conflux Testnet</b> network.',
-    url: 'https://test.confluxrpc.org',
+    url: 'https://testnet-rpc.conflux-chain.org.cn',
     chainId: 1,
     explorer: 'https://testnet.confluxscan.io/v1',
   },

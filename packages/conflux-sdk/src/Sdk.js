@@ -1,6 +1,6 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { address as addressUtil, Drip } from 'js-conflux-sdk'
+import { address as addressUtil, Drip, format } from 'js-conflux-sdk'
 
 import Client from './Client'
 import Contract from './Contract'
@@ -127,5 +127,14 @@ export default class ConfluxSdk {
         blockNumber: tx.epochNumber
       }))
     }
+  }
+
+  async getLogs (contract, selectedEvent) {
+    const status = await this.getStatus()
+    const logs = await contract.instance[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs({
+      fromEpoch: status.epochNumber - 9999 > 0 ? status.epochNumber - 9999 : 0,
+      toEpoch: 'latest_state',
+    })
+    return logs
   }
 }
