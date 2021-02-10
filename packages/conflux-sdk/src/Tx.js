@@ -21,6 +21,15 @@ export class TransferTx extends Tx {
 }
 
 export class ContractTx extends Tx {
+  constructor (cfx, tx, override) {
+    super(cfx, tx)
+    this.override = override
+  }
+
+  get from () {
+    return this.override.from
+  }
+
   send (sp) {
     const account = this.cfx.wallet.addExternalAccount(this.from, sp)
     return this.tx.sendTransaction({ from: account })

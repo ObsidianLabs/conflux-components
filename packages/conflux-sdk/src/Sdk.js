@@ -79,8 +79,7 @@ export default class ConfluxSdk {
   async getDeployTransaction ({ abi, bytecode, parameters }, override) {
     const factory = this.cfx.Contract({ abi, bytecode })
     const tx = factory.constructor.call(...parameters)
-    tx.from = override.from
-    return new ContractTx(this.cfx, tx)
+    return new ContractTx(this.cfx, tx, override)
   }
 
   async estimate (tx) {
@@ -126,14 +125,5 @@ export default class ConfluxSdk {
         blockNumber: tx.epochNumber
       }))
     }
-  }
-
-  // contractFrom (options) {
-  //   return this.client.cfx.Contract(options)
-  // }
-
-  async contract (abi, method, ...args) {
-    const result = await contract[method](...args)
-    return result.toString()
   }
 }
