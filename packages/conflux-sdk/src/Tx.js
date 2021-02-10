@@ -27,6 +27,6 @@ export class ContractTx extends Tx {
   }
 
   async estimate ({ from }) {
-    return await this.cfx.estimateGasAndCollateral({ from })
+    return await this.tx.estimateGasAndCollateral({ from })
   }
 }

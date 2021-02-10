@@ -14,7 +14,7 @@ const display = value => {
 
 export default {
   sign: {
-    sha3: str => `0x`
+    sha3: str => format.hex(sign.keccak256(format.hexBuffer(str)))
   },
   format: {
     bytes: format.bytes,
