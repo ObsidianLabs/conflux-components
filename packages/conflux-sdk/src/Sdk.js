@@ -1,11 +1,12 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { Account, util } from 'js-conflux-sdk'
+import { address as addressUtil, Drip, format } from 'js-conflux-sdk'
 
 import Client from './Client'
 import Contract from './Contract'
-import Tx from './Tx'
+import { TransferTx, ContractTx } from './Tx'
 import signatureProvider from './signatureProvider'
+import utils from './utils'
 
 export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id }) {
@@ -21,12 +22,27 @@ export default class ConfluxSdk {
   }
 
   isValidAddress (address) {
+    // address can be hex40 or Conflux base32
     try {
-      util.format.address(address)
+      if (address.toUpperCase().startsWith('CFXTEST:') && this.chainId !== 1) {
+        // Testnet
+        return false
+      } else if (address.toUpperCase().startsWith('CFX:') && this.chainId !== 1029) {
+        // Mainnet
+        return false
+      }
+      utils.format.address(address, this.chainId)
       return true
     } catch(e) {
       return false
     }
+  }
+
+  convertAddress (address) {
+    if (addressUtil.hasNetworkPrefix(address)) {
+      return utils.format.hexAddress(address)
+    }
+    return utils.format.address(address, this.chainId, true)
   }
 
   async networkInfo () {
@@ -41,10 +57,11 @@ export default class ConfluxSdk {
   }
 
   async accountFrom (address) {
-    const account = await this.client.cfx.getAccount(address)
+    const hexAddress = utils.format.hexAddress(address)
+    const account = await this.client.cfx.getAccount(hexAddress)
     return {
-      address,
-      balance: util.unit.fromDripToCFX(account.balance),
+      address: utils.format.address(address, this.chainId, true).toUpperCase(),
+      balance: utils.unit.fromValue(account.balance),
       codeHash: account.codeHash,
     }
   }
@@ -54,14 +71,15 @@ export default class ConfluxSdk {
   }
 
   async getTransferTransaction ({ from, to, amount }, override) {
-    const value = util.unit.fromCFXToDrip(amount)
-    return new Tx(this.cfx, { from, to, value, ...override })
+    const hexFrom = utils.format.hexAddress(from)
+    const value = Drip.fromCFX(amount)
+    return new TransferTx(this.cfx, { from: hexFrom, to, value, ...override })
   }
 
   async getDeployTransaction ({ abi, bytecode, parameters }, override) {
     const factory = this.cfx.Contract({ abi, bytecode })
     const tx = factory.constructor.call(...parameters)
-    return new Tx(tx, override)
+    return new ContractTx(this.cfx, tx, override)
   }
 
   async estimate (tx) {
@@ -72,8 +90,8 @@ export default class ConfluxSdk {
   }
 
   sendTransaction (tx) {
-    const signer = new Account(tx.from, signatureProvider)
-    return tx.send(signer)
+    const sp = signatureProvider(tx.from)
+    return tx.send(sp)
   }
 
   async getTransactionsCount (address) {
@@ -81,7 +99,8 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/account/${address.toLowerCase()}`)
+    const hexAddress = utils.format.hexAddress(address)
+    const result = await ipc.invoke('fetch', `${this.explorer}/account/${hexAddress.toLowerCase()}`)
     const json = JSON.parse(result)
     return json.nonce
   }
@@ -91,17 +110,31 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return { noExplorer: true }
     }
-    const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${address.toLowerCase()}&skip=${page * size}&limit=${size}`)
+    const hexAddress = utils.format.hexAddress(address)
+    const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
-    return json
+    if (!json.list) {
+      return json
+    }
+    return {
+      ...json,
+      list: json.list.map(tx => ({
+        ...tx,
+        from: tx.from.replace('TYPE.USER:', '').toLowerCase(),
+        to: tx.to && tx.to.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase(),
+        contractCreated: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
+        timeStamp: tx.timestamp,
+        blockNumber: tx.epochNumber
+      }))
+    }
   }
 
-  // contractFrom (options) {
-  //   return this.client.cfx.Contract(options)
-  // }
-
-  async contract (abi, method, ...args) {
-    const result = await contract[method](...args)
-    return result.toString()
+  async getLogs (contract, selectedEvent) {
+    const status = await this.getStatus()
+    const logs = await contract.instance[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs({
+      fromEpoch: status.epochNumber - 9999 > 0 ? status.epochNumber - 9999 : 0,
+      toEpoch: 'latest_state',
+    })
+    return logs
   }
 }
