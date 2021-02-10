@@ -121,8 +121,8 @@ export default class ConfluxSdk {
       list: json.list.map(tx => ({
         ...tx,
         from: tx.from.replace('TYPE.USER:', '').toLowerCase(),
-        to: tx.to && tx.to.replace('TYPE.USER:', '').toLowerCase(),
-        contractCreated: tx.contractCreated && tx.contractCreated.replace('TYPE.USER:', '').toLowerCase(),
+        to: tx.to && tx.to.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase(),
+        contractCreated: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
         timeStamp: tx.timestamp,
         blockNumber: tx.epochNumber
       }))
