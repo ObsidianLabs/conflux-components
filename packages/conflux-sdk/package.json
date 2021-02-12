@@ -24,6 +24,7 @@
     "cross-env": "^6.0.3"
   },
   "peerDependencies": {
-    "js-conflux-sdk": "1.5.10"
+    "js-conflux-sdk": "1.5.10",
+    "immutable": "^4.0.0-rc.12"
   }
 }
