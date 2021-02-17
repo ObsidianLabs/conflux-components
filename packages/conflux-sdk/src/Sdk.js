@@ -122,19 +122,10 @@ export default class ConfluxSdk {
         ...tx,
         from: tx.from.replace('TYPE.USER:', '').toLowerCase(),
         to: tx.to && tx.to.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase(),
-        contractCreated: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
+        contractAddress: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
         timeStamp: tx.timestamp,
         blockNumber: tx.epochNumber
       }))
     }
-  }
-
-  async getLogs (contract, selectedEvent) {
-    const status = await this.getStatus()
-    const logs = await contract.instance[selectedEvent.name].call(...Array(selectedEvent.inputs.length)).getLogs({
-      fromEpoch: status.epochNumber - 9999 > 0 ? status.epochNumber - 9999 : 0,
-      toEpoch: 'latest_state',
-    })
-    return logs
   }
 }
