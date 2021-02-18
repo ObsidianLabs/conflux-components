@@ -21,18 +21,21 @@ const isDirectoryNotEmpty = dirPath => {
   return false
 }
 
-const copyRecursiveSync = (src, dest, name) => {
+const copyRecursiveSync = (src, dest, name, compilerVersion) => {
   const exists = fs.existsSync(src)
   const stats = exists && fs.statSync(src)
   const isDirectory = exists && stats.isDirectory();
   if (isDirectory) {
     fse.ensureDirSync(dest)
     fs.readdirSync(src).forEach(childFile => {
-      copyRecursiveSync(path.join(src, childFile), path.join(dest, childFile), name)
+      copyRecursiveSync(path.join(src, childFile), path.join(dest, childFile), name, compilerVersion)
     })
   } else {
     const srcContent = fs.readFileSync(src, 'utf8')
-    const replacedContent = srcContent.replace(/#name/g, name)
+    const replacedContent = srcContent
+      .replace(/#name/g, name)
+      .replace(/#compiler_name/g, 'truffle')
+      .replace(/#compiler_version/g, compilerVersion)
     const replacedDestPath = dest.replace(/#name/g, name)
 
     fs.writeFileSync(replacedDestPath, replacedContent)
@@ -42,9 +45,8 @@ const copyRecursiveSync = (src, dest, name) => {
   }
 }
 
-
 class ProjectChannel extends FileTreeChannel {
-  async post (_, { template, projectRoot, name }) {
+  async post (_, { template, projectRoot, name, compilerVersion }) {
     if (await isDirectoryNotEmpty(projectRoot)) {
       throw new Error(`<b>${projectRoot}</b> is not an empty directory.`)
     }
@@ -56,7 +58,7 @@ class ProjectChannel extends FileTreeChannel {
       throw new Error(`Template "${template}" does not exist.`)
     }
 
-    copyRecursiveSync(templateFolder, projectRoot, name)
+    copyRecursiveSync(templateFolder, projectRoot, name, compilerVersion)
 
     return { projectRoot, name }
   }

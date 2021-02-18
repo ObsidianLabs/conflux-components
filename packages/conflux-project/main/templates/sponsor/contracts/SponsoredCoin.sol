@@ -2,7 +2,7 @@ pragma solidity >=0.5.0 <0.7.0;
 
 import "./SponsorWhitelistControl.sol";
 
-contract Coin {
+contract SponsoredCoin {
     address public minter;
     mapping (address => uint) private balances;
 
