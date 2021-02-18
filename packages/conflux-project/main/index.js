@@ -34,7 +34,7 @@ const copyRecursiveSync = (src, dest, name, compilerVersion) => {
     const srcContent = fs.readFileSync(src, 'utf8')
     const replacedContent = srcContent
       .replace(/#name/g, name)
-      .replace(/#compiler_name/g, 'truffle')
+      .replace(/#compiler_name/g, 'cfxtruffle')
       .replace(/#compiler_version/g, compilerVersion)
     const replacedDestPath = dest.replace(/#name/g, name)
 
