@@ -1,12 +1,13 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { address as addressUtil, Drip, format } from 'js-conflux-sdk'
+import { address as addressUtil, Drip } from 'js-conflux-sdk'
 
+import utils from './utils'
 import Client from './Client'
 import Contract from './Contract'
 import { TransferTx, ContractTx } from './Tx'
 import signatureProvider from './signatureProvider'
-import utils from './utils'
+import BrowserExtension from './BrowserExtension'
 
 export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id }) {
@@ -15,6 +16,12 @@ export default class ConfluxSdk {
     this.chainId = chainId
     this.explorer = explorer
     this.networkId = id
+  }
+
+  static InitBrowserExtension (networkManager) {
+    if (window.conflux && window.conflux.isConfluxPortal) {
+      return new BrowserExtension(networkManager, window.conflux)
+    }
   }
 
   get cfx () {
