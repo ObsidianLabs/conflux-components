@@ -13,6 +13,7 @@
     "@obsidians/ipc": "^0.1.2",
     "@obsidians/platform": "^0.1.0",
     "@obsidians/redux": "^0.1.0",
+    "semver": "^7.3.4",
     "url-parse": "^1.4.7"
   },
   "devDependencies": {
@@ -25,7 +26,7 @@
     "cross-env": "^6.0.3"
   },
   "peerDependencies": {
-    "js-conflux-sdk": "1.5.10",
-    "immutable": "^4.0.0-rc.12"
+    "immutable": "^4.0.0-rc.12",
+    "js-conflux-sdk": "1.5.10"
   }
 }

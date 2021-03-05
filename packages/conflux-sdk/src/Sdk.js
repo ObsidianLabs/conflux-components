@@ -10,8 +10,8 @@ import signatureProvider from './signatureProvider'
 import BrowserExtension from './BrowserExtension'
 
 export default class ConfluxSdk {
-  constructor ({ url, chainId, explorer, id }) {
-    this.client = new Client(url, chainId)
+  constructor ({ url, chainId, explorer, id, version }) {
+    this.client = new Client(url, chainId, version)
     this.url = url
     this.chainId = chainId
     this.explorer = explorer

@@ -12,7 +12,7 @@ class InstanceManager extends IpcChannel {
     this.dockerChannel = new DockerImageChannel(process.env.DOCKER_IMAGE_NODE)
   }
 
-  async create ({ name, version, miner, keys, networkId = 'dev' }) {
+  async create ({ name, version, miner, keys, networkId = 'dev', chainId = 999 }) {
     const tmpdir = os.tmpdir()
     const configPath = path.join(tmpdir, `conflux.toml`)
     const logPath = path.join(tmpdir, `log.yaml`)
@@ -30,7 +30,7 @@ class InstanceManager extends IpcChannel {
     const configStr = fs.readFileSync(configPath, 'utf8')
     const config = TOML.parse(configStr)
     config.mode = 'dev'
-    config.chain_id = 0
+    config.chain_id = chainId
     config.mining_author = miner.address.replace('0x', '')
     config.genesis_secrets = 'genesis_secrets.txt'
 
