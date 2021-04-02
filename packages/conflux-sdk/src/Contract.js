@@ -17,8 +17,7 @@ export default class Contract {
     return new ContractTx(this.cfx, tx, override)
   }
 
-  async getLogs (event) {
-    const maxGap = 1000
+  async getLogs (event, maxGap = 1000) {
     const status = await this.cfx.getStatus()
     const logs = await this.instance[event.name].call(...Array(event.inputs.length)).getLogs({
       fromEpoch: status.epochNumber - maxGap > 0 ? status.epochNumber - maxGap : 0,
