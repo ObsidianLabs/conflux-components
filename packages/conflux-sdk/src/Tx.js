@@ -32,7 +32,7 @@ export class ContractTx extends Tx {
 
   send (sp) {
     const account = this.cfx.wallet.addExternalAccount(this.from, sp)
-    return this.tx.sendTransaction({ from: account })
+    return this.tx.sendTransaction({ ...this.override, from: account })
   }
 
   async estimate ({ from }) {
