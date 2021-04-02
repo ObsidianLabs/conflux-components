@@ -18,9 +18,10 @@ export default class Contract {
   }
 
   async getLogs (event) {
+    const maxGap = 1000
     const status = await this.cfx.getStatus()
     const logs = await this.instance[event.name].call(...Array(event.inputs.length)).getLogs({
-      fromEpoch: status.epochNumber - 9999 > 0 ? status.epochNumber - 9999 : 0,
+      fromEpoch: status.epochNumber - maxGap > 0 ? status.epochNumber - maxGap : 0,
       toEpoch: 'latest_state',
     })
     return logs.map(item => {
