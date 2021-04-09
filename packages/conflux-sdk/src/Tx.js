@@ -16,7 +16,7 @@ export class TransferTx extends Tx {
   }
 
   async estimate ({ from }) {
-    return await this.cfx.estimateGasAndCollateral({ from })
+    return await this.cfx.estimateGasAndCollateral({ ...this.override, from })
   }
 }
 
@@ -36,6 +36,6 @@ export class ContractTx extends Tx {
   }
 
   async estimate ({ from }) {
-    return await this.tx.estimateGasAndCollateral({ from })
+    return await this.tx.estimateGasAndCollateral({ ...this.override, from })
   }
 }
