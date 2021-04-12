@@ -13,11 +13,8 @@ export default class Contract {
   }
 
   execute (method, args, override) {
-    debugger
     try {
-      debugger
       const tx = this.instance[method].call(...args)
-      debugger
       return new ContractTx(this.cfx, tx, override)
     } catch (error) {
       console.log(error)
