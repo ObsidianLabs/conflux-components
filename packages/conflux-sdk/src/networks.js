@@ -19,7 +19,7 @@ const networks = [
     fullName: 'Conflux Tethys',
     icon: 'fas fa-globe',
     notification: 'Switched to <b>Conflux Tethys</b> network.',
-    url: 'https://main.confluxrpc.org/v2',
+    url: 'https://mainnet-rpc.conflux-chain.org.cn/v2',
     chainId: 1029,
     explorer: 'https://confluxscan.io/v1',
   }
