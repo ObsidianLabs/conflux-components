@@ -17,7 +17,7 @@ export default class Contract {
       const tx = this.instance[method].call(...args)
       return new ContractTx(this.cfx, tx, override)
     } catch (error) {
-      console.log(error)
+      console.warn(error)
       return
     }
   }

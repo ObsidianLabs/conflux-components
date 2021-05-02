@@ -1,7 +1,7 @@
 import { sign, format } from 'js-conflux-sdk'
 
 // https://github.com/Conflux-Chain/js-conflux-sdk/blob/master/src/wallet/PrivateKeyAccount.js
-const keygen = (pvk, networkId) => {
+const keygen = (pvk, networkId = 1029) => {
   // Get or create private key buffer
   const buffer = pvk || sign.randomPrivateKey()
 
@@ -15,7 +15,7 @@ const keygen = (pvk, networkId) => {
   const privateKey = format.privateKey(privateKeyBuffer)
 
   // With networkId, it is a Conflux base32 address - cfx:aak2rra2njvd77ezwjvx04kkds9fzagfe6ku8scz91
-  const address = networkId ? format.address(addressBuffer, networkId) : undefined
+  const address = format.address(addressBuffer, networkId)
 
   // Without networkId, it is a hex40 address - 0x1386b4185a223ef49592233b69291bbe5a80c527
   const hexAddress = format.hexAddress(addressBuffer)
@@ -23,18 +23,24 @@ const keygen = (pvk, networkId) => {
   return { address, hexAddress, publicKey, privateKey }
 }
 
+const networkIds = {
+  testnet: 1,
+  mainnet: 1029,
+  dev: 999,
+}
+
 export default {
-  newKeypair () {
-    const key = keygen()
+  newKeypair (chain) {
+    const key = keygen(null, networkIds[chain])
     return {
-      address: key.hexAddress,
+      address: key.address,
       secret: key.privateKey,
     }
   },
-  importKeypair (secret) {
-    const key = keygen(secret)
+  importKeypair (secret, chain) {
+    const key = keygen(secret, networkIds[chain])
     return {
-      address: key.hexAddress,
+      address: key.address,
       secret: key.privateKey,
     }
   },

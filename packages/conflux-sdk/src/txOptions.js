@@ -18,7 +18,7 @@ export default {
       default: 100
     },
     {
-      name: 'storage',
+      name: 'storageLimit',
       className: 'col-4',
       icon: 'fas fa-hdd',
       label: 'Storage Limit'

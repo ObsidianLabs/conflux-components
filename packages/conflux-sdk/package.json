@@ -11,6 +11,7 @@
   "scripts": {},
   "dependencies": {
     "@obsidians/ipc": "^0.3.0",
+    "@obsidians/keypair": "^0.3.0",
     "@obsidians/platform": "^0.3.0",
     "@obsidians/redux": "^0.3.0",
     "semver": "^7.3.4",
@@ -27,6 +28,6 @@
   },
   "peerDependencies": {
     "immutable": "^4.0.0-rc.12",
-    "js-conflux-sdk": "1.5.10"
+    "js-conflux-sdk": "1.6.0"
   }
 }

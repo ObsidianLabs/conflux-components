@@ -92,8 +92,8 @@ export default class ConfluxSdk {
   async estimate (tx) {
     const result = await tx.estimate({ from: tx.from })
     const gas = result.gasUsed && result.gasUsed.toString() || ''
-    const storage = result.storageCollateralized && result.storageCollateralized.toString() || ''
-    return { gas, storage }
+    const storageLimit = result.storageCollateralized && result.storageCollateralized.toString() || ''
+    return { gas, storageLimit }
   }
 
   sendTransaction (tx) {
