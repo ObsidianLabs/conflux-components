@@ -27,11 +27,11 @@ export default class ExternalAccount extends PrivateKeyAccount.__proto__ {
     const transaction = await super.signTransaction(options)
     await this.sp(transaction, this.networkId)
 
-    assert(transaction.from === this.address, {
-      message: 'Invalid sign transaction.from',
-      expected: this.address,
-      got: transaction.from,
-    })
+    // assert(transaction.from === this.address, {
+    //   message: 'Invalid sign transaction.from',
+    //   expected: this.address,
+    //   got: transaction.from,
+    // })
 
     return transaction
   }
@@ -40,11 +40,11 @@ export default class ExternalAccount extends PrivateKeyAccount.__proto__ {
     const message = await super.signMessage(options)
     await this.sp(message, this.networkId)
 
-    assert(transaction.from === this.address, {
-      message: 'Invalid sign message.from',
-      expected: this.address,
-      got: message.from,
-    })
+    // assert(transaction.from === this.address, {
+    //   message: 'Invalid sign message.from',
+    //   expected: this.address,
+    //   got: message.from,
+    // })
 
     return message
   }
