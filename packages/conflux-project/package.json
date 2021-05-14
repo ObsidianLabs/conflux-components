@@ -10,9 +10,7 @@
   ],
   "scripts": {},
   "dependencies": {
-    "@obsidians/filetree": "^0.3.0",
-    "prettier": "^2.2.1",
-    "prettier-plugin-solidity": "1.0.0-beta.8"
+    "@obsidians/filetree": "^0.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
