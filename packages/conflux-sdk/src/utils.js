@@ -18,6 +18,7 @@ export default {
   },
   format: {
     bytes: format.bytes,
+    bytesFromHex: format.hexBuffer,
     address: format.address,
     hexAddress: addr => {
       if (address.hasNetworkPrefix(addr)) {
