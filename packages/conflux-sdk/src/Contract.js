@@ -8,13 +8,13 @@ export default class Contract {
     this.instance = cfx.Contract({ address, abi })
   }
 
-  async query (method, args) {
-    return await this.instance[method].call(...args)
+  async query (method, { array }) {
+    return await this.instance[method].call(...array)
   }
 
-  execute (method, args, override) {
+  execute (method, { array }, override) {
     try {
-      const tx = this.instance[method].call(...args)
+      const tx = this.instance[method].call(...array)
       return new ContractTx(this.cfx, tx, override)
     } catch (error) {
       console.warn(error)
