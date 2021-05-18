@@ -78,9 +78,9 @@ export default class ConfluxSdk {
   }
 
   async getTransferTransaction ({ from, to, amount }, override) {
-    const hexFrom = utils.format.hexAddress(from)
+    // const hexFrom = utils.format.hexAddress(from)
     const value = Drip.fromCFX(amount)
-    return new TransferTx(this.cfx, { from: hexFrom, to, value, ...override })
+    return new TransferTx(this.cfx, { from, to, value, ...override })
   }
 
   async getDeployTransaction ({ abi, bytecode, parameters }, override) {
