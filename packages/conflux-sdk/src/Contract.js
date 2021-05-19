@@ -13,13 +13,8 @@ export default class Contract {
   }
 
   execute (method, { array }, override) {
-    try {
-      const tx = this.instance[method].call(...array)
-      return new ContractTx(this.cfx, tx, override)
-    } catch (error) {
-      console.warn(error)
-      return
-    }
+    const tx = this.instance[method].call(...array)
+    return new ContractTx(this.cfx, tx, override)
   }
 
   async getLogs (event, maxGap = 1000) {
