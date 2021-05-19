@@ -34,7 +34,10 @@ export default {
       secret: key.privateKey,
     }
   },
-  importKeypair (secret, chain) {
+  importKeypair (secret = '', chain) {
+    if (!secret.startsWith('0x')) {
+      secret = '0x' + secret
+    }
     const key = keygen(secret, networkIds[chain])
     return {
       address: key.address || key.hexAddress,
