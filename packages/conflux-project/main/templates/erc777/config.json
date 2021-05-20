@@ -1,0 +1,8 @@
+{
+  "main": "./contracts/ERC777.sol",
+  "deploy": "./build/contracts/ERC777.json",
+  "compilers": {
+    "#compiler_name": "#compiler_version",
+    "solc": "0.8.0"
+  }
+}
