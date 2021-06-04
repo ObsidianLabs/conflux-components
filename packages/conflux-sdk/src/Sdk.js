@@ -63,6 +63,11 @@ export default class ConfluxSdk {
     return await this.cfx.getStatus()
   }
 
+  async latest () {
+    const status = await this.cfx.getStatus()
+    return status.latestState
+  }
+
   async accountFrom (address) {
     const hexAddress = utils.format.hexAddress(address)
     const account = await this.client.cfx.getAccount(hexAddress)

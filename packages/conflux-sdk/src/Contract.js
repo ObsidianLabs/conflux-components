@@ -17,14 +17,10 @@ export default class Contract {
     return new ContractTx(this.cfx, tx, override)
   }
 
-  async getLogs (event, maxGap = 1000) {
-    const status = await this.cfx.getStatus()
+  async getLogs (event, { from, to } = {}) {
     const logs = await this.instance[event.name]
       .call(...new Array(event.inputs.length).fill(null))
-      .getLogs({
-        fromEpoch: status.epochNumber - maxGap > 0 ? status.epochNumber - maxGap : 0,
-        toEpoch: 'latest_state',
-      })
+      .getLogs({ fromEpoch: from, toEpoch: to })
     return logs.map(item => {
       item.blockNumber = item.epochNumber
       item.args = item.arguments
