@@ -4,6 +4,9 @@ import ExternalWallet from './wallet/ExternalWallet'
 
 export default class Client {
   constructor (url, chainId, version = '1.1.1') {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'http://' + url
+    }
     this.cfx = new Conflux({
       url,
       defaultGasPrice: 100, // The default gas price of your following transactions

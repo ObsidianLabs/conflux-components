@@ -13,7 +13,13 @@ export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id, version }) {
     this.client = new Client(url, chainId, version)
     this.url = url
-    this.chainId = chainId
+    if (chainId) {
+      this.chainId = chainId
+    } else {
+      this.cfx.updateNetworkId().then(() => {
+        this.chainId = this.cfx.networkId
+      })
+    }
     this.explorer = explorer
     this.networkId = id
   }
@@ -31,10 +37,10 @@ export default class ConfluxSdk {
   isValidAddress (address) {
     // address can be hex40 or Conflux base32
     try {
-      if (address.toUpperCase().startsWith('CFXTEST:') && this.chainId !== 1) {
+      if (address.toLowerCase().startsWith('cfxtest:') && this.chainId !== 1) {
         // Testnet
         return false
-      } else if (address.toUpperCase().startsWith('CFX:') && this.chainId !== 1029) {
+      } else if (address.toLowerCase().startsWith('cfx:') && this.chainId !== 1029) {
         // Mainnet
         return false
       }
@@ -72,7 +78,7 @@ export default class ConfluxSdk {
     const hexAddress = utils.format.hexAddress(address)
     const account = await this.client.cfx.getAccount(hexAddress)
     return {
-      address: utils.format.address(address, this.chainId, true).toUpperCase(),
+      address: utils.format.address(address, this.chainId, true).toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
       codeHash: account.codeHash,
     }
@@ -135,7 +141,7 @@ export default class ConfluxSdk {
         to: tx.to && tx.to.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase(),
         contractAddress: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
         timeStamp: tx.timestamp,
-        blockNumber: tx.epochNumber
+        blockNumber: tx.epochNumber,
       }))
     }
   }

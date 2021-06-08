@@ -22,6 +22,14 @@ const networks = [
     url: 'https://mainnet-rpc.conflux-chain.org.cn/v2',
     chainId: 1029,
     explorer: 'https://confluxscan.io/v1',
+  },
+  {
+    id: 'custom',
+    group: 'others',
+    name: 'Custom',
+    fullName: 'Custom Network',
+    icon: 'fas fa-edit',
+    notification: 'Switched to <b>Custom</b> network.',
   }
 ]
 if (platform.isDesktop) {
