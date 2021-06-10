@@ -1,6 +1,6 @@
 {
-  "main": "./contracts/ERC777.sol",
-  "deploy": "./build/contracts/ERC777.json",
+  "main": "./contracts/ERC777GLDToken.sol",
+  "deploy": "./build/contracts/ERC777GLDToken.json",
   "compilers": {
     "#compiler_name": "#compiler_version",
     "solc": "0.8.0"
