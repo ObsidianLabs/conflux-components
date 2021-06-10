@@ -17,6 +17,10 @@ export default class Contract {
     return new ContractTx(this.cfx, tx, override)
   }
 
+  get maxGap () {
+    return this.cfx.networkId === 1029 ? 100 : 1000
+  }
+
   async getLogs (event, { from, to } = {}) {
     const logs = await this.instance[event.name]
       .call(...new Array(event.inputs.length).fill(null))
