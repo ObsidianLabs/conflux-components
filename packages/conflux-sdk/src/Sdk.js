@@ -4,6 +4,7 @@ import { address as addressUtil, Drip } from 'js-conflux-sdk'
 
 import utils from './utils'
 import Client from './Client'
+import rpc from './rpc'
 import Contract from './Contract'
 import { TransferTx, ContractTx } from './Tx'
 import signatureProvider from './signatureProvider'
@@ -49,6 +50,11 @@ export default class ConfluxSdk {
     } catch(e) {
       return false
     }
+  }
+
+  async callRpc (method, parameters) {
+    const params = rpc.prepare(parameters)
+    return await this.cfx.provider.call(method, ...params)
   }
 
   convertAddress (address) {
