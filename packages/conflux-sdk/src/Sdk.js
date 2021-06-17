@@ -82,10 +82,14 @@ export default class ConfluxSdk {
 
   async accountFrom (address) {
     const hexAddress = utils.format.hexAddress(address)
-    const account = await this.client.cfx.getAccount(hexAddress)
+    const account = await this.cfx.getAccount(hexAddress)
+    const txCount = this.explorer
+      ? await this.getTransactionsCount(address)
+      : await this.cfx.provider.call('cfx_getNextNonce', hexAddress)
     return {
       address: utils.format.address(address, this.chainId, true).toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
+      txCount: BigInt(txCount).toString(10),
       codeHash: account.codeHash,
     }
   }
@@ -107,10 +111,12 @@ export default class ConfluxSdk {
 
   async estimate (tx) {
     const result = await tx.estimate({ from: tx.from })
-    const gasPrice = BigInt(await this.callRpc('cfx_gasPrice')).toString(10)
-    const gas = result.gasLimit && result.gasLimit.toString() || ''
-    const storageLimit = result.storageCollateralized && result.storageCollateralized.toString() || ''
-    return { gas, gasPrice, storageLimit }
+    const gasPrice = await this.callRpc('cfx_gasPrice')
+    return {
+      gas: result.gasLimit && result.gasLimit.toString() || '',
+      gasPrice: BigInt(gasPrice).toString(10),
+      storageLimit: result.storageCollateralized && result.storageCollateralized.toString() || ''
+    }
   }
 
   sendTransaction (tx) {
