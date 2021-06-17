@@ -107,7 +107,7 @@ export default class ConfluxSdk {
 
   async estimate (tx) {
     const result = await tx.estimate({ from: tx.from })
-    const gasPrice = BigInt(await this.callRpc('cfx_gasPrice')).toString(16)
+    const gasPrice = BigInt(await this.callRpc('cfx_gasPrice')).toString(10)
     const gas = result.gasLimit && result.gasLimit.toString() || ''
     const storageLimit = result.storageCollateralized && result.storageCollateralized.toString() || ''
     return { gas, gasPrice, storageLimit }
