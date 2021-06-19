@@ -1,4 +1,5 @@
 import { sign, format } from 'js-conflux-sdk'
+import { Wallet } from '@ethersproject/wallet'
 
 // https://github.com/Conflux-Chain/js-conflux-sdk/blob/master/src/wallet/PrivateKeyAccount.js
 const keygen = (pvk, networkId) => {
@@ -27,21 +28,50 @@ const networkIds = {
 }
 
 export default {
-  newKeypair (chain) {
-    const key = keygen(null, networkIds[chain])
-    return {
-      address: key.address || key.hexAddress,
-      secret: key.privateKey,
+  newKeypair (chain, secretType) {
+    if (secretType === 'mnemonic') {
+      const wallet = Wallet.createRandom({ path: `m/44'/503'/0'/0/0` })
+      const key = keygen(wallet.privateKey, networkIds[chain])
+      return {
+        address: key.address || key.hexAddress,
+        secret: wallet.mnemonic.phrase,
+        secretName: 'Mnemonic',
+      }
+    } else {
+      const key = keygen(null, networkIds[chain])
+      return {
+        address: key.address || key.hexAddress,
+        secret: key.privateKey,
+        secretName: 'Private Key',
+      }
     }
   },
   importKeypair (secret = '', chain) {
-    if (!secret.startsWith('0x')) {
-      secret = '0x' + secret
+    if (secret.startsWith('0x') || /^[0-9a-zA-Z]{64}$/.test(secret)) {
+      if (!secret.startsWith('0x')) {
+        secret = '0x' + secret
+      }
+      const key = keygen(secret, networkIds[chain])
+      return {
+        address: key.address || key.hexAddress,
+        secret: key.privateKey,
+        secretName: 'Private Key',
+      }
+    } else {
+      const wallet = Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
+      const key = keygen(wallet.privateKey, networkIds[chain])
+      return {
+        address: key.address || key.hexAddress,
+        secret: wallet.mnemonic.phrase,
+        secretName: 'Mnemonic',
+      }
     }
-    const key = keygen(secret, networkIds[chain])
-    return {
-      address: key.address || key.hexAddress,
-      secret: key.privateKey,
+  },
+  walletFrom (secret) {
+    if (secret.startsWith('0x')) {
+      return new Wallet(secret)
+    } else {
+      return Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
     }
   },
   exportKeypair (secret, networkId) {

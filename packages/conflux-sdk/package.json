@@ -10,6 +10,7 @@
   ],
   "scripts": {},
   "dependencies": {
+    "@ethersproject/wallet": "^5.3.0",
     "@obsidians/ipc": "^0.3.0",
     "@obsidians/keypair": "^0.3.0",
     "@obsidians/platform": "^0.3.0",
