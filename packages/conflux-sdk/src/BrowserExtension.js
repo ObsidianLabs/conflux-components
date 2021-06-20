@@ -12,8 +12,6 @@ export default class BrowserExtension {
       this.conflux = conflux
       this.initialize(conflux)
     }
-
-    window.be = this
   }
 
   get isEnabled () {
