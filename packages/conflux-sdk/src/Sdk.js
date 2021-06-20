@@ -138,7 +138,7 @@ export default class ConfluxSdk {
   sendTransaction (tx) {
     let pendingTx
     if (browserExtension && browserExtension.currentAccount === tx.from) {
-      pendingTx = this.sendThroughBrowserExtension(tx.tx)
+      pendingTx = this.sendThroughBrowserExtension({ ...tx.tx, ...tx.override })
     } else {
       const sp = signatureProvider(tx.from)
       pendingTx = tx.send(sp)

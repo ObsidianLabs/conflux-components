@@ -64,11 +64,11 @@ export default class BrowserExtension {
   }
 
   async onAccountsChanged (accounts) {
-    redux.dispatch('UPDATE_UI_STATE', { signer: accounts[0] })
+    redux.dispatch('UPDATE_UI_STATE', { signer: accounts[0], browserAccounts: accounts })
   }
 
   sendTransaction (tx, callback) {
-    tx.value = BigInt(tx.value).toString(16)
+    tx.value = BigInt(tx.value || 0).toString(16)
     this.conflux.sendAsync({
       method: 'cfx_sendTransaction',
       params: [tx],
