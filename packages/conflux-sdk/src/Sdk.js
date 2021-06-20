@@ -10,6 +10,8 @@ import { TransferTx, ContractTx } from './Tx'
 import signatureProvider from './signatureProvider'
 import BrowserExtension from './BrowserExtension'
 
+let browserExtension
+
 export default class ConfluxSdk {
   constructor ({ url, chainId, explorer, id, version }) {
     this.client = new Client(url, chainId, version)
@@ -23,11 +25,13 @@ export default class ConfluxSdk {
     }
     this.explorer = explorer
     this.networkId = id
+    this.sendThroughBrowserExtension = this.cfx._decoratePendingTransaction(this.sendThroughBrowserExtension)
   }
 
   static InitBrowserExtension (networkManager) {
     if (window.conflux && window.conflux.isConfluxPortal) {
-      return new BrowserExtension(networkManager, window.conflux)
+      browserExtension = new BrowserExtension(networkManager, window.conflux)
+      return browserExtension
     }
   }
 
@@ -99,7 +103,7 @@ export default class ConfluxSdk {
   }
 
   async getTransferTransaction ({ from, to, amount }, override) {
-    const value = Drip.fromCFX(amount)
+    const value = utils.unit.toValue(amount)
     return new TransferTx(this.cfx, { from, to, value, ...override })
   }
 
@@ -119,9 +123,27 @@ export default class ConfluxSdk {
     }
   }
 
+  async sendThroughBrowserExtension (tx) {
+    return new Promise((resolve, reject) => {
+      browserExtension.sendTransaction(tx, (err, result) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(result.result)
+        }
+      })
+    }) 
+  }
+
   sendTransaction (tx) {
-    const sp = signatureProvider(tx.from)
-    return tx.send(sp)
+    let pendingTx
+    if (browserExtension && browserExtension.currentAccount === tx.from) {
+      pendingTx = this.sendThroughBrowserExtension(tx.tx)
+    } else {
+      const sp = signatureProvider(tx.from)
+      pendingTx = tx.send(sp)
+    }
+    return pendingTx
   }
 
   async getTransactionsCount (address) {

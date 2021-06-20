@@ -57,12 +57,22 @@ export default class BrowserExtension {
   }
 
   async getAllAccounts () {
-    const result = await this.conflux.send('wallet_getPermissions')
-    const found = result[0].caveats.find(c => c.type === 'filterResponse')
-    return found ? found.value : []
+    return this.conflux.send('cfx_requestAccounts')
+    // const result = await this.conflux.send('wallet_getPermissions')
+    // const found = result[0].caveats.find(c => c.type === 'filterResponse')
+    // return found ? found.value : []
   }
 
   async onAccountsChanged (accounts) {
     redux.dispatch('UPDATE_UI_STATE', { signer: accounts[0] })
+  }
+
+  sendTransaction (tx, callback) {
+    tx.value = BigInt(tx.value).toString(16)
+    this.conflux.sendAsync({
+      method: 'cfx_sendTransaction',
+      params: [tx],
+      from: tx.from,
+    }, callback)
   }
 }
