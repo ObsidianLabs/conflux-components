@@ -90,7 +90,7 @@ export default class ConfluxSdk {
       ? await this.getTransactionsCount(address)
       : await this.cfx.provider.call('cfx_getNextNonce', hexAddress)
     return {
-      address: utils.format.address(address, this.chainId, true).toLowerCase(),
+      address: utils.format.address(address, this.chainId, true).replace('TYPE.USER:', '').toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
       txCount: BigInt(txCount).toString(10),
       codeHash: account.codeHash,
@@ -160,8 +160,10 @@ export default class ConfluxSdk {
         from: tx.from.replace('TYPE.USER:', '').toLowerCase(),
         to: tx.to && tx.to.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase(),
         contractAddress: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
+        method: tx.method === '0x' ? undefined : tx.method,
         timeStamp: tx.timestamp,
         blockNumber: tx.epochNumber,
+        gasUsed: BigInt(tx.gasFee) / BigInt(tx.gasPrice),
       }))
     }
   }
