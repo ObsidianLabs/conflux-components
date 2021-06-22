@@ -25,7 +25,6 @@ export default class ConfluxSdk {
     }
     this.explorer = explorer
     this.networkId = id
-    this.sendThroughBrowserExtension = this.cfx._decoratePendingTransaction(this.sendThroughBrowserExtension)
   }
 
   static InitBrowserExtension (networkManager) {
@@ -123,27 +122,13 @@ export default class ConfluxSdk {
     }
   }
 
-  async sendThroughBrowserExtension (tx) {
-    return new Promise((resolve, reject) => {
-      browserExtension.sendTransaction(tx, (err, result) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(result.result)
-        }
-      })
-    }) 
-  }
-
   sendTransaction (tx) {
-    let pendingTx
     if (browserExtension && browserExtension.currentAccount === tx.from) {
-      pendingTx = this.sendThroughBrowserExtension({ ...tx.tx, ...tx.override })
+      return tx.send(null, browserExtension)
     } else {
       const sp = signatureProvider(tx.from)
-      pendingTx = tx.send(sp)
+      return tx.send(sp)
     }
-    return pendingTx
   }
 
   async getTransactionsCount (address) {

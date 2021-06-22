@@ -4,15 +4,37 @@ class Tx {
   constructor (cfx, tx) {
     this.cfx = cfx
     this.tx = tx
+    this._sendThroughBrowserExtension = this.cfx._decoratePendingTransaction(this._sendThroughBrowserExtension)
   }
 
   get from () {
     return this.tx.from
   }
 
-  send (sp) {
-    const account = this.cfx.wallet.addExternalAccount(this.from, sp)
-    const pendingTx = this.sendTx(account)
+  send (sp, browserExtension) {
+    let pendingTx
+    if (browserExtension) {
+      pendingTx = this._sendThroughBrowserExtension(browserExtension)
+    } else {
+      const account = this.cfx.wallet.addExternalAccount(this.from, sp)
+      pendingTx = this.sendTx(account)
+    }
+    return this._processPendingTx(pendingTx)
+  }
+
+  _sendThroughBrowserExtension (browserExtension) {
+    const txObject = { ...this.tx, ...this.override }
+    txObject.gas = txObject.gas && `0x${BigInt(txObject.gas).toString(16)}`
+    txObject.gasPrice = txObject.gasPrice && `0x${BigInt(txObject.gasPrice).toString(16)}`
+    txObject.storageLimit = txObject.storageLimit && `0x${BigInt(txObject.storageLimit).toString(16)}`
+    return new Promise((resolve, reject) => {
+      browserExtension.sendTransaction(txObject, (err, result) => {
+        err ? reject(err) : resolve(result.result)
+      })
+    })
+  }
+
+  _processPendingTx (pendingTx) {
     let tx
     return {
       then: (res, rej) => pendingTx.then(res, rej),
