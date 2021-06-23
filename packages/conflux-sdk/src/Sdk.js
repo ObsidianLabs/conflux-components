@@ -93,7 +93,7 @@ export default class ConfluxSdk {
       address: utils.format.address(address, this.chainId, true).replace('TYPE.USER:', '').toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
       txCount: BigInt(txCount).toString(10),
-      codeHash: account.codeHash,
+      codeHash: account.codeHash === '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' ? null : account.codeHash,
     }
   }
 
@@ -143,10 +143,10 @@ export default class ConfluxSdk {
   }
 
   async getTransactions (address, page = 1, size = 10) {
-    const ipc = new IpcChannel()
     if (!this.explorer) {
       return { noExplorer: true }
     }
+    const ipc = new IpcChannel()
     const hexAddress = utils.format.hexAddress(address)
     const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
@@ -166,5 +166,32 @@ export default class ConfluxSdk {
         gasUsed: BigInt(tx.gasFee) / BigInt(tx.gasPrice),
       }))
     }
+  }
+
+  async tokenInfo (address) {
+    if (!this.explorer) {
+      return
+    }
+    const ipc = new IpcChannel()
+    const result = await ipc.invoke('fetch', `${this.explorer}/token/${address}?fields=name&fields=icon`)
+    const json = JSON.parse(result)
+    return json
+  }
+
+  async getTokens (address) {
+    if (!this.explorer) {
+      return
+    }
+    const ipc = new IpcChannel()
+    const result = await ipc.invoke('fetch', `${this.explorer}/token?accountAddress=${address}&fields=icon`)
+    const json = JSON.parse(result)
+    if (!json.list) {
+      return []
+    }
+    return json.list.map(token => ({
+      ...token,
+      accountAddress: token.address.replace('TYPE.USER:', '').toLowerCase(),
+      address: token.address.replace('TYPE.CONTRACT:', '').toLowerCase(),
+    }))
   }
 }
