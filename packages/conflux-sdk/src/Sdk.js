@@ -25,7 +25,6 @@ export default class ConfluxSdk {
     }
     this.explorer = explorer
     this.networkId = id
-    this.sendThroughBrowserExtension = this.cfx._decoratePendingTransaction(this.sendThroughBrowserExtension)
   }
 
   static InitBrowserExtension (networkManager) {
@@ -91,7 +90,7 @@ export default class ConfluxSdk {
       ? await this.getTransactionsCount(address)
       : await this.cfx.provider.call('cfx_getNextNonce', hexAddress)
     return {
-      address: utils.format.address(address, this.chainId, true).toLowerCase(),
+      address: utils.format.address(address, this.chainId, true).replace('TYPE.USER:', '').toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
       txCount: BigInt(txCount).toString(10),
       codeHash: account.codeHash,
@@ -123,27 +122,13 @@ export default class ConfluxSdk {
     }
   }
 
-  async sendThroughBrowserExtension (tx) {
-    return new Promise((resolve, reject) => {
-      browserExtension.sendTransaction(tx, (err, result) => {
-        if (err) {
-          reject(err)
-        } else {
-          resolve(result.result)
-        }
-      })
-    }) 
-  }
-
   sendTransaction (tx) {
-    let pendingTx
     if (browserExtension && browserExtension.currentAccount === tx.from) {
-      pendingTx = this.sendThroughBrowserExtension({ ...tx.tx, ...tx.override })
+      return tx.send(null, browserExtension)
     } else {
       const sp = signatureProvider(tx.from)
-      pendingTx = tx.send(sp)
+      return tx.send(sp)
     }
-    return pendingTx
   }
 
   async getTransactionsCount (address) {
@@ -175,8 +160,10 @@ export default class ConfluxSdk {
         from: tx.from.replace('TYPE.USER:', '').toLowerCase(),
         to: tx.to && tx.to.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase(),
         contractAddress: tx.contractCreated && tx.contractCreated.replace('TYPE.CONTRACT:', '').toLowerCase(),
+        method: tx.method === '0x' ? undefined : tx.method,
         timeStamp: tx.timestamp,
         blockNumber: tx.epochNumber,
+        gasUsed: BigInt(tx.gasFee) / BigInt(tx.gasPrice),
       }))
     }
   }
