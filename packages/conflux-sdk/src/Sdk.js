@@ -1,6 +1,6 @@
 import { IpcChannel } from '@obsidians/ipc'
 
-import { address as addressUtil, Drip } from 'js-conflux-sdk'
+import { address as addressUtil } from 'js-conflux-sdk'
 
 import utils from './utils'
 import Client from './Client'
