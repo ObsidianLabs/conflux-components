@@ -91,7 +91,10 @@ export default class ConfluxSdk {
       ? await this.getTransactionsCount(address)
       : await this.cfx.provider.call('cfx_getNextNonce', hexAddress)
     return {
-      address: utils.format.address(address, this.chainId, true).replace('TYPE.USER:', '').toLowerCase(),
+      address: utils.format.address(address, this.chainId, true)
+        .replace('TYPE.USER:', '')
+        .replace('TYPE.CONTRACT:', '')
+        .toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
       txCount: BigInt(txCount).toString(10),
       codeHash: account.codeHash === '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' ? null : account.codeHash,
@@ -182,6 +185,9 @@ export default class ConfluxSdk {
     const ipc = new IpcChannel()
     const result = await ipc.invoke('fetch', `${this.explorer}/token/${address}?fields=name&fields=icon`)
     const json = JSON.parse(result)
+    if (json) {
+      json.type = json.transferType
+    }
     return json
   }
 
