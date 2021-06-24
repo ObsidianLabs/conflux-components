@@ -17,6 +17,7 @@ export default {
     sha3: str => format.hex(sign.keccak256(format.hexBuffer(str)))
   },
   format: {
+    big: format.big,
     bytes: format.bytes,
     bytesFromHex: format.hexBuffer,
     address: format.address,

@@ -9,6 +9,7 @@ import Contract from './Contract'
 import { TransferTx, ContractTx } from './Tx'
 import signatureProvider from './signatureProvider'
 import BrowserExtension from './BrowserExtension'
+import ERC20 from './redux/abi/ERC20.json'
 
 let browserExtension
 
@@ -101,9 +102,15 @@ export default class ConfluxSdk {
     return new Contract({ address, abi }, this.cfx)
   }
 
-  async getTransferTransaction ({ from, to, amount }, override) {
-    const value = utils.unit.toValue(amount)
-    return new TransferTx(this.cfx, { from, to, value, ...override })
+  async getTransferTransaction ({ from, to, token, amount }, override) {
+    if (token === 'core' || !token) {
+      const value = utils.unit.toValue(amount)
+      return new TransferTx(this.cfx, { from, to, value, ...override })
+    } else {
+      const value = utils.format.big(amount).times(10 ** token.decimals).toString()
+      const contract = new Contract({ address: token.address, abi: ERC20 }, this.cfx)
+      return contract.execute('transfer', { array: [to, value] }, { ...override, from })
+    }
   }
 
   async getDeployTransaction ({ abi, bytecode, parameters }, override) {
