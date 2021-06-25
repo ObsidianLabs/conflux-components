@@ -22,17 +22,17 @@ const networks = [
     url: 'https://main.confluxrpc.com',
     chainId: 1029,
     explorer: 'https://confluxscan.io/v1',
-  },
-  {
+  }
+]
+if (platform.isDesktop) {
+  networks.push({
     id: 'custom',
     group: 'others',
     name: 'Custom',
     fullName: 'Custom Network',
     icon: 'fas fa-edit',
     notification: 'Switched to <b>Custom</b> network.',
-  }
-]
-if (platform.isDesktop) {
+  })
   networks.unshift({
     id: 'dev',
     group: 'default',
