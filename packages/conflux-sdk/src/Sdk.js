@@ -110,7 +110,7 @@ export default class ConfluxSdk {
       const value = utils.unit.toValue(amount)
       return new TransferTx(this.cfx, { from, to, value, ...override })
     } else {
-      const value = utils.format.big(amount).times(10 ** token.decimals).toString()
+      const value = utils.format.big(amount).mul(utils.format.big(10).pow(token.decimals)).toString()
       const contract = new Contract({ address: token.address, abi: ERC20 }, this.cfx)
       return contract.execute('transfer', { array: [to, value] }, { ...override, from })
     }
