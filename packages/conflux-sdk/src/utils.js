@@ -1,5 +1,4 @@
 import { address, abi, format, sign, Drip } from 'js-conflux-sdk'
-import { BigNumber } from '@ethersproject/bignumber'
 
 const display = value => {
   const amount = Drip(value).toCFX()
@@ -18,7 +17,7 @@ export default {
     sha3: str => format.hex(sign.keccak256(format.hexBuffer(str)))
   },
   format: {
-    big: value => BigNumber.from(value),
+    big: format.big,
     bytes: format.bytes,
     bytesFromHex: format.hexBuffer,
     address: format.address,
