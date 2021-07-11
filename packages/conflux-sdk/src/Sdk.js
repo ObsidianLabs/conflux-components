@@ -2,7 +2,10 @@ import { IpcChannel } from '@obsidians/ipc'
 
 import { address as addressUtil } from 'js-conflux-sdk'
 
+import networks from './networks'
+import kp from './kp'
 import utils from './utils'
+import txOptions from './txOptions'
 import Client from './Client'
 import rpc from './rpc'
 import Contract from './Contract'
@@ -26,12 +29,27 @@ export default class ConfluxSdk {
     }
     this.explorer = explorer
     this.networkId = id
+    this.ipc = new IpcChannel()
   }
+
+  static get kp () { return kp }
+  static get networks () { return networks }
 
   static InitBrowserExtension (networkManager) {
     if (window.conflux && window.conflux.isConfluxPortal) {
       browserExtension = new BrowserExtension(networkManager, window.conflux)
       return browserExtension
+    }
+  }
+
+  get utils () { return utils }
+  get txOptions () { return txOptions }
+  get rpc () { return rpc }
+  get namedContracts () {
+    return {
+      '0x0888000000000000000000000000000000000000': 'AdminControl',
+      '0x0888000000000000000000000000000000000001': 'SponsorWhitelistControl',
+      '0x0888000000000000000000000000000000000002': 'Staking',
     }
   }
 
@@ -57,7 +75,7 @@ export default class ConfluxSdk {
   }
 
   async callRpc (method, parameters) {
-    const params = rpc.prepare(parameters)
+    const params = rpc.prepare(parameters, false, this)
     return await this.cfx.provider.call(method, ...params)
   }
 
@@ -65,12 +83,15 @@ export default class ConfluxSdk {
     if (addressUtil.hasNetworkPrefix(address)) {
       return utils.format.hexAddress(address)
     }
+    return this.base32Address(address)
+  }
+
+  base32Address (address) {
     return utils.format.address(address, this.chainId, true)
   }
 
   async networkInfo () {
-    const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `${this.explorer}/plot?interval=514&limit=7`)
+    const result = await this.ipc.invoke('fetch', `${this.explorer}/plot?interval=514&limit=7`)
     const json = JSON.parse(result)
     return json.list[json.total - 1]
   }
@@ -86,17 +107,16 @@ export default class ConfluxSdk {
 
   async accountFrom (address) {
     const hexAddress = utils.format.hexAddress(address)
+    const base32Address = utils.format.address(hexAddress, this.chainId, true)
     const account = await this.cfx.getAccount(hexAddress)
-    const txCount = this.explorer
-      ? await this.getTransactionsCount(address)
-      : await this.cfx.provider.call('cfx_getNextNonce', hexAddress)
+    const nonce = await this.cfx.provider.call('cfx_getNextNonce', base32Address)
     return {
       address: utils.format.address(address, this.chainId, true)
         .replace('TYPE.USER:', '')
         .replace('TYPE.CONTRACT:', '')
         .toLowerCase(),
       balance: utils.unit.fromValue(account.balance),
-      txCount: BigInt(txCount).toString(10),
+      nonce: BigInt(nonce).toString(10),
       codeHash: account.codeHash === '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470' ? null : account.codeHash,
     }
   }
@@ -142,12 +162,11 @@ export default class ConfluxSdk {
   }
 
   async getTransactionsCount (address) {
-    const ipc = new IpcChannel()
     if (!this.explorer) {
       return
     }
     const hexAddress = utils.format.hexAddress(address)
-    const result = await ipc.invoke('fetch', `${this.explorer}/account/${hexAddress.toLowerCase()}`)
+    const result = await this.ipc.invoke('fetch', `${this.explorer}/account/${hexAddress.toLowerCase()}`)
     const json = JSON.parse(result)
     return json.nonce
   }
@@ -156,9 +175,8 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return { noExplorer: true }
     }
-    const ipc = new IpcChannel()
     const hexAddress = utils.format.hexAddress(address)
-    const result = await ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
+    const result = await this.ipc.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
     if (!json.list) {
       return json
@@ -182,8 +200,7 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `${this.explorer}/token/${address}?fields=name&fields=icon`)
+    const result = await this.ipc.invoke('fetch', `${this.explorer}/token/${address}?fields=name&fields=icon`)
     const json = JSON.parse(result)
     if (json) {
       json.type = json.transferType
@@ -195,8 +212,7 @@ export default class ConfluxSdk {
     if (!this.explorer) {
       return
     }
-    const ipc = new IpcChannel()
-    const result = await ipc.invoke('fetch', `${this.explorer}/token?accountAddress=${address}&fields=icon`)
+    const result = await this.ipc.invoke('fetch', `${this.explorer}/token?accountAddress=${address}&fields=icon`)
     const json = JSON.parse(result)
     if (!json.list) {
       return []

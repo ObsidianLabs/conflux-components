@@ -7,9 +7,10 @@ const { IpcChannel } = require('@obsidians/ipc')
 const { DockerImageChannel } = require('@obsidians/docker')
 
 class InstanceManager extends IpcChannel {
-  constructor () {
+  constructor (dockerImageName) {
     super('node-instance')
-    this.dockerChannel = new DockerImageChannel(process.env.DOCKER_IMAGE_NODE)
+    this.dockerImageName = dockerImageName
+    this.dockerChannel = new DockerImageChannel(dockerImageName)
   }
 
   async create ({ name, version, miner, keys, networkId = 'dev', chainId = 999 }) {
@@ -21,11 +22,11 @@ class InstanceManager extends IpcChannel {
 
     await this.exec(`docker volume create --label version=${version},chain=${networkId} ${PROJECT}-${name}`)
 
-    await this.exec(`docker run -di --rm --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${process.env.DOCKER_IMAGE_NODE}:${version} /bin/bash`)
+    await this.exec(`docker run -di --rm --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${this.dockerImageName}:${version} /bin/bash`)
 
     await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/default.toml ${configPath}`)
     await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/log.yaml ${logPath}`)
-    await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/genesis_secrets.txt ${genesis}`)
+    // await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/genesis_secrets.txt ${genesis}`)
 
     const configStr = fs.readFileSync(configPath, 'utf8')
     const config = TOML.parse(configStr)
@@ -35,7 +36,7 @@ class InstanceManager extends IpcChannel {
     config.genesis_secrets = 'genesis_secrets.txt'
 
     fs.writeFileSync(configPath, TOML.stringify(config))
-    fs.writeFileSync(genesis, keys.map(k => k.substr(2)).join('\n') + '\n')
+    fs.writeFileSync(genesis, keys.filter(k => k.startsWith('0x')).map(k => k.substr(2)).join('\n') + '\n')
 
     await this.exec(`docker cp ${configPath} ${PROJECT}-config-${name}:/${PROJECT}-node/default.toml`)
     await this.exec(`docker cp ${logPath} ${PROJECT}-config-${name}:/${PROJECT}-node/log.yaml`)
@@ -75,7 +76,7 @@ class InstanceManager extends IpcChannel {
     try {
       fs.unlinkSync(configPath)
     } catch (e) {}
-    await this.exec(`docker run --rm -di --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${process.env.DOCKER_IMAGE_NODE}:${version} /bin/bash`)
+    await this.exec(`docker run --rm -di --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${this.dockerImageName}:${version} /bin/bash`)
     await this.exec(`docker cp ${PROJECT}-config-${name}:/${PROJECT}-node/default.toml ${configPath}`)
     let config
     try {
@@ -91,7 +92,7 @@ class InstanceManager extends IpcChannel {
     const PROJECT = process.env.PROJECT
     const configPath = path.join(os.tmpdir(), 'conflux.toml')
     fs.writeFileSync(configPath, content, 'utf8')
-    await this.exec(`docker run --rm -di --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${process.env.DOCKER_IMAGE_NODE}:${version} /bin/bash`)
+    await this.exec(`docker run --rm -di --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${this.dockerImageName}:${version} /bin/bash`)
     await this.exec(`docker cp ${configPath} ${PROJECT}-config-${name}:/${PROJECT}-node/default.toml`)
     await this.exec(`docker stop ${PROJECT}-config-${name}`)
   }

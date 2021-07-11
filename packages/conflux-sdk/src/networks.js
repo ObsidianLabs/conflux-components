@@ -11,6 +11,7 @@ const networks = [
     url: 'https://test.confluxrpc.com',
     chainId: 1,
     explorer: 'https://testnet.confluxscan.io/v1',
+    symbol: 'CFX',
   },
   {
     id: 'tethys',
@@ -22,6 +23,7 @@ const networks = [
     url: 'https://main.confluxrpc.com',
     chainId: 1029,
     explorer: 'https://confluxscan.io/v1',
+    symbol: 'CFX',
   }
 ]
 if (platform.isDesktop) {
@@ -32,6 +34,7 @@ if (platform.isDesktop) {
     fullName: 'Custom Network',
     icon: 'fas fa-edit',
     notification: 'Switched to <b>Custom</b> network.',
+    symbol: 'CFX',
   })
   networks.unshift({
     id: 'dev',
@@ -42,6 +45,7 @@ if (platform.isDesktop) {
     notification: 'Switched to <b>Development</b> network.',
     url: 'http://localhost:12537',
     chainId: 999,
+    symbol: 'CFX',
   })
 }
 

@@ -1,4 +1,6 @@
-function prepare (parameters, asObject) {
+
+
+function prepare (parameters, asObject, sdk) {
   if (!parameters) {
     return []
   }
@@ -6,13 +8,13 @@ function prepare (parameters, asObject) {
   const keys = Object.keys(obj)
   const values = keys.map(key => {
     const param = obj[key]
-    if (param.type === 'tuple') {
+    if (param.type === 'address') {
+      return sdk.base32Address(param.value)
+    } else if (param.type === 'tuple') {
       return prepare({ obj: param.value }, true)
-    }
-    if (param.type.endsWith('[]') && !param.value.length) {
+    } else if (param.type.endsWith('[]') && !param.value.length) {
       return null
-    }
-    if (param.type.startsWith('uint')) {
+    } else if (param.type.startsWith('uint')) {
       let value = param.value
       if (value === '0') {
         if (key === 'limit') {
