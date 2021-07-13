@@ -87,7 +87,8 @@ export default class ConfluxSdk {
   }
 
   base32Address (address) {
-    return utils.format.address(address, this.chainId, true)
+    const base32 = utils.format.address(address, this.chainId, true)
+    return base32.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase()
   }
 
   async networkInfo () {
