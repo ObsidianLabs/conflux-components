@@ -1,6 +1,9 @@
 import { address, abi, format, sign, Drip } from 'js-conflux-sdk'
 
 const display = value => {
+  if (typeof value === 'bigint') {
+    value = value.toString()
+  }
   const amount = Drip(value).toCFX()
   if (amount > 0.001) {
     return `${new Intl.NumberFormat().format(amount)} CFX`

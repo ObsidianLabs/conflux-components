@@ -192,7 +192,7 @@ export default class ConfluxSdk {
         method: tx.method === '0x' ? undefined : tx.method,
         timeStamp: tx.timestamp,
         blockNumber: tx.epochNumber,
-        gasUsed: BigInt(tx.gasFee) / BigInt(tx.gasPrice),
+        gasUsed: tx.gas,
       }))
     }
   }
