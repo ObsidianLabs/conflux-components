@@ -52,7 +52,7 @@ class Tx {
             e.data = err.data
             e.receipt = receipt
             throw e
-          })    
+          })
         }
 
         if (receipt.contractCreated) {
