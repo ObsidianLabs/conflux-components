@@ -1,6 +1,5 @@
 import { PrivateKeyAccount } from 'js-conflux-sdk'
 import lodash from 'lodash'
-import utils from '../utils'
 
 function assert (bool, value) {
   if (!bool) {

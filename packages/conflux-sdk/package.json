@@ -28,7 +28,8 @@
     "cross-env": "^6.0.3"
   },
   "peerDependencies": {
-    "immutable": "^4.0.0-rc.12",
-    "js-conflux-sdk": "1.6.0"
+    "@obsidians/eth-sdk": "*",
+    "immutable": "*",
+    "js-conflux-sdk": "*"
   }
 }

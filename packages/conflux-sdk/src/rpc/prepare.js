@@ -9,7 +9,7 @@ function prepare (parameters, asObject, sdk) {
   const values = keys.map(key => {
     const param = obj[key]
     if (param.type === 'address') {
-      return sdk.base32Address(param.value)
+      return sdk.utils.format.base32Address(param.value, sdk.chainId)
     } else if (param.type === 'tuple') {
       return prepare({ obj: param.value }, true)
     } else if (param.type.endsWith('[]') && !param.value.length) {

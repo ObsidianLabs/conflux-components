@@ -1,5 +1,5 @@
 import keypairManager from '@obsidians/keypair'
-import kp from './kp'
+import kp from '../kp'
 
 export default function signatureProvider (address) {
   return async (tx, networkId) => {

@@ -1,4 +1,8 @@
-import { address, abi, format, sign, Drip } from 'js-conflux-sdk'
+import { utils } from '@obsidians/eth-sdk'
+
+import { Contract, format, Drip } from 'js-conflux-sdk'
+import txOptions from './txOptions'
+import { isValidAddress, formatAddress, hexAddress, base32Address, convertAddress } from './address'
 
 const display = value => {
   if (typeof value === 'bigint') {
@@ -16,20 +20,19 @@ const display = value => {
 }
 
 export default {
-  sign: {
-    sha3: str => format.hex(sign.keccak256(format.hexBuffer(str)))
-  },
+  ...utils,
+  get chainId () { return 999 },
+  txOptions,
+  isValidAddress,
+  formatAddress,
   format: {
     big: format.big,
     bytes: format.bytes,
     bytesFromHex: format.hexBuffer,
     address: format.address,
-    hexAddress: addr => {
-      if (address.hasNetworkPrefix(addr)) {
-        return format.hexAddress(addr)
-      }
-      return addr
-    }
+    hexAddress,
+    base32Address,
+    convertAddress,
   },
   unit: {
     fromValue: value => Drip(value).toCFX(),
@@ -37,5 +40,5 @@ export default {
     valueToGvalue: value => Drip(value).toGDrip()
   },
   display,
-  decodeError: data => abi.errorCoder.decodeError({ data }).message
+  decodeError: data => Contract.decodeError({ data }).message,
 }

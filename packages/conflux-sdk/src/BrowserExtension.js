@@ -2,6 +2,13 @@ import redux from '@obsidians/redux'
 import networks from './networks'
 
 export default class BrowserExtension {
+  static Init (networkManager) {
+    if (window.conflux && window.conflux.isConfluxPortal) {
+      browserExtension = new BrowserExtension(networkManager, window.conflux)
+      return browserExtension
+    }
+  }
+
   constructor (networkManager, conflux) {
     this.name = 'Conflux Portal'
     this.networkManager = networkManager

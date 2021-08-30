@@ -2,7 +2,7 @@ import { sign, format } from 'js-conflux-sdk'
 import { Wallet } from '@ethersproject/wallet'
 
 // https://github.com/Conflux-Chain/js-conflux-sdk/blob/master/src/wallet/PrivateKeyAccount.js
-const keygen = (pvk, networkId) => {
+const keygen = (pvk, chainId) => {
   // Get or create private key buffer
   const buffer = pvk || sign.randomPrivateKey()
 
@@ -15,13 +15,13 @@ const keygen = (pvk, networkId) => {
   const publicKey = format.publicKey(publicKeyBuffer)
   const privateKey = format.privateKey(privateKeyBuffer)
 
-  const address = networkId ? format.address(addressBuffer, networkId) : ''
+  const address = chainId ? format.address(addressBuffer, chainId) : ''
   const hexAddress = format.hexAddress(addressBuffer)
 
   return { address, hexAddress, publicKey, privateKey }
 }
 
-const networkIds = {
+const chainIds = {
   testnet: 1,
   mainnet: 1029,
   // dev: 999,
@@ -31,14 +31,14 @@ export default {
   newKeypair (chain, secretType) {
     if (secretType === 'mnemonic') {
       const wallet = Wallet.createRandom({ path: `m/44'/503'/0'/0/0` })
-      const key = keygen(wallet.privateKey, networkIds[chain])
+      const key = keygen(wallet.privateKey, chainIds[chain])
       return {
         address: key.address || key.hexAddress,
         secret: wallet.mnemonic.phrase,
         secretName: 'Mnemonic',
       }
     } else {
-      const key = keygen(null, networkIds[chain])
+      const key = keygen(null, chainIds[chain])
       return {
         address: key.address || key.hexAddress,
         secret: key.privateKey,
@@ -51,7 +51,7 @@ export default {
       if (!secret.startsWith('0x')) {
         secret = '0x' + secret
       }
-      const key = keygen(secret, networkIds[chain])
+      const key = keygen(secret, chainIds[chain])
       return {
         address: key.address || key.hexAddress,
         secret: key.privateKey,
@@ -59,7 +59,7 @@ export default {
       }
     } else {
       const wallet = Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
-      const key = keygen(wallet.privateKey, networkIds[chain])
+      const key = keygen(wallet.privateKey, chainIds[chain])
       return {
         address: key.address || key.hexAddress,
         secret: wallet.mnemonic.phrase,
@@ -74,8 +74,8 @@ export default {
       return Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
     }
   },
-  exportKeypair (secret, networkId) {
-    const key = keygen(secret, networkId)
+  exportKeypair (secret, chainId) {
+    const key = keygen(secret, chainId)
     return {
       address: key.address || key.hexAddress,
       hexAddress: key.hexAddress,
