@@ -1,5 +1,3 @@
-
-
 function prepare (parameters, asObject, sdk) {
   if (!parameters) {
     return []

@@ -1,5 +1,5 @@
 import { sign, format } from 'js-conflux-sdk'
-import { Wallet } from '@ethersproject/wallet'
+import { ethers } from 'ethers'
 
 // https://github.com/Conflux-Chain/js-conflux-sdk/blob/master/src/wallet/PrivateKeyAccount.js
 const keygen = (pvk, chainId) => {
@@ -30,7 +30,7 @@ const chainIds = {
 export default {
   newKeypair (chain, secretType) {
     if (secretType === 'mnemonic') {
-      const wallet = Wallet.createRandom({ path: `m/44'/503'/0'/0/0` })
+      const wallet = ethers.Wallet.createRandom({ path: `m/44'/503'/0'/0/0` })
       const key = keygen(wallet.privateKey, chainIds[chain])
       return {
         address: key.address || key.hexAddress,
@@ -58,7 +58,7 @@ export default {
         secretName: 'Private Key',
       }
     } else {
-      const wallet = Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
+      const wallet = ethers.Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
       const key = keygen(wallet.privateKey, chainIds[chain])
       return {
         address: key.address || key.hexAddress,
@@ -69,9 +69,9 @@ export default {
   },
   walletFrom (secret) {
     if (secret.startsWith('0x')) {
-      return new Wallet(secret)
+      return new ethers.Wallet(secret)
     } else {
-      return Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
+      return ethers.Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
     }
   },
   exportKeypair (secret, chainId) {

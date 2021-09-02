@@ -6,9 +6,22 @@ class SdkChannel extends IpcChannel {
   constructor (keypairManager) {
     super('sdk')
 
-    this.rpcServer = new RpcServer(CfxClient, keypairManager, {
-      platon_accounts: 'cfx_accounts',
-      platon_sendTransaction: 'cfx_sendTransaction',
+    this.rpcServer = new RpcServer(CfxClient, {
+      keypairManager,
+      keypairFilter: (keypair, client) => {
+        const chainId = client.chainId
+        if (chainId === 1) {
+          return keypair.address.startsWith('cfxtest:')
+        } else if (chainId === 1029) {
+          return keypair.address.startsWith('cfx:')
+        } else {
+          return keypair.address.startsWith('0x')
+        }
+      },
+      rpcMap: {
+        accounts: 'eth_accounts',
+        cfx_sendTransaction: 'eth_sendTransaction',
+      }
     })
   }
 
@@ -18,10 +31,6 @@ class SdkChannel extends IpcChannel {
 
   unsetNetwork () {
     this.rpcServer.unsetNetwork()
-  }
-
-  async rpc (method, params) {
-    return await this.rpcServer.client.rpc(method, params)
   }
 }
 

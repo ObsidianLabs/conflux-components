@@ -1,39 +1,36 @@
-const { Conflux } = require('js-conflux-sdk')
-const { Wallet } = require('@ethersproject/wallet')
+const PrivateKeyAccount = require('js-conflux-sdk/src/wallet/PrivateKeyAccount')
+const { ethers } = require('ethers')
 
 module.exports = class CfxClient {
-  constructor ({ url }) {
-    this.cfx = new Conflux({
-      url,
-      defaultGasPrice: 100,
-      defaultGas: 1000000,
-      networkId: chainId,
-    })
+  constructor ({ url, chainId }) {
+    this.chainId = chainId
+    this.provider = ethers.getDefaultProvider(url)
   }
 
   async rpc (method, params) {
-    return await this.cfx.provider.call(method, ...params)
+    return await this.provider.send(method, params)
   }
 
   async sign (tx, secret) {
-    const wallet = this.walletFrom(secret)
-    tx.nonce = tx.nonce || await this.web3.platon.getTransactionCount(tx.from)
-    const result = await this.web3.platon.accounts.signTransaction(tx, wallet.privateKey)
-    return result.rawTransaction
+    const account = this.accountFrom(secret)
+    tx.from = account.address
+    const accountInfo = await this.rpc('cfx_getAccount', [tx.from])
+    tx.nonce = accountInfo.nonce
+    const signedTx = await account.signTransaction(tx)
+    return signedTx.serialize()
   }
 
-  walletFrom (secret) {
+  accountFrom (secret) {
     let wallet
     if (secret.startsWith('0x')) {
-      wallet = new Wallet(secret)
+      wallet = new ethers.Wallet(secret)
     } else {
-      wallet = Wallet.fromMnemonic(secret)
+      wallet = ethers.Wallet.fromMnemonic(secret, `m/44'/503'/0'/0/0`)
     }
-    return wallet.connect(this.web3.provider)
+    return new PrivateKeyAccount(wallet.privateKey, this.chainId)
   }
 
   async sendRawTransaction (tx) {
-    const result = await this.web3.platon.sendSignedTransaction(tx)
-    return result.transactionHash
+    return this.rpc('cfx_sendRawTransaction', [tx])
   }
 }
