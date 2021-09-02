@@ -122,6 +122,10 @@ export default class CfxClient {
       return { length: list.length, list }
     }
 
+    if (!this.explorer) {
+      return { noExplorer: true }
+    }
+
     const result = await this.channel.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
     const json = JSON.parse(result)
     if (!json.list) {
