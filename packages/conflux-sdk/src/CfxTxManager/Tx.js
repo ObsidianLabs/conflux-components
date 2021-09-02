@@ -21,8 +21,9 @@ class Tx {
     if (browserExtension) {
       pendingTx = this._sendThroughBrowserExtension(browserExtension)
     } else {
-      const account = this.client.cfx.wallet.addExternalAccount(this.from, sp)
-      pendingTx = this.sendTx(account)
+      const base32Address = utils.format.base32Address(this.from, this.chainId)
+      const account = this.client.cfx.wallet.addExternalAccount(base32Address, sp)
+      pendingTx = this.sendTx(account, this.tx.from)
     }
     return this._processPendingTx(pendingTx)
   }
@@ -96,7 +97,7 @@ export class TransferTx extends Tx {
 
   async estimate ({ from }) {
     const account = await this.client.getAccount(from)
-    return await this.client.cfx.estimateGasAndCollateral({ ...this.override, from, nonce: account.nonce })
+    return await this.client.cfx.estimateGasAndCollateral({ from, nonce: account.nonce })
   }
 }
 

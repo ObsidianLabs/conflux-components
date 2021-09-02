@@ -28,9 +28,10 @@ export default class CfxClient {
       useHexAddressInParameter: semver.lt(version, '1.1.1'),
       networkId: chainId
     })
-    this.cfx.wallet = new ExternalWallet(chainId)
 
-    this.prepare(chainId)
+    this.prepare(chainId).then(() => {
+      this.cfx.wallet = new ExternalWallet(this.chainId)
+    })
 
     if (platform.isDesktop) {
       this.channel = new IpcChannel('sdk')
