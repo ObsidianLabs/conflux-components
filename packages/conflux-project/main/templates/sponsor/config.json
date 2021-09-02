@@ -1,8 +1,8 @@
 {
   "main": "./contracts/SponsoredCoin.sol",
   "deploy": "./build/contracts/SponsoredCoin.json",
+  "framework": "#framework",
   "compilers": {
-    "#compiler_name": "#compiler_version",
     "solc": "0.6.12"
   }
 }
