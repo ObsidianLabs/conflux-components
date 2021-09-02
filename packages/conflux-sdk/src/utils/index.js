@@ -21,10 +21,10 @@ const display = value => {
 
 export default {
   ...utils,
-  get chainId () { return 999 },
   txOptions,
   isValidAddress,
   formatAddress,
+  convertAddress,
   format: {
     big: format.big,
     bytes: format.bytes,
@@ -32,7 +32,6 @@ export default {
     address: format.address,
     hexAddress,
     base32Address,
-    convertAddress,
   },
   unit: {
     fromValue: value => Drip(value).toCFX(),

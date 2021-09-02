@@ -9,6 +9,10 @@ export default class CfxContract {
     this.instance = this.client.cfx.Contract({ address, abi })
   }
 
+  get chainId () {
+    return this.client.chainId
+  }
+
   async query (method, { array }) {
     let result
     try {
@@ -31,7 +35,7 @@ export default class CfxContract {
   parseResult (result, method) {
     const methodAbi = this.abi.find(item => item.name === method)
     const abi = methodAbi && methodAbi.outputs
-    const parsed = utils.parseObject(abi.length === 1 ? [result] : result, abi)
+    const parsed = utils.parseObject(abi.length === 1 ? [result] : result, abi, this.chainId)
     return {
       raw: result,
       parsed: Object.values(parsed),
@@ -39,7 +43,7 @@ export default class CfxContract {
   }
 
   get maxGap () {
-    return this.client.chainId === 1029 ? 100 : 1000
+    return this.chainId === 1029 ? 100 : 1000
   }
 
   async getLogs (event, { from, to } = {}) {

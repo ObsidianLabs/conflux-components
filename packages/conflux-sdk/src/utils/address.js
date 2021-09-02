@@ -14,14 +14,14 @@ export function isValidAddress (addr, chainId) {
   }
 }
 
-export function formatAddress (addr) {
+export function formatAddress (addr, chainId) {
   if (!addr) {
     return
   }
-  if (this.chainId === 999) {
+  if (chainId === 999) {
     return hexAddress(addr)
   } else {
-    return base32Address(addr, this.chainId)
+    return base32Address(addr, chainId)
   }
 }
 
@@ -37,9 +37,9 @@ export function base32Address (addr, chainId) {
   return base32.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase()
 }
 
-export function convertAddress (addr) {
+export function convertAddress (addr, chainId) {
   if (address.hasNetworkPrefix(addr)) {
     return format.hexAddress(addr)
   }
-  return base32Address(addr)
+  return base32Address(addr, chainId)
 }
