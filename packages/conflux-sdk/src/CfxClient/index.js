@@ -36,6 +36,8 @@ export default class CfxClient {
     if (platform.isDesktop) {
       this.channel = new IpcChannel('sdk')
       this.channel.invoke('setNetwork', option)
+    } else {
+      this.channel = new IpcChannel()
     }
   }
 

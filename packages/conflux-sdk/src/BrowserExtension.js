@@ -4,8 +4,7 @@ import networks from './networks'
 export default class BrowserExtension {
   static Init (networkManager) {
     if (window.conflux && window.conflux.isConfluxPortal) {
-      browserExtension = new BrowserExtension(networkManager, window.conflux)
-      return browserExtension
+      return new BrowserExtension(networkManager, window.conflux)
     }
   }
 
