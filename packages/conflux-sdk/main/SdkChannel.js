@@ -7,6 +7,7 @@ class SdkChannel extends IpcChannel {
     super('sdk')
 
     this.rpcServer = new RpcServer(CfxClient, {
+      channel: this,
       keypairManager,
       keypairFilter: (keypair, client) => {
         const chainId = client.chainId
