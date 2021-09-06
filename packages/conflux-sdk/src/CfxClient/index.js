@@ -89,9 +89,8 @@ export default class CfxClient {
     const hexAddress = utils.format.hexAddress(address)
 
     if (this.networkId.startsWith('dev')) {
-      const { queue, uiState } = redux.getState()
-      const networkId = uiState.get('localNetwork').params.id
-      const txs = queue.getIn([networkId, 'txs'])
+      const { queue } = redux.getState()
+      const txs = queue.getIn([this.networkId, 'txs'])
       if (!txs) {
         return { length: 0, list: [] }
       }

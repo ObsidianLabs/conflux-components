@@ -12,14 +12,13 @@
   ],
   "scripts": {},
   "dependencies": {
+    "@obsidians/eth-sdk": "^0.3.0",
     "@obsidians/ipc": "^0.3.0",
     "@obsidians/keypair": "^0.3.0",
     "@obsidians/platform": "^0.3.0",
     "@obsidians/redux": "^0.3.0",
-    "ethers": "^5.4.4",
     "js-conflux-sdk": "^1.7.0",
-    "semver": "^7.3.4",
-    "url-parse": "^1.4.7"
+    "semver": "^7.3.4"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",
@@ -31,8 +30,6 @@
     "cross-env": "^6.0.3"
   },
   "peerDependencies": {
-    "@obsidians/eth-sdk": "*",
-    "immutable": "*",
-    "js-conflux-sdk": "*"
+    "immutable": "*"
   }
 }
