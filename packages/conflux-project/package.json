@@ -10,15 +10,6 @@
   ],
   "scripts": {},
   "dependencies": {
-    "@obsidians/filetree": "^0.3.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.7.5",
-    "@babel/plugin-external-helpers": "^7.7.4",
-    "@babel/plugin-proposal-class-properties": "^7.7.4",
-    "@babel/plugin-proposal-function-bind": "^7.7.4",
-    "@babel/preset-env": "^7.7.5",
-    "babel-eslint": "10.0.3",
-    "cross-env": "^6.0.3"
+    "@obsidians/eth-project": "^0.3.0"
   }
 }
