@@ -6,10 +6,7 @@
     "build": "node init.js"
   },
   "dependencies": {
-    "node-sass": "^5.0.0"
-  },
-  "resolutions": {
-    "node-sass/node-gyp": "^5.0.2"
+    "node-sass": "^6.0.0"
   },
   "workspaces": [
     "packages/*",
