@@ -6,7 +6,7 @@ export default class CfxContract {
     this.address = address
     this.abi = abi
     this.client = client
-    this.instance = this.client.cfx.Contract({ address, abi })
+    this.instance = this.client.cfx.Contract({ address, abi:[abi] })
   }
 
   get chainId () {
