@@ -26,9 +26,7 @@ export default {
   formatAddress,
   convertAddress,
   format: {
-    big: format.big,
-    bytes: format.bytes,
-    bytesFromHex: format.hexBuffer,
+    ...utils.format,
     address: format.address,
     hexAddress,
     base32Address,
