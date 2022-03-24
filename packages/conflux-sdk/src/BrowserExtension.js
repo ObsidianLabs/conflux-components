@@ -33,8 +33,8 @@ export default class BrowserExtension {
   }
   
   async initialize (conflux) {
-    conflux.on('networkChanged', this.onChainChanged.bind(this))
-    const status = await conflux.send('cfx_getStatus')
+    conflux.on('chainChanged', this.onChainChanged.bind(this))
+    const status = await conflux.request('cfx_getStatus')
     this.onChainChanged(status.chainId)
 
     conflux.on('accountsChanged', this.onAccountsChanged.bind(this))
@@ -47,7 +47,7 @@ export default class BrowserExtension {
 
   async requestAccounts () {
     try {
-      const accounts = await this.conflux.send('cfx_requestAccounts')
+      const accounts = await this.conflux.request('cfx_requestAccounts')
       this.onAccountsChanged(accounts)
     } catch (e) {
       console.warn(e)
@@ -63,8 +63,8 @@ export default class BrowserExtension {
   }
 
   async getAllAccounts () {
-    return this.conflux.send('cfx_requestAccounts')
-    // const result = await this.conflux.send('wallet_getPermissions')
+    return this.conflux.request('cfx_requestAccounts')
+    // const result = await this.conflux.request('wallet_getPermissions')
     // const found = result[0].caveats.find(c => c.type === 'filterResponse')
     // return found ? found.value : []
   }
@@ -75,7 +75,7 @@ export default class BrowserExtension {
 
   sendTransaction (tx, callback) {
     tx.value = BigInt(tx.value || 0).toString(16)
-    this.conflux.sendAsync({
+    this.conflux.requestAsync({
       method: 'cfx_sendTransaction',
       params: [tx],
       from: tx.from,

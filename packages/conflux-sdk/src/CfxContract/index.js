@@ -16,10 +16,15 @@ export default class CfxContract {
   async query (method, { array }) {
     let result
     try {
-      result = await this.instance[method].call(...array)
+      let result
+      if (this.instance[method])
+        result = await this.instance[method].call(...array)
+      else
+        result = await this.client.cfx[method](...array)
     } catch (e) {
       throw utils.parseError(e)
     }
+    console.log(result)
     return this.parseResult(result, method)
   }
 
