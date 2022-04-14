@@ -24,7 +24,11 @@ class InstanceManager extends IpcChannel {
 
     await this.exec(`docker run -di --rm --name ${PROJECT}-config-${name} -v ${PROJECT}-${name}:/${PROJECT}-node ${this.dockerImageName}:${version} /bin/bash`)
 
-    await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/default.toml ${configPath}`)
+    if (version.startsWith('2.')) {
+      await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/conflux.toml ${configPath}`)
+    } else {
+      await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/default.toml ${configPath}`)
+    }
     await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/log.yaml ${logPath}`)
     // await this.exec(`docker cp ${PROJECT}-config-${name}:/root/run/genesis_secrets.txt ${genesis}`)
 
@@ -38,7 +42,11 @@ class InstanceManager extends IpcChannel {
     fs.writeFileSync(configPath, TOML.stringify(config))
     fs.writeFileSync(genesis, keys.filter(k => k.startsWith('0x')).map(k => k.substr(2)).join('\n') + '\n')
 
-    await this.exec(`docker cp ${configPath} ${PROJECT}-config-${name}:/${PROJECT}-node/default.toml`)
+    if (version.startsWith('2.')) {
+      await this.exec(`docker cp ${configPath} ${PROJECT}-config-${name}:/${PROJECT}-node/conflux.toml`)
+    } else {
+      await this.exec(`docker cp ${configPath} ${PROJECT}-config-${name}:/${PROJECT}-node/default.toml`)
+    }
     await this.exec(`docker cp ${logPath} ${PROJECT}-config-${name}:/${PROJECT}-node/log.yaml`)
     await this.exec(`docker cp ${genesis} ${PROJECT}-config-${name}:/${PROJECT}-node/genesis_secrets.txt`)
     await this.exec(`docker stop ${PROJECT}-config-${name}`)
