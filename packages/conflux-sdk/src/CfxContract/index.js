@@ -4,9 +4,9 @@ import utils from '../utils'
 export default class CfxContract {
   constructor ({ address, abi }, client) {
     this.address = address
-    this.abi = abi
+    this.abi = Object.prototype.toString.call(abi) === '[object Array]' ? abi : [abi]
     this.client = client
-    this.instance = this.client.cfx.Contract({ address, abi:[abi] })
+    this.instance = this.client.cfx.Contract({ address, abi: this.abi})
   }
 
   get chainId () {
@@ -24,7 +24,6 @@ export default class CfxContract {
     } catch (e) {
       throw utils.parseError(e)
     }
-    console.log(result)
     return this.parseResult(result, method)
   }
 
