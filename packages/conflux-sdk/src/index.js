@@ -28,4 +28,8 @@ export default makeSdk({
   rpc,
 })
 
+export {
+  utils,
+}
+
 export { default as redux } from './redux'

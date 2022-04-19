@@ -4,9 +4,12 @@ import utils from '../utils'
 export default class CfxContract {
   constructor ({ address, abi }, client) {
     this.address = address
-    this.abi = Object.prototype.toString.call(abi) === '[object Array]' ? abi : [abi]
+    this.abi = abi
+    if (abi.abi && abi.abi instanceof Array && abi.abi[0].type) {
+      this.abi = abi.abi
+    }
     this.client = client
-    this.instance = this.client.cfx.Contract({ address, abi: this.abi})
+    this.instance = this.client.cfx.Contract({ address, abi: this.abi })
   }
 
   get chainId () {
@@ -16,11 +19,7 @@ export default class CfxContract {
   async query (method, { array }) {
     let result
     try {
-      let result
-      if (this.instance[method])
-        result = await this.instance[method].call(...array)
-      else
-        result = await this.client.cfx[method](...array)
+      result = await this.instance[method].call(...array)
     } catch (e) {
       throw utils.parseError(e)
     }

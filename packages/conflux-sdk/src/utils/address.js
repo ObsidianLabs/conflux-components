@@ -32,7 +32,7 @@ export function hexAddress (addr) {
   return addr
 }
 
-export function base32Address (addr, chainId) {
+export function base32Address (addr, chainId = 1) {
   const base32 = format.address(addr, chainId, true)
   return base32.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase()
 }
