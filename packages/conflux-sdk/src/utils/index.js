@@ -1,5 +1,4 @@
 import { utils } from '@obsidians/eth-sdk'
-
 import { Contract, format, Drip } from 'js-conflux-sdk'
 import txOptions from './txOptions'
 import { isValidAddress, formatAddress, hexAddress, base32Address, convertAddress } from './address'
@@ -23,8 +22,13 @@ export default {
   ...utils,
   txOptions,
   isValidAddress,
+  isValidAddressReturn: formatAddress,
   formatAddress,
   convertAddress,
+  abbreviateAddress: address => {
+    address =  formatAddress(address)
+    return `${address.substr(0, 12)}...${address.substr(address.length - 6, address.length)}`
+  },
   format: {
     ...utils.format,
     address: format.address,

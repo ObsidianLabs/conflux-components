@@ -1,7 +1,4 @@
 function prepare (parameters, asObject, sdk) {
-  if (!parameters) {
-    return []
-  }
   const obj = parameters.obj
   const keys = Object.keys(obj)
   const values = keys.map(key => {
@@ -9,7 +6,7 @@ function prepare (parameters, asObject, sdk) {
     if (param.type === 'address') {
       return sdk.utils.format.base32Address(param.value, sdk.chainId)
     } else if (param.type === 'tuple') {
-      return prepare({ obj: param.value }, true)
+      return prepare({ obj: param.value }, true, sdk)
     } else if (param.type.endsWith('[]') && !param.value.length) {
       return null
     } else if (param.type.startsWith('uint')) {

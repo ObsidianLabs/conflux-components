@@ -14,14 +14,16 @@ export function isValidAddress (addr, chainId) {
   }
 }
 
-export function formatAddress (addr, chainId) {
+export function formatAddress (addr, targetChainId) {
+  // note: the chinaId IS the target chain id, NOT the source chain id.
   if (!addr) {
     return
   }
-  if (chainId === 999) {
+  if (!targetChainId) return addr
+  if (targetChainId === 999) {
     return hexAddress(addr)
   } else {
-    return base32Address(addr, chainId)
+    return base32Address(addr, targetChainId)
   }
 }
 
@@ -32,14 +34,14 @@ export function hexAddress (addr) {
   return addr
 }
 
-export function base32Address (addr, chainId) {
-  const base32 = format.address(addr, chainId, true)
+export function base32Address (addr, targetChainId = 999) {
+  const base32 = format.address(addr, targetChainId, true)
   return base32.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase()
 }
 
-export function convertAddress (addr, chainId) {
+export function convertAddress (addr, targetChainId) {
   if (address.hasNetworkPrefix(addr)) {
     return format.hexAddress(addr)
   }
-  return base32Address(addr, chainId)
+  return base32Address(addr, targetChainId)
 }
