@@ -8,9 +8,9 @@ const networks = [
     fullName: 'Conflux Testnet',
     icon: 'fas fa-vial',
     notification: 'Switched to <b>Conflux Testnet</b> network.',
-    url: 'https://test.confluxrpc.com',
+    url: 'https://portal-test.confluxrpc.com',
     chainId: 1,
-    explorer: 'https://testnet.confluxscan.io/v1',
+    explorer: 'https://testnet.confluxscan.io',
     symbol: 'CFX',
   },
   {
@@ -20,9 +20,9 @@ const networks = [
     fullName: 'Conflux Tethys',
     icon: 'fas fa-globe',
     notification: 'Switched to <b>Conflux Tethys</b> network.',
-    url: 'https://main.confluxrpc.com',
+    url: 'https://portal-main.confluxrpc.com',
     chainId: 1029,
-    explorer: 'https://confluxscan.io/v1',
+    explorer: 'https://confluxscan.io',
     symbol: 'CFX',
   }
 ]
