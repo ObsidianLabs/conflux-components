@@ -3,7 +3,7 @@ import networks from './networks'
 
 export default class BrowserExtension {
   static Init (networkManager) {
-    if (window.conflux && window.conflux.isConfluxPortal) {
+    if (window.conflux) {
       return new BrowserExtension(networkManager, window.conflux)
     }
   }
@@ -11,11 +11,14 @@ export default class BrowserExtension {
   constructor (networkManager, conflux) {
     this.name = 'Conflux Portal'
     this.networkManager = networkManager
-    this._accounts = []
     this._enabled = false
-    if (conflux && conflux.isConfluxPortal) {
+
+    this._currentAccount = ''
+    if (conflux) {
       this._enabled = true
+      this.ethereum = conflux
       this.conflux = conflux
+      this.prefix = 'cfx'
       this.initialize(conflux)
     }
   }
@@ -24,8 +27,9 @@ export default class BrowserExtension {
     return this._enabled
   }
 
-  get currentAccount () {
-    return this.conflux.selectedAddress
+  async currentAccount () {
+    const account = await this.conflux.request({method: "cfx_accounts"})
+    return account[0]
   }
 
   get allAccounts () {
@@ -62,6 +66,31 @@ export default class BrowserExtension {
     }
   }
 
+  async getChainId(){
+    return await this.conflux.request({ method: 'cfx_chainId' })
+  }
+
+  async switchChain(chainId){
+    const res = await this.conflux.request({
+      method: 'wallet_switchConfluxChain',
+      params: [{
+        chainId,
+      }]
+    })
+    return res
+  }
+
+  async addChain({chainId, chainName, rpcUrls}) {
+    return await this.conflux.request({
+      method: 'wallet_addConfluxChain',
+      params: [{
+        chainId,
+        chainName,
+        rpcUrls,
+      }],
+    })
+  }
+
   async getAllAccounts () {
     return this.conflux.request('cfx_requestAccounts')
     // const result = await this.conflux.request('wallet_getPermissions')
@@ -70,15 +99,18 @@ export default class BrowserExtension {
   }
 
   async onAccountsChanged (accounts) {
+
     redux.dispatch('UPDATE_UI_STATE', { signer: accounts[0], browserAccounts: accounts })
   }
 
   sendTransaction (tx, callback) {
-    tx.value = BigInt(tx.value || 0).toString(16)
-    this.conflux.requestAsync({
+    tx.value = '0x' + BigInt(tx.value || 0).toString(16)
+    console.log("asdasdad")
+    this.conflux.request({
       method: 'cfx_sendTransaction',
       params: [tx],
       from: tx.from,
-    }, callback)
+    }, console.log)
+    console.log("DONE!!!")
   }
 }
