@@ -1,14 +1,10 @@
 const PrivateKeyAccount = require('js-conflux-sdk/src/wallet/PrivateKeyAccount')
 const { ethers } = require('ethers')
-import { Conflux } from 'js-conflux-sdk'
 
 module.exports = class CfxClient {
   constructor ({ url, chainId }) {
     this.chainId = chainId
-    this.provider = new Conflux({
-      url,
-      networkId: chainId,
-    })
+    this.provider = ethers.getDefaultProvider(url)
   }
 
   async rpc (method, params) {
