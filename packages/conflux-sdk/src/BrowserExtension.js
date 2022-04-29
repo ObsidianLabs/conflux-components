@@ -105,7 +105,6 @@ export default class BrowserExtension {
 
   sendTransaction (tx, callback) {
     tx.value = '0x' + BigInt(tx.value || 0).toString(16)
-    console.log("asdasdad")
     this.conflux.request({
       method: 'cfx_sendTransaction',
       params: [tx],
