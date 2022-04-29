@@ -34,7 +34,16 @@ export function hexAddress (addr) {
   return addr
 }
 
-export function base32Address (addr, targetChainId = 999) {
+export function base32Address (addr, targetChainId = null) {
+  const { networkManager } = require('@obsidians/network')
+  let chainId = targetChainId
+  if (!chainId) {
+    if (networkManager && networkManager.network && networkManager.network.chainId) {
+      chainId = networkManager.network.chainId
+    } else {
+      chainId = 999
+    }
+  }
   const base32 = format.address(addr, targetChainId, true)
   return base32.replace('TYPE.USER:', '').replace('TYPE.CONTRACT:', '').toLowerCase()
 }
