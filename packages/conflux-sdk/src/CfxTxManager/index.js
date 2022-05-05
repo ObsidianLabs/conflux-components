@@ -36,8 +36,8 @@ export default class CfxTxManager {
     }
   }
 
-  async sendTransaction (tx, browserExtension) {
-    if (browserExtension && await browserExtension.currentAccount() === tx.from) {
+  sendTransaction (tx, browserExtension) {
+    if (browserExtension && browserExtension.currentAccount === tx.from) {
       return tx.send(null, browserExtension)
     } else {
       const sp = signatureProvider(tx.from)
