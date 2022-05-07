@@ -4,6 +4,7 @@ import networks from './networks'
 export default class BrowserExtension {
   static Init (networkManager) {
     if (window.conflux) {
+      window.conflux.request({ method: 'cfx_requestAccounts' })
       return new BrowserExtension(networkManager, window.conflux)
     }
   }
