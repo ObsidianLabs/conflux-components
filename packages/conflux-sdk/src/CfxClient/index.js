@@ -128,8 +128,8 @@ export default class CfxClient {
       return { noExplorer: true }
     }
 
-    const result = await this.channel.invoke('fetch', `${this.explorer}/transaction?accountAddress=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
-    const json = JSON.parse(result)
+    const result = await this.channel.invoke('fetch', `${this.explorer}/account/transactions?account=${hexAddress.toLowerCase()}&skip=${page * size}&limit=${size}`)
+    const json = JSON.parse(result).data
     if (!json.list) {
       return json
     }

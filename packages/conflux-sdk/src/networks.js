@@ -10,7 +10,7 @@ const networks = [
     notification: 'Switched to <b>Conflux Testnet</b> network.',
     url: 'https://portal-test.confluxrpc.com',
     chainId: 1,
-    explorer: 'https://testnet.confluxscan.io',
+    explorer: 'https://api-testnet.confluxscan.net',
     symbol: 'CFX',
   },
   {
@@ -22,7 +22,7 @@ const networks = [
     notification: 'Switched to <b>Conflux Tethys</b> network.',
     url: 'https://portal-main.confluxrpc.com',
     chainId: 1029,
-    explorer: 'https://confluxscan.io',
+    explorer: 'https://api.confluxscan.net',
     symbol: 'CFX',
   }
 ]
