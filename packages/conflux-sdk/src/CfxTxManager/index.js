@@ -10,13 +10,19 @@ export default class CfxTxManager {
   }
 
   async getTransferTx (Contract, { from, to, token, amount }, override) {
+    let overrideObj = Object.assign({}, override)
+    const gas = await this.client.callRpc('cfx_gasPrice', [])
+    delete overrideObj.gas
+    delete overrideObj.gasPrice
+    delete overrideObj.gasLimit
+    overrideObj.gasPrice = gas
     if (token === 'core' || !token) {
       const value = utils.unit.toValue(amount)
-      return new TransferTx(this.client, { from, to, value, ...override })
+      return new TransferTx(this.client, { from, to, value, ...overrideObj })
     } else {
       const value = utils.format.big(amount).times(utils.format.big(10).pow(token.decimals)).toString()
       const contract = new Contract({ address: token.address, abi: ERC20 }, this.client)
-      return contract.execute('transfer', { array: [to, value] }, { ...override, from })
+      return contract.execute('transfer', { array: [to, value] }, { ...overrideObj, from })
     }
   }
 
