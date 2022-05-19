@@ -11,6 +11,8 @@ const networks = [
     url: 'https://portal-test.confluxrpc.com',
     chainId: 1,
     explorer: 'https://api-testnet.confluxscan.net',
+    explorerApi: 'https://api-testnet.confluxscan.net',
+    explorerScan: 'https://testnet.confluxscan.io',
     symbol: 'CFX',
   },
   {
@@ -23,6 +25,8 @@ const networks = [
     url: 'https://portal-main.confluxrpc.com',
     chainId: 1029,
     explorer: 'https://api.confluxscan.net',
+    explorerApi: 'https://api.confluxscan.net',
+    explorerScan: 'https://www.confluxscan.io',
     symbol: 'CFX',
   }
 ]

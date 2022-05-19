@@ -10,8 +10,7 @@ import ExternalWallet from './wallet/ExternalWallet'
 
 export default class CfxClient {
   constructor (option) {
-    const { networkId, chainId, explorer, version = '1.1.1' } = option
-    
+    const { networkId, chainId, explorer, explorerScan, explorerApi, version = '1.1.1' } = option
     let url = option.url
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
       url = 'http://' + url
@@ -20,6 +19,7 @@ export default class CfxClient {
     this.networkId = networkId
     this.url = url
     this.explorer = explorer
+    this.explorerScan = explorerScan
 
     this.cfx = new Conflux({
       url,
@@ -57,8 +57,8 @@ export default class CfxClient {
   }
 
   async networkInfo () {
-    if (this.explorer) {
-      const result = await this.channel.invoke('fetch', `${this.explorer}/plot?interval=514&limit=7`)
+    if (this.explorerScan) {
+      const result = await this.channel.invoke('fetch', `${this.explorerScan}/v1/plot?interval=30&limit=7`)
       const json = JSON.parse(result)
       return json.list[json.total - 1]
     } else {
