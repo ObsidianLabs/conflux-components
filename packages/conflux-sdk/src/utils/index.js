@@ -26,7 +26,6 @@ export default {
   formatAddress,
   convertAddress,
   abbreviateAddress: address => {
-    address =  formatAddress(address)
     return `${address.substr(0, 12)}...${address.substr(address.length - 6, address.length)}`
   },
   format: {
