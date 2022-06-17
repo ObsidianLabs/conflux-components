@@ -1,4 +1,5 @@
 import { Map } from 'immutable'
+import notification from '@obsidians/notification'
 
 import AdminControl from './abi/AdminControl.json'
 import SponsorWhitelistControl from './abi/SponsorWhitelistControl.json'
@@ -27,6 +28,23 @@ export default {
     },
     ADD_DEFAULT_ABIS: {
       reducer: state => {
+        let allAbis = state.toJS()
+        let errorAbiNumbers = 0
+        for (let key in allAbis) {
+          try{
+            let objectAbi = JSON.parse(allAbis[key].abi)
+            if (objectAbi instanceof Array) continue
+            state = state.remove(key)
+          } catch(e) {}
+          errorAbiNumbers++
+        }
+        if (errorAbiNumbers) {
+          setTimeout(() => {
+            notification.info(`Removed ${errorAbiNumbers} abi which may cause error.`)
+          }, 500)
+        }
+          // for built contract
+          
         return state
           .set('0x0888000000000000000000000000000000000000', Map({ name: 'AdminControl', abi: JSON.stringify(AdminControl) }))
           .set('0x0888000000000000000000000000000000000001', Map({ name: 'SponsorWhitelistControl', abi: JSON.stringify(SponsorWhitelistControl) }))
