@@ -26,7 +26,19 @@ export default {
   formatAddress,
   convertAddress,
   abbreviateAddress: address => {
-    return `${address.substr(0, 12)}...${address.substr(address.length - 6, address.length)}`
+    let prefix
+    let mainaddr
+    if (address.startsWith('0x')) {
+      prefix = '0x'
+      mainaddr = address.substr(2)
+    } else if (address.split(":").length === 2) {
+      prefix = address.split(":")[0] + ':'
+      mainaddr = address.split(":")[1]
+    } else {
+      prefix = ""
+      mainaddr = address
+    }
+    return `${prefix}${mainaddr.substring(0, 13)}...${mainaddr.substring(mainaddr.length - 13, mainaddr.length)}`
   },
   format: {
     ...utils.format,
