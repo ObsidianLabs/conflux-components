@@ -13,11 +13,17 @@ class CfxProjectChannel extends ProjectChannel {
       const truffleConfig = fs.readFileSync(path.join(__dirname, 'templates', 'truffle-config.js'), 'utf8')
       fs.writeFileSync(path.join(projectRoot, 'truffle-config.js'), truffleConfig)
       config.compilers = { cfxtruffle: compilerVersion, ...config.compilers }
-      fs.rmdirSync(path.join(projectRoot, 'scripts'), { recursive: true })
+      try{
+        fs.rmdirSync(path.join(projectRoot, 'scripts'), { recursive: true })
+      } catch(e) {
+      }
     } else if (framework === 'cfxtruffle') {
       const truffleConfig = fs.readFileSync(path.join(__dirname, 'templates', 'truffle-config.js'), 'utf8')
       fs.writeFileSync(path.join(projectRoot, 'truffle-config.js'), truffleConfig)
-      fs.rmdirSync(path.join(projectRoot, 'scripts'), { recursive: true })
+      try{
+        fs.rmdirSync(path.join(projectRoot, 'scripts'), { recursive: true })
+      } catch(e) {
+      }
     }
 
     fs.writeFileSync(path.join(projectRoot, 'config.json'), JSON.stringify(config, null, 2))
