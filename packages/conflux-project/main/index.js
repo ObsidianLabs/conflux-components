@@ -33,7 +33,7 @@ class CfxProjectChannel extends ProjectChannel {
     const packageJson = fs.readFileSync(path.join(projectRoot, 'package.json'), 'utf8')
     const packageObj = JSON.parse(packageJson)
     if (framework === 'cfxtruffle') {
-      packageObj.scripts = { build: 'cfxtruffle compile', deploy: 'cfxtruffle deploy' }
+      packageObj.scripts = { build: 'npx cfxtruffle compile', deploy: 'npx cfxtruffle deploy' }
     }
     fs.writeFileSync(path.join(projectRoot, 'package.json'), JSON.stringify(packageObj, null, 2))
     return { projectRoot, name }
